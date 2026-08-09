@@ -1,0 +1,24 @@
+# Echo AI vertical configuration.
+# Echo Core must never hard-code any of these values -- this file is the
+# single source of truth for the AI vertical's topics/content rules.
+
+id: ai
+name: Echo AI
+
+topics:
+  - artificial_intelligence
+  - llm
+  - ai_agents
+  - ai_tools
+  - robotics
+  - ai_business
+
+content_types:
+  - breaking
+  - explain
+  - signal
+  - evergreen
+
+primary_language: en
+
+human_review_required: true
