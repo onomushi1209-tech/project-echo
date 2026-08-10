@@ -13,6 +13,7 @@ class SourceItem(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     source_id: str = Field(min_length=1)
+    source_key: str = Field(min_length=1, description="Source Registry SourceConfig.id this item came from")
     url: HttpUrl
     source_name: str = Field(min_length=1)
     title: str = Field(min_length=1)

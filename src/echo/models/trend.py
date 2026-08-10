@@ -20,3 +20,11 @@ class TrendCandidate(BaseModel):
     novelty: float = Field(ge=0.0, le=1.0)
     relevance: float = Field(ge=0.0, le=1.0)
     vertical: str = Field(min_length=1)
+
+    # STEP 2 signals. Defaulted so STEP 1 callers (DummyTrendBrain, existing
+    # tests/fixtures) are unaffected -- see echo.trend for how a
+    # source-intelligence-aware brain (RealTrendBrain) computes these.
+    freshness: float = Field(default=0.5, ge=0.0, le=1.0)
+    source_quality: float = Field(default=0.5, ge=0.0, le=1.0)
+    source_count: int = Field(default=1, ge=1)
+    cross_source_confirmation: float = Field(default=0.0, ge=0.0, le=1.0)

@@ -12,12 +12,13 @@ from datetime import date, datetime
 from pathlib import Path
 
 from echo.models.draft import ContentDraft
-from echo.models.enums import ContentType, DecisionType, RejectReason
+from echo.models.enums import ContentType, DecisionType, FetchStatus, RejectReason
 from echo.models.performance import PerformanceSnapshot
 from echo.models.publish import PublishedPost
 from echo.models.research import ResearchPacket
 from echo.models.review import ReviewDecision
 from echo.models.score import OpportunityScore
+from echo.models.source import SourceItem
 from echo.models.trend import TrendCandidate
 from echo.storage.db import get_connection, init_db
 
@@ -64,15 +65,20 @@ class EchoRepository:
             conn.execute(
                 """
                 INSERT INTO trends (trend_id, trace_id, vertical, topic, keywords_json,
-                                     sources_json, detected_at, velocity, novelty, relevance)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                     sources_json, detected_at, velocity, novelty, relevance,
+                                     freshness, source_quality, source_count, cross_source_confirmation)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (trend_id) DO UPDATE SET
                     topic = excluded.topic,
                     keywords_json = excluded.keywords_json,
                     sources_json = excluded.sources_json,
                     velocity = excluded.velocity,
                     novelty = excluded.novelty,
-                    relevance = excluded.relevance
+                    relevance = excluded.relevance,
+                    freshness = excluded.freshness,
+                    source_quality = excluded.source_quality,
+                    source_count = excluded.source_count,
+                    cross_source_confirmation = excluded.cross_source_confirmation
                 """,
                 (
                     trend.trend_id,
@@ -85,6 +91,10 @@ class EchoRepository:
                     trend.velocity,
                     trend.novelty,
                     trend.relevance,
+                    trend.freshness,
+                    trend.source_quality,
+                    trend.source_count,
+                    trend.cross_source_confirmation,
                 ),
             )
             conn.commit()
@@ -327,6 +337,155 @@ class EchoRepository:
         finally:
             conn.close()
 
+    # -- source items / fetch runs / failures (STEP 2) ----------------------
+
+    def save_source_item(self, item: SourceItem, canonical_url: str, content_fingerprint: str) -> None:
+        """Idempotent: a re-ingested item with the same id or canonical_url
+        is silently ignored rather than overwritten, since SourceItem is
+        immutable raw material, not something later stages edit in place."""
+        conn = self._connect()
+        try:
+            conn.execute(
+                """
+                INSERT INTO source_items (source_item_id, source_key, vertical, url, canonical_url,
+                                           content_fingerprint, source_name, title, published_at,
+                                           retrieved_at, content, language)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT (source_item_id) DO NOTHING
+                """,
+                (
+                    item.source_id,
+                    item.source_key,
+                    item.vertical,
+                    str(item.url),
+                    canonical_url,
+                    content_fingerprint,
+                    item.source_name,
+                    item.title,
+                    item.published_at.isoformat(),
+                    item.retrieved_at.isoformat(),
+                    item.content,
+                    item.language,
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def list_known_canonical_urls(self) -> set[str]:
+        """Seed data for echo.source.dedup.Deduplicator so duplicates are
+        caught across ingest runs, not just within one batch."""
+        conn = self._connect()
+        try:
+            rows = conn.execute("SELECT canonical_url FROM source_items").fetchall()
+            return {row["canonical_url"] for row in rows}
+        finally:
+            conn.close()
+
+    def list_known_content_fingerprints(self) -> set[str]:
+        conn = self._connect()
+        try:
+            rows = conn.execute("SELECT content_fingerprint FROM source_items").fetchall()
+            return {row["content_fingerprint"] for row in rows}
+        finally:
+            conn.close()
+
+    def list_source_items(self, vertical: str | None = None) -> list[SourceItem]:
+        conn = self._connect()
+        try:
+            if vertical is None:
+                rows = conn.execute("SELECT * FROM source_items ORDER BY published_at").fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM source_items WHERE vertical = ? ORDER BY published_at", (vertical,)
+                ).fetchall()
+            return [_row_to_source_item(r) for r in rows]
+        finally:
+            conn.close()
+
+    def save_source_fetch_run(
+        self,
+        run_id: str,
+        source_key: str,
+        vertical: str,
+        started_at: datetime,
+        finished_at: datetime,
+        status: FetchStatus,
+        items_fetched: int,
+        items_normalized: int,
+        items_deduplicated: int,
+        items_age_filtered: int = 0,
+        items_item_limit_filtered: int = 0,
+    ) -> None:
+        conn = self._connect()
+        try:
+            conn.execute(
+                """
+                INSERT INTO source_fetch_runs (run_id, source_key, vertical, started_at, finished_at,
+                                                status, items_fetched, items_normalized, items_age_filtered,
+                                                items_item_limit_filtered, items_deduplicated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT (run_id) DO NOTHING
+                """,
+                (
+                    run_id,
+                    source_key,
+                    vertical,
+                    started_at.isoformat(),
+                    finished_at.isoformat(),
+                    status.value,
+                    items_fetched,
+                    items_normalized,
+                    items_age_filtered,
+                    items_item_limit_filtered,
+                    items_deduplicated,
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def list_source_fetch_runs(self) -> list[dict]:
+        conn = self._connect()
+        try:
+            rows = conn.execute("SELECT * FROM source_fetch_runs ORDER BY started_at").fetchall()
+            return [dict(r) for r in rows]
+        finally:
+            conn.close()
+
+    def save_source_failure(
+        self,
+        failure_id: str,
+        source_key: str,
+        vertical: str,
+        occurred_at: datetime,
+        stage: str,
+        error_type: str,
+        message: str,
+    ) -> None:
+        conn = self._connect()
+        try:
+            conn.execute(
+                """
+                INSERT INTO source_failures (failure_id, source_key, vertical, occurred_at, stage,
+                                              error_type, message)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT (failure_id) DO NOTHING
+                """,
+                (failure_id, source_key, vertical, occurred_at.isoformat(), stage, error_type, message),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def list_source_failures(self) -> list[dict]:
+        conn = self._connect()
+        try:
+            rows = conn.execute("SELECT * FROM source_failures ORDER BY occurred_at").fetchall()
+            return [dict(r) for r in rows]
+        finally:
+            conn.close()
+
     # -- published posts / performance --------------------------------------
     # No STEP 1 service writes these yet (no X API integration exists); the
     # methods exist so the schema has a stable, tested write path ready for
@@ -388,6 +547,7 @@ class EchoRepository:
 
 
 def _row_to_trend(row: sqlite3.Row) -> TrendCandidate:
+    row_keys = row.keys()
     return TrendCandidate(
         trend_id=row["trend_id"],
         trace_id=row["trace_id"],
@@ -399,6 +559,12 @@ def _row_to_trend(row: sqlite3.Row) -> TrendCandidate:
         novelty=row["novelty"],
         relevance=row["relevance"],
         vertical=row["vertical"],
+        freshness=row["freshness"] if "freshness" in row_keys else 0.5,
+        source_quality=row["source_quality"] if "source_quality" in row_keys else 0.5,
+        source_count=row["source_count"] if "source_count" in row_keys else 1,
+        cross_source_confirmation=(
+            row["cross_source_confirmation"] if "cross_source_confirmation" in row_keys else 0.0
+        ),
     )
 
 
@@ -448,6 +614,21 @@ def _row_to_draft(row: sqlite3.Row) -> ContentDraft:
         vertical=row["vertical"],
         compliance_risk_score=row["compliance_risk_score"],
         compliance_flags=json.loads(row["compliance_flags_json"]),
+    )
+
+
+def _row_to_source_item(row: sqlite3.Row) -> SourceItem:
+    return SourceItem(
+        source_id=row["source_item_id"],
+        source_key=row["source_key"],
+        url=row["url"],
+        source_name=row["source_name"],
+        title=row["title"],
+        published_at=datetime.fromisoformat(row["published_at"]),
+        retrieved_at=datetime.fromisoformat(row["retrieved_at"]),
+        content=row["content"],
+        language=row["language"],
+        vertical=row["vertical"],
     )
 
 

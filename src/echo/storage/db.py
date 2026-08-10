@@ -27,7 +27,11 @@ CREATE TABLE IF NOT EXISTS trends (
     detected_at TEXT NOT NULL,
     velocity REAL NOT NULL,
     novelty REAL NOT NULL,
-    relevance REAL NOT NULL
+    relevance REAL NOT NULL,
+    freshness REAL NOT NULL DEFAULT 0.5,
+    source_quality REAL NOT NULL DEFAULT 0.5,
+    source_count INTEGER NOT NULL DEFAULT 1,
+    cross_source_confirmation REAL NOT NULL DEFAULT 0.0
 );
 
 CREATE TABLE IF NOT EXISTS research (
@@ -105,7 +109,71 @@ CREATE TABLE IF NOT EXISTS performance (
     followers_gained INTEGER NOT NULL DEFAULT 0,
     link_clicks INTEGER NOT NULL DEFAULT 0
 );
+
+-- STEP 2: Source & Trend Intelligence -------------------------------------
+
+CREATE TABLE IF NOT EXISTS source_items (
+    source_item_id TEXT PRIMARY KEY,
+    source_key TEXT NOT NULL,
+    vertical TEXT NOT NULL,
+    url TEXT NOT NULL,
+    canonical_url TEXT NOT NULL,
+    content_fingerprint TEXT NOT NULL,
+    source_name TEXT NOT NULL,
+    title TEXT NOT NULL,
+    published_at TEXT NOT NULL,
+    retrieved_at TEXT NOT NULL,
+    content TEXT NOT NULL,
+    language TEXT NOT NULL,
+    UNIQUE (canonical_url)
+);
+
+CREATE TABLE IF NOT EXISTS source_fetch_runs (
+    run_id TEXT PRIMARY KEY,
+    source_key TEXT NOT NULL,
+    vertical TEXT NOT NULL,
+    started_at TEXT NOT NULL,
+    finished_at TEXT NOT NULL,
+    status TEXT NOT NULL,
+    items_fetched INTEGER NOT NULL DEFAULT 0,
+    items_normalized INTEGER NOT NULL DEFAULT 0,
+    items_age_filtered INTEGER NOT NULL DEFAULT 0,
+    items_item_limit_filtered INTEGER NOT NULL DEFAULT 0,
+    items_deduplicated INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS source_failures (
+    failure_id TEXT PRIMARY KEY,
+    source_key TEXT NOT NULL,
+    vertical TEXT NOT NULL,
+    occurred_at TEXT NOT NULL,
+    stage TEXT NOT NULL,
+    error_type TEXT NOT NULL,
+    message TEXT NOT NULL
+);
 """
+
+# Columns added after a table's initial release. Applied by
+# _migrate_schema() via `ALTER TABLE ... ADD COLUMN`, guarded by checking
+# PRAGMA table_info() first -- SQLite has no `ADD COLUMN IF NOT EXISTS`,
+# so idempotency is enforced here in Python rather than in SQL. This lets
+# a database created by an older version of this schema upgrade in place;
+# a fresh database already gets these columns from CREATE TABLE above, so
+# the loop below is a no-op for it. One entry per table; never drops or
+# renames anything.
+_ADDITIVE_COLUMNS: dict[str, tuple[tuple[str, str], ...]] = {
+    "trends": (
+        ("freshness", "REAL NOT NULL DEFAULT 0.5"),
+        ("source_quality", "REAL NOT NULL DEFAULT 0.5"),
+        ("source_count", "INTEGER NOT NULL DEFAULT 1"),
+        ("cross_source_confirmation", "REAL NOT NULL DEFAULT 0.0"),
+    ),
+    # Pre-Commit Hardening: source ingestion upper bounds observability.
+    "source_fetch_runs": (
+        ("items_age_filtered", "INTEGER NOT NULL DEFAULT 0"),
+        ("items_item_limit_filtered", "INTEGER NOT NULL DEFAULT 0"),
+    ),
+}
 
 
 def get_connection(db_path: Path) -> sqlite3.Connection:
@@ -117,11 +185,29 @@ def get_connection(db_path: Path) -> sqlite3.Connection:
 
 
 def init_db(db_path: Path) -> None:
-    """Create the database file and all tables if they do not already exist."""
+    """Create the database file and all tables if they do not already exist.
+
+    Idempotent: safe to call on an already-initialized database (STEP 1 or
+    STEP 2 schema) -- CREATE TABLE IF NOT EXISTS leaves existing tables
+    untouched, and _migrate_schema only adds columns that are missing.
+    """
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = get_connection(db_path)
     try:
         conn.executescript(SCHEMA)
+        _migrate_schema(conn)
         conn.commit()
     finally:
         conn.close()
+
+
+def _migrate_schema(conn: sqlite3.Connection) -> None:
+    """Additive, idempotent column migrations for databases created by an
+    older version of this schema (e.g. a STEP 1 database being upgraded to
+    STEP 2, or a pre-hardening STEP 2 database). Never drops or renames
+    anything."""
+    for table_name, columns in _ADDITIVE_COLUMNS.items():
+        existing_columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table_name})")}
+        for column_name, column_ddl in columns:
+            if column_name not in existing_columns:
+                conn.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_ddl}")

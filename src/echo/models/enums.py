@@ -52,3 +52,31 @@ class RejectReason(str, Enum):
     CLICKBAIT_ONLY = "clickbait_only"
     NO_NEW_INFORMATION = "no_new_information"
     OTHER = "other"
+
+
+class SourceType(str, Enum):
+    """How a registered source is fetched. Extensible: adding a new fetch
+    mechanism (HTML, API, X, ...) means adding a member here plus one
+    adapter function in echo.source.adapters -- never a Core change."""
+
+    RSS = "rss"
+    ATOM = "atom"
+    JSON = "json"
+    STATIC_FIXTURE = "static_fixture"
+
+
+class ReliabilityTier(str, Enum):
+    """Config-driven source trust tier. Never tied to a specific company
+    name in code -- see config/sources/*.yaml for which source gets which
+    tier."""
+
+    A = "tier_a"  # official / primary source
+    B = "tier_b"  # high-quality secondary source
+    C = "tier_c"  # discovery-only source
+
+
+class FetchStatus(str, Enum):
+    """Outcome of one source_fetch_runs row."""
+
+    SUCCESS = "success"
+    FAILED = "failed"

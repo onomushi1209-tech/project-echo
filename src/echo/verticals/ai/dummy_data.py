@@ -56,6 +56,7 @@ def sample_sources(retrieved_at: datetime | None = None) -> list[SourceItem]:
     return [
         SourceItem(
             source_id=item["source_id"],
+            source_key="dummy_fixture",
             url=item["url"],
             source_name=item["source_name"],
             title=item["title"],

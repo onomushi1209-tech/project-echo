@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "title": "New open-weight LLM claims state-of-the-art reasoning benchmarks",
+      "url": "https://example.com/echo/fixtures/llm-benchmark-release",
+      "published_at": "2026-08-09T08:00:00Z",
+      "summary": "A research lab released a new open-weight large language model, reporting state-of-the-art results on several reasoning benchmarks. The release includes model weights and a technical report."
+    },
+    {
+      "title": "New open-weight LLM claims state of the art reasoning benchmarks",
+      "url": "https://example.com/echo/fixtures/llm-benchmark-release-mirror?utm_source=newsletter&utm_medium=email",
+      "published_at": "2026-08-09T08:15:00Z",
+      "summary": "A research lab released a new open-weight large language model, reporting state-of-the-art results on several reasoning benchmarks. The release includes model weights and a technical report."
+    },
+    {
+      "title": "AI agent framework adds native tool-use memory across sessions",
+      "url": "https://example.com/echo/fixtures/agent-framework-memory",
+      "published_at": "2026-08-09T05:00:00Z",
+      "summary": "A widely used AI agent framework shipped an update adding persistent, cross-session memory for tool use, aimed at long-running autonomous tasks."
+    },
+    {
+      "title": "Robotics startup demonstrates warehouse robot trained with AI agents",
+      "url": "https://example.com/echo/fixtures/warehouse-robot-demo",
+      "published_at": "2026-08-08T22:00:00Z",
+      "summary": "A robotics startup published a demo of a warehouse picking robot whose control policy was trained using an AI agent-based simulation pipeline."
+    },
+    {
+      "title": "Quarterly earnings report shows steady growth in cloud division",
+      "url": "https://example.com/echo/fixtures/cloud-earnings-report",
+      "published_at": "2026-08-07T14:00:00Z",
+      "summary": "A technology company reported quarterly earnings, highlighting steady growth in its cloud computing division."
+    }
+  ]
+}

@@ -2,7 +2,15 @@
 
 from echo.models.compliance import ComplianceResult
 from echo.models.draft import ContentDraft
-from echo.models.enums import ContentType, DecisionType, PipelineStage, RejectReason
+from echo.models.enums import (
+    ContentType,
+    DecisionType,
+    FetchStatus,
+    PipelineStage,
+    ReliabilityTier,
+    RejectReason,
+    SourceType,
+)
 from echo.models.performance import PerformanceSnapshot
 from echo.models.publish import PublishedPost
 from echo.models.research import ResearchPacket
@@ -16,13 +24,16 @@ __all__ = [
     "ContentDraft",
     "ContentType",
     "DecisionType",
+    "FetchStatus",
     "OpportunityScore",
     "PerformanceSnapshot",
     "PipelineStage",
     "PublishedPost",
+    "ReliabilityTier",
     "RejectReason",
     "ResearchPacket",
     "ReviewDecision",
     "SourceItem",
+    "SourceType",
     "TrendCandidate",
 ]

@@ -1,0 +1,114 @@
+# Source Registry for the AI vertical.
+#
+# Only sources that were actually verified reachable with a plain HTTP
+# fetch (single request, no bypass of robots/WAF/rate limits) during STEP 2
+# implementation are `enabled: true`. Everything else is registered but
+# disabled, with the verification result recorded below, rather than
+# guessing a URL or silently enabling something unverified -- see
+# docs/SOURCE_INTELLIGENCE.md "Adding a new source".
+#
+# Verified 2026-08-09 via:
+#   curl -sS -L --max-time 10 -H "User-Agent: Project-Echo/0.1" "<url>"
+
+vertical: ai
+
+# Pre-Commit Hardening (2026-08-10): every real (non-fixture) source below
+# sets explicit ingestion upper bounds -- max_items_per_fetch: 200,
+# max_item_age_hours: 168 (7 days) -- so a single fetch of a large feed
+# (e.g. a full-history blog feed) cannot flood one `echo ingest` run. Both
+# are overridable per source; see echo.source.config.SourceConfig and
+# docs/SOURCE_INTELLIGENCE.md "Ingestion upper bounds".
+
+sources:
+  # --- Verified working (2026-08-09): HTTP 200, valid RSS 2.0 -------------
+
+  - id: nvidia_blog
+    name: "NVIDIA Blog"
+    url: "https://blogs.nvidia.com/feed/"
+    source_type: rss
+    enabled: true
+    vertical: ai
+    reliability_tier: tier_a
+    language: en
+    polling_interval: 60
+    primary_source: true
+    max_items_per_fetch: 200
+    max_item_age_hours: 168
+
+  - id: openai_news
+    name: "OpenAI News"
+    url: "https://openai.com/blog/rss.xml"
+    source_type: rss
+    enabled: true
+    vertical: ai
+    reliability_tier: tier_a
+    language: en
+    polling_interval: 60
+    primary_source: true
+    max_items_per_fetch: 200
+    max_item_age_hours: 168
+
+  # --- Registered but disabled: not reachable via plain HTTP fetch --------
+  # No bypass (WAF/robots/rate-limit) was attempted for any of these, per
+  # STEP 2 security rules. Re-verify manually before flipping to enabled.
+
+  - id: microsoft_research
+    name: "Microsoft Research"
+    url: "https://www.microsoft.com/en-us/research/feed/"
+    source_type: rss
+    enabled: false  # 2026-08-09: HTTP 403 (robots noindex,nofollow) via plain fetch -- currently unavailable
+    vertical: ai
+    reliability_tier: tier_a
+    language: en
+    polling_interval: 60
+    primary_source: true
+    max_items_per_fetch: 200
+    max_item_age_hours: 168
+
+  - id: google_deepmind_blog
+    name: "Google DeepMind Blog"
+    url: "https://deepmind.google/discover/blog/rss.xml"
+    source_type: rss
+    enabled: false  # 2026-08-09: HTTP 404 -- no verified feed URL found (guessed path did not resolve)
+    vertical: ai
+    reliability_tier: tier_a
+    language: en
+    polling_interval: 60
+    primary_source: true
+    max_items_per_fetch: 200
+    max_item_age_hours: 168
+
+  - id: anthropic_news
+    name: "Anthropic News"
+    url: "https://www.anthropic.com/rss.xml"
+    source_type: rss
+    enabled: false  # 2026-08-09: HTTP 404 -- no verified feed URL found
+    vertical: ai
+    reliability_tier: tier_a
+    language: en
+    polling_interval: 60
+    primary_source: true
+    max_items_per_fetch: 200
+    max_item_age_hours: 168
+
+  # --- Offline fixture source, always enabled -----------------------------
+  # Used by `echo ingest --fixture` and tests -- no network access. See
+  # tests/fixtures/sources/dummy_fixture.json. Bounds are overridden to
+  # "unlimited" (null) here: this is a small, static, fixed-date fixture
+  # used for offline demos/tests, not a live feed -- it must keep working
+  # regardless of how much wall-clock time has passed since the fixture's
+  # dates, which is exactly the per-source override the bounds are meant
+  # to support.
+
+  - id: dummy_fixture
+    name: "Echo Fixture Feed"
+    url: "https://example.com/echo/fixture"
+    source_type: static_fixture
+    enabled: true
+    vertical: ai
+    reliability_tier: tier_c
+    language: en
+    polling_interval: 60
+    primary_source: false
+    max_items_per_fetch: null
+    max_item_age_hours: null

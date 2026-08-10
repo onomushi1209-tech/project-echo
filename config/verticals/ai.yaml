@@ -13,6 +13,44 @@ topics:
   - robotics
   - ai_business
 
+# STEP 2: per-topic keywords/aliases used for deterministic relevance
+# scoring (echo.trend.relevance). Echo Core never hard-codes these words --
+# they only exist here. Keys must be a subset of `topics` above.
+topic_keywords:
+  artificial_intelligence:
+    - artificial intelligence
+    - AI
+    - machine learning
+    - deep learning
+    - neural network
+  llm:
+    - LLM
+    - large language model
+    - GPT
+    - transformer
+    - foundation model
+  ai_agents:
+    - AI agent
+    - autonomous agent
+    - agentic
+    - multi-agent
+  ai_tools:
+    - AI tool
+    - copilot
+    - AI assistant
+    - AI coding assistant
+  robotics:
+    - robot
+    - robotics
+    - humanoid robot
+    - autonomous vehicle
+  ai_business:
+    - AI startup
+    - AI funding
+    - AI investment
+    - AI chip
+    - AI infrastructure
+
 content_types:
   - breaking
   - explain

@@ -35,6 +35,7 @@ def _draft(**overrides) -> ContentDraft:
 def test_source_item_valid() -> None:
     item = SourceItem(
         source_id="src-1",
+        source_key="example_feed",
         url="https://example.com/a",
         source_name="Example",
         title="Title",
@@ -52,6 +53,7 @@ def test_source_item_rejects_invalid_url() -> None:
     with pytest.raises(ValidationError):
         SourceItem(
             source_id="src-1",
+            source_key="example_feed",
             url="not-a-url",
             source_name="Example",
             title="Title",
