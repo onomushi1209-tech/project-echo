@@ -6,11 +6,32 @@ vertical-agnostic pipeline engine; each **vertical** (AI, Tech, Crypto,
 Business, Entertainment, ...) plugs into it through config and swappable
 "brains" without Core ever hard-coding vertical-specific behavior.
 
-This repository currently implements **STEP 1: Echo Foundation** and
-**STEP 2: Source & Trend Intelligence**. See [Scope](#scope) below for
-what is intentionally not implemented yet.
+This repository currently implements **STEP 1: Echo Foundation**,
+**STEP 2: Source & Trend Intelligence**, and **STEP 3: Research
+Intelligence**. See [Scope](#scope) below for what is intentionally not
+implemented yet.
 
 ## Quick start
+
+For agent work, start with [PROJECT_STATE.json](PROJECT_STATE.json) and
+[AGENTS.md](AGENTS.md). The repeatable offline closeout is
+[docs/VERIFICATION_GATE.md](docs/VERIFICATION_GATE.md).
+
+In **PowerShell**, `echo` is normally the `Write-Output` alias. With this
+project installed into the selected Python, use **`python -B -m echo.cli`**
+as the canonical CLI invocation, for example:
+
+```powershell
+python -B -m echo.cli --help
+python -B -m echo.cli research --help
+python -B scripts/verify.py
+```
+
+Use the same interpreter for installation and execution; if it is not on
+PATH, supply its absolute path. The `echo = echo.cli:main` console entrypoint
+is retained. In the examples below, replace `echo` with `python -B -m echo.cli`
+when using PowerShell. Operational commands such as `init`, `ingest` and
+`sources check` have DB/network effects and require their own authorized scope.
 
 ```bash
 python -m venv .venv
@@ -33,6 +54,12 @@ echo ingest                 # fetch enabled sources -> normalize -> dedup -> sto
 echo ingest --fixture       # same, but offline/reproducible (no network)
 echo trends detect          # cluster stored SourceItems into TrendCandidates
 echo trends list            # list detected TrendCandidates
+
+# STEP 3: research intelligence for a detected trend
+echo research run <trend_id>     # build a ResearchPacket (claims/evidence/conflicts/confidence)
+echo research show <research_id> # show a persisted ResearchPacket's summary
+echo research claims <research_id>    # list its claims
+echo research conflicts <research_id> # list its detected conflicts
 ```
 
 Run tests (fully offline -- no network access required):
@@ -40,6 +67,10 @@ Run tests (fully offline -- no network access required):
 ```bash
 pytest
 ```
+
+For repository-clean verification, use `python -B scripts/verify.py`; it runs
+targeted, STEP 3 and full tests in external temporary directories with cache
+and bytecode disabled. See the Verification Gate for evidence and stopping rules.
 
 Real-source connectivity smoke test (separate from pytest, makes real
 requests): `python scripts/smoke_test_sources.py`
@@ -83,19 +114,43 @@ near-exact repeat of an already-detected topic (low novelty) is still
 detected and shown, but is not written to SQLite again. See
 [docs/SOURCE_INTELLIGENCE.md](docs/SOURCE_INTELLIGENCE.md) for details.
 
+**STEP 3** -- a `TrendCandidate` and the `SourceItem`s behind it become a
+structured `ResearchPacket`:
+
+```
+TrendCandidate -> Relevant Source Collection -> Fact/Claim Extraction
+                -> Claim Grouping -> Conflict Detection
+                -> Source Independence + Confidence Calculation -> ResearchPacket
+```
+
+`echo research run <trend_id>` groups same-fact sentences from multiple
+sources into claims (`CONFIRMED`/`SUPPORTED`/`SINGLE_SOURCE`/
+`UNVERIFIED`/`CONFLICTED`), traces every claim back to the original
+`SourceItem`/URL via `EvidenceItem`s, flags contradictions with
+deterministic heuristics (opposite-status keywords, negation, differing
+numbers, differing dates) rather than asserting them silently as
+agreement, and computes a config-driven `confidence` plus a
+`research_status` (`READY`/`NEEDS_MORE_SOURCES`/`CONFLICTED`/
+`LOW_CONFIDENCE`/`INSUFFICIENT_EVIDENCE`) -- informational only, never a
+publish decision. `RealResearchBrain` coexists with STEP 1's
+`DummyResearchBrain`. See
+[docs/RESEARCH_INTELLIGENCE.md](docs/RESEARCH_INTELLIGENCE.md) for
+details.
+
 ## Documentation
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- Core vs. Vertical separation, package layout, extension points
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md) -- data models and SQLite schema
 - [docs/SOURCE_INTELLIGENCE.md](docs/SOURCE_INTELLIGENCE.md) -- Source Registry, fetch/dedup/clustering/scoring, adding a new source
+- [docs/RESEARCH_INTELLIGENCE.md](docs/RESEARCH_INTELLIGENCE.md) -- claims, evidence, conflicts, confidence, research status
 - [docs/DEVELOPMENT_RULES.md](docs/DEVELOPMENT_RULES.md) -- rules every contributor (human or AI) must follow
 
 ## Scope
 
-Neither STEP 1 nor STEP 2 implement: X posting, browser automation,
-OpenAI/Anthropic/Gemini API calls, LLM-generated content, a production
-Research/Content brain, a dashboard, an affiliate/monetization system, a
-newsletter, "Echo Hub", automated self-learning, or running multiple
+Neither STEP 1, STEP 2, nor STEP 3 implement: X posting, browser
+automation, OpenAI/Anthropic/Gemini API calls, LLM-generated content, a
+production Content brain, a dashboard, an affiliate/monetization system,
+a newsletter, "Echo Hub", automated self-learning, or running multiple
 verticals in production. See
 [docs/DEVELOPMENT_RULES.md](docs/DEVELOPMENT_RULES.md) for the full rule
 and rationale.

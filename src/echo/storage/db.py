@@ -43,7 +43,53 @@ CREATE TABLE IF NOT EXISTS research (
     sources_json TEXT NOT NULL,
     source_quality REAL NOT NULL,
     conflicting_information INTEGER NOT NULL,
-    confidence REAL NOT NULL
+    confidence REAL NOT NULL,
+    source_assessments_json TEXT NOT NULL DEFAULT '[]',
+    primary_source_present INTEGER NOT NULL DEFAULT 0,
+    independent_source_count INTEGER NOT NULL DEFAULT 0,
+    research_status TEXT NOT NULL DEFAULT 'ready',
+    researched_at TEXT
+);
+
+-- STEP 3: Research Intelligence ---------------------------------------------
+
+CREATE TABLE IF NOT EXISTS research_claims (
+    claim_id TEXT PRIMARY KEY,
+    research_id TEXT NOT NULL REFERENCES research (research_id),
+    text TEXT NOT NULL,
+    normalized_text TEXT NOT NULL,
+    claim_type TEXT NOT NULL,
+    evidence_ids_json TEXT NOT NULL,
+    supporting_source_ids_json TEXT NOT NULL,
+    contradicting_source_ids_json TEXT NOT NULL,
+    confidence REAL NOT NULL,
+    status TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS research_evidence (
+    evidence_id TEXT PRIMARY KEY,
+    research_id TEXT NOT NULL REFERENCES research (research_id),
+    source_item_id TEXT NOT NULL,
+    source_key TEXT NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    published_at TEXT NOT NULL,
+    excerpt TEXT NOT NULL,
+    is_primary_source INTEGER NOT NULL,
+    reliability_tier TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS research_conflicts (
+    conflict_id TEXT PRIMARY KEY,
+    research_id TEXT NOT NULL REFERENCES research (research_id),
+    claim_id TEXT,
+    evidence_id_a TEXT NOT NULL,
+    evidence_id_b TEXT NOT NULL,
+    source_key_a TEXT NOT NULL,
+    source_key_b TEXT NOT NULL,
+    conflict_type TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    severity TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS scores (
@@ -172,6 +218,15 @@ _ADDITIVE_COLUMNS: dict[str, tuple[tuple[str, str], ...]] = {
     "source_fetch_runs": (
         ("items_age_filtered", "INTEGER NOT NULL DEFAULT 0"),
         ("items_item_limit_filtered", "INTEGER NOT NULL DEFAULT 0"),
+    ),
+    # STEP 3: Research Intelligence -- scalar rollups added directly to
+    # `research`; claims/evidence/conflicts get their own tables (above).
+    "research": (
+        ("source_assessments_json", "TEXT NOT NULL DEFAULT '[]'"),
+        ("primary_source_present", "INTEGER NOT NULL DEFAULT 0"),
+        ("independent_source_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("research_status", "TEXT NOT NULL DEFAULT 'ready'"),
+        ("researched_at", "TEXT"),
     ),
 }
 

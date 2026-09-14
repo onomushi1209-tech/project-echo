@@ -1,0 +1,335 @@
+{
+  "schema_version": 2,
+  "project": "Project Echo",
+  "branch": "main",
+  "baseline_head": "a3ae594f003b962306af84ea94c51c069c85ed3d",
+  "baseline_subject": "feat: add source and trend intelligence",
+  "completed_steps": [
+    "STEP 1 Echo Foundation",
+    "STEP 2 Source & Trend Intelligence",
+    "STEP 3 Research Intelligence (product verification evidence recorded below)",
+    "Efficiency Foundation v1 (checkpoint lifecycle verification recorded below)"
+  ],
+  "test_baseline": {
+    "audit": {
+      "collected": 275,
+      "passed": 271,
+      "failed": 4,
+      "skipped": 0,
+      "warnings": 0,
+      "step3_passed": 90
+    },
+    "pre_lifecycle": {
+      "targeted": {
+        "passed": 99,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "step3": {
+        "passed": 131,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0,
+        "original_90_preserved": true
+      },
+      "full": {
+        "collected": 327,
+        "passed": 327,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "python": "3.14.6"
+    },
+    "pre_state_integrity": {
+      "verification": {
+        "passed": 31,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "targeted": {
+        "passed": 125,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "step3": {
+        "passed": 131,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0,
+        "original_90_preserved": true
+      },
+      "full": {
+        "collected": 353,
+        "passed": 353,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "python": "3.14.6"
+    },
+    "accepted": {
+      "verification": {
+        "passed": 103,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "targeted": {
+        "passed": 197,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "step3": {
+        "passed": 131,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0,
+        "original_90_preserved": true
+      },
+      "full": {
+        "collected": 425,
+        "passed": 425,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "python": "3.14.6"
+    }
+  },
+  "known_blockers": [],
+  "live_authority": {
+    "network": false,
+    "external_api": false,
+    "x_posting": false,
+    "affiliate_integration": false,
+    "step4": false,
+    "existing_database_mutation": false,
+    "scheduler": false
+  },
+  "commit_authorized": false,
+  "approved_change_paths": [
+    ".env.example",
+    "AGENTS.md",
+    "PROJECT_STATE.json",
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/DATA_MODEL.md",
+    "docs/DEVELOPMENT_RULES.md",
+    "docs/RESEARCH_INTELLIGENCE.md",
+    "docs/VERIFICATION_GATE.md",
+    "pyproject.toml",
+    "scripts/verify.py",
+    "src/echo/brains/__init__.py",
+    "src/echo/brains/real_research_brain.py",
+    "src/echo/cli.py",
+    "src/echo/config/settings.py",
+    "src/echo/core/ids.py",
+    "src/echo/core/reliability.py",
+    "src/echo/core/text.py",
+    "src/echo/models/__init__.py",
+    "src/echo/models/enums.py",
+    "src/echo/models/research.py",
+    "src/echo/research/__init__.py",
+    "src/echo/research/claims.py",
+    "src/echo/research/confidence.py",
+    "src/echo/research/config.py",
+    "src/echo/research/conflicts.py",
+    "src/echo/research/evidence.py",
+    "src/echo/research/extraction.py",
+    "src/echo/research/independence.py",
+    "src/echo/research/source_selection.py",
+    "src/echo/research/status.py",
+    "src/echo/research/summary.py",
+    "src/echo/source/dedup.py",
+    "src/echo/source/reliability.py",
+    "src/echo/storage/db.py",
+    "src/echo/storage/repository.py",
+    "tests/test_architecture.py",
+    "tests/test_cli_research.py",
+    "tests/test_ingest.py",
+    "tests/test_real_research_brain.py",
+    "tests/test_research_claims.py",
+    "tests/test_research_confidence.py",
+    "tests/test_research_conflicts.py",
+    "tests/test_research_extraction.py",
+    "tests/test_research_independence.py",
+    "tests/test_research_models.py",
+    "tests/test_research_source_selection.py",
+    "tests/test_research_status.py",
+    "tests/test_research_storage.py",
+    "tests/test_verification.py"
+  ],
+  "verification": {
+    "status": "PASS",
+    "mode": "worktree",
+    "evidence_type": "guarded_offline_workers",
+    "verified_at_utc": "2026-09-05T23:16:57Z",
+    "command": "supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+    "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+    "input_digest": "2be5c8dae9cb302178413d0d8582d780ee2e6a9eece23f0ecde2a8b53794117b",
+    "digest_algorithm": "sha256-path-content-lf-state-v2",
+    "imported_modules": 82,
+    "cli_help_routes": 9,
+    "installed_entrypoint": "echo.cli:main",
+    "repository_unchanged_during_gate": true,
+    "index_unchanged_during_gate": true,
+    "existing_database_unchanged": true,
+    "worker_blocked_side_effects": [],
+    "independent_review": {
+      "status": "PASS",
+      "reviewed_at_utc": "2026-09-05T23:16:57Z",
+      "reviewers": [
+        {
+          "name": "STATE_TEMPORAL_REVIEW",
+          "scope": "Durable State, conditional resume protocol, identical State through external review/staging/single commit, no sync/self hash; implementation read-only review",
+          "status": "PASS"
+        },
+        {
+          "name": "STATE_INTEGRITY_REVIEW",
+          "scope": "State projection, minimal self exclusion, accepted evidence and tamper validation, all-mode lifecycle regressions; implementation read-only review",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "handoff": {
+    "what_changed": [
+      "Deterministic ingest test clocks; exclusive lexical opposite-status checks",
+      "Evidence-contribution trust statistics and all-unverified readiness guard",
+      "CLI trend_id handoff and neutral reliability helper with STEP 2 exports",
+      "Minimal Japanese Unicode extraction/bigrams and pre-cluster candidate bounds",
+      "Project AGENTS, reusable verification, canonical state/handoff and efficiency inventory",
+      "Explicit worktree/index/HEAD verification with baseline_head fixed as checkpoint parent; no self commit hash or repository-granted Git authority",
+      "Durable Git-derived resume protocol replaces mutable current/next-action cursors",
+      "State semantic projection binds all checkpoint metadata except the active input_digest value; accepted evidence validation is mode-independent"
+    ],
+    "limitations": [
+      "Japanese support is deterministic normalization/extraction/character overlap, not full semantic NLP; conflict keyword/negation vocabulary remains English",
+      "Pre-cluster input is bounded; history scanning and candidate ranking still scale with input size",
+      "Existing data/echo.db remains at its prior STEP 1 schema; no runtime migration is authorized",
+      "Technical verification supplies no Git or live authority; baseline_head is the checkpoint parent before and after commit",
+      "CP-01 MEDIUM NON-BLOCKING: before a feature re-saves changed content under the same research ID, implement either immutable/reject semantics or fully consistent transactional replacement; not fixed by lifecycle remediation",
+      "CP-02 LOW NON-BLOCKING: research documentation overstates configurability of the fixed 0.3 reliability coefficient; deferred without documentation changes"
+    ],
+    "review_resolutions": [
+      "Reject symbol-only and whitespace-padded Japanese noise; preserve English sentences with short Japanese product names",
+      "Scan YAML/text and suppress matched detector values; fail if snapshot enumeration is unreadable",
+      "Architecture checks resolve relative/package imports and protect RealResearchBrain; canonical module CLI exercised",
+      "Reject symlinks in approved/worktree inputs; explicitly bind Windows Git executable and verify serialized argv; align documented gate order",
+      "LC-01: replaced ephemeral cursors with a durable Git-derived resume protocol; identical State survives review/staging/commit without synchronization",
+      "LC-02: included complete semantic State except the self-digest value in v2; rejected invalid evidence, unresolved blockers, unsafe authority and missing handoff even after resealing"
+    ],
+    "resume_protocol": {
+      "method": "derive_from_git_and_external_authority",
+      "lifecycle_derivation": {
+        "worktree": "HEAD == baseline_head; clean index; approved dirty subset: verify worktree, then external review and staging authorization",
+        "staged": "HEAD == baseline_head; exact staged scope; no drift: verify staged, then external commit authorization",
+        "committed": "clean HEAD with single parent == baseline_head and exact scope: verify committed, then external push review"
+      },
+      "external_authority_required": [
+        "stage",
+        "commit",
+        "push"
+      ],
+      "otherwise": "STOP"
+    },
+    "prohibited_automatic_actions": [
+      "stage",
+      "commit",
+      "push",
+      "network",
+      "external_api",
+      "step4",
+      "affiliate_phase0",
+      "database_migration",
+      "install",
+      "scheduler"
+    ]
+  },
+  "state_model": "durable_checkpoint",
+  "checkpoint_subject": "STEP 3 + Efficiency Foundation v1 checkpoint lifecycle",
+  "verification_history": [
+    {
+      "status": "PASS",
+      "verified_at_utc": "2026-09-05T22:08:22Z",
+      "command": "python -B scripts/verify.py --mode worktree",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "input_digest": "abc295b5fcef5fe7436c3ea25d1c06f395c9c928baba4bc803a5496ef40f566e",
+      "digest_excludes": [
+        "PROJECT_STATE.json"
+      ],
+      "imported_modules": 82,
+      "cli_help_routes": 9,
+      "installed_entrypoint": "echo.cli:main",
+      "diff_check": "PASS (unstaged and staged)",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "env_present": false,
+      "secret_scan": "No recognized high-confidence pattern in tracked/approved source, docs, config and fixture text; no real secret values inspected",
+      "independent_review": {
+        "status": "PASS",
+        "prior_product_review": {
+          "status": "PASS",
+          "reviewers": [
+            {
+              "name": "design_review",
+              "scope": "Research correctness, H2/H3/M3/M4",
+              "result": "PASS after closing spaced-noise and mixed-language findings"
+            },
+            {
+              "name": "foundation_review",
+              "scope": "Efficiency Foundation, verification safety, handoff structure",
+              "result": "PASS after extending secret-pattern coverage to YAML/text"
+            },
+            {
+              "name": "regression_review",
+              "scope": "H1, CLI handoff, architecture, metadata and invocation",
+              "result": "PASS; module invocation executed and import guard strengthened by main agent"
+            }
+          ]
+        },
+        "reviewers": [
+          {
+            "name": "lifecycle_design_review (Ampere)",
+            "scope": "Git lifecycle, self-reference, worktree/index/HEAD digest, verifier safety and temporary Git coverage",
+            "result": "PASS; approved/worktree symlink checks and explicit Windows subprocess executable binding read back; gate-order documentation aligned by main agent. Read-only review; tests run by main agent."
+          }
+        ]
+      },
+      "post_state_checks": "PASS: worktree --checks-only after recording full verification and review; identical full-run digest, 82 imports, 9 CLI help routes, unchanged repository/index/HEAD/branch",
+      "prior_input_digest": "1c0e006fd4751f1f374ffc80c57fbedf8ad52699eeae6ac0100850f163e3d281",
+      "digest_algorithm": "sha256-path-content-lf-v1",
+      "mode": "worktree",
+      "prior_canonical_module_help_exit": 0,
+      "remediation_failure": {
+        "stage": "verification",
+        "passed": 5,
+        "setup_errors": 26,
+        "reason": "Windows subprocess audit reported no explicit executable; fixture Git startup rejected by guard",
+        "later_stages_run": false,
+        "repository_unchanged": true,
+        "resolution": "Set executable=GIT_EXECUTABLE without weakening the allowlist; fresh complete verification PASS"
+      }
+    }
+  ],
+  "review_history": [
+    {
+      "status": "FAIL",
+      "review": "Checkpoint Lifecycle Read-Only Review",
+      "findings": [
+        "LC-01",
+        "LC-02"
+      ],
+      "decision": "NOT APPROVED - LIFECYCLE REMEDIATION REQUIRED",
+      "input_digest": "abc295b5fcef5fe7436c3ea25d1c06f395c9c928baba4bc803a5496ef40f566e",
+      "digest_algorithm": "sha256-path-content-lf-v1"
+    }
+  ]
+}

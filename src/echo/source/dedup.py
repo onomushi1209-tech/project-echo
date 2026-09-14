@@ -9,12 +9,11 @@ against a configurable threshold.
 from __future__ import annotations
 
 import hashlib
-import re
 from dataclasses import dataclass
 from enum import Enum
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from echo.core.text import jaccard_similarity, token_set
+from echo.core.text import jaccard_similarity, normalize_text, token_set
 from echo.models.source import SourceItem
 
 _TRACKING_PARAM_PREFIXES = ("utm_",)
@@ -22,8 +21,6 @@ _TRACKING_PARAM_NAMES = {
     "gclid", "fbclid", "mc_cid", "mc_eid", "igshid", "ref", "ref_src",
     "spm", "icid", "cmp", "yclid", "msclkid",
 }
-_PUNCT_RE = re.compile(r"[^\w\s]", re.UNICODE)
-_WHITESPACE_RE = re.compile(r"\s+")
 
 DEFAULT_NEAR_DUPLICATE_THRESHOLD = 0.8
 
@@ -53,9 +50,10 @@ def canonicalize_url(url: str) -> str:
 
 
 def normalize_title(title: str) -> str:
-    lowered = title.lower()
-    no_punctuation = _PUNCT_RE.sub(" ", lowered)
-    return _WHITESPACE_RE.sub(" ", no_punctuation).strip()
+    """Kept here (delegating to ``echo.core.text.normalize_text``) for
+    backward compatibility -- existing callers/tests import this name from
+    ``echo.source.dedup``."""
+    return normalize_text(title)
 
 
 def content_fingerprint(title: str, content: str) -> str:

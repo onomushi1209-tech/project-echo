@@ -10,8 +10,12 @@ docs/SOURCE_INTELLIGENCE.md).
 from __future__ import annotations
 
 import re
+import unicodedata
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9]+")
+_PUNCT_RE = re.compile(r"[^\w\s]", re.UNICODE)
+_WHITESPACE_RE = re.compile(r"\s+")
+_JAPANESE_RUN_RE = re.compile(r"[\u3041-\u3096\u30a1-\u30fa\u30fc\u3400-\u4dbf\u4e00-\u9fff]+")
 _STOPWORDS = frozenset(
     {
         "a", "an", "the", "and", "or", "but", "of", "in", "on", "for", "to", "with",
@@ -23,17 +27,37 @@ _STOPWORDS = frozenset(
 
 
 def tokenize(text: str) -> list[str]:
-    """Lowercase alphanumeric tokens, length > 2, stopwords removed.
+    """ASCII tokens (length > 2, stopwords removed) plus Japanese bigrams.
 
-    Deterministic: same input always produces the same output, in the
-    order tokens appear in ``text``.
+    Deterministic: ASCII tokens retain input order, followed by Japanese
+    run bigrams in their input order. Plain ASCII behavior is unchanged.
     """
+    text = unicodedata.normalize("NFKC", text)
     tokens = [t.lower() for t in _TOKEN_RE.findall(text)]
-    return [t for t in tokens if len(t) > 2 and t not in _STOPWORDS]
+    tokens = [t for t in tokens if len(t) > 2 and t not in _STOPWORDS]
+    # Keep the ASCII branch unchanged. Japanese uses character bigrams:
+    # deterministic overlap without a tokenizer dependency or empty sets.
+    for run in japanese_runs(text):
+        tokens.extend([run] if len(run) == 1 else [run[i:i + 2] for i in range(len(run) - 1)])
+    return tokens
+
+
+def japanese_runs(text: str) -> list[str]:
+    """Japanese/CJK runs, with fullwidth/halfwidth forms normalized."""
+    return _JAPANESE_RUN_RE.findall(unicodedata.normalize("NFKC", text))
 
 
 def token_set(text: str) -> set[str]:
     return set(tokenize(text))
+
+
+def normalize_text(text: str) -> str:
+    """Lowercase, strip punctuation, collapse whitespace -- generic free-text
+    normalization shared by ``echo.source.dedup`` (as ``normalize_title``,
+    kept for backward compatibility) and ``echo.research.extraction``."""
+    lowered = unicodedata.normalize("NFKC", text).lower()
+    no_punctuation = _PUNCT_RE.sub(" ", lowered)
+    return _WHITESPACE_RE.sub(" ", no_punctuation).strip()
 
 
 def jaccard_similarity(a: set[str], b: set[str]) -> float:

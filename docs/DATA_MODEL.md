@@ -60,6 +60,85 @@ Output of RESEARCH.
 | source_quality | float [0,1] | |
 | conflicting_information | bool | |
 | confidence | float [0,1] | |
+| claims | list[ResearchClaim] | STEP 3, default `[]` |
+| evidence | list[EvidenceItem] | STEP 3, default `[]` |
+| conflicts | list[ConflictRecord] | STEP 3, default `[]` |
+| source_assessments | list[SourceAssessment] | STEP 3, default `[]` |
+| primary_source_present | bool | STEP 3, default `false` |
+| independent_source_count | int >= 0 | STEP 3, default `0` -- distinct `source_key` count, see docs/RESEARCH_INTELLIGENCE.md "Source independence" |
+| research_status | ResearchStatus | STEP 3, default `ready` -- `ready` \| `needs_more_sources` \| `conflicted` \| `low_confidence` \| `insufficient_evidence` |
+| researched_at | datetime \| None | STEP 3, default `None` (unset for STEP 1 `DummyResearchBrain` output) |
+
+The STEP 3 fields all default so a `ResearchPacket` built the STEP 1 way
+(`DummyResearchBrain`) still validates and persists unchanged.
+
+Packet `source_quality`, `primary_source_present` and `independent_source_count`
+describe sources contributing actual evidence. `sources` and `source_assessments`
+retain the selected pool, including zero-evidence entries for provenance. No
+database schema change is needed for this distinction.
+
+## ResearchClaim (STEP 3)
+
+One extracted fact, grouped from every evidence sentence found to be
+about it -- claim-level, not article-level. Not persisted standalone;
+lives under a `ResearchPacket.claims` / the `research_claims` table.
+
+| field | type | notes |
+|---|---|---|
+| claim_id | str | |
+| text, normalized_text | str | representative surface text (earliest-published fact candidate in the group) |
+| claim_type | str | free-form; STEP 3 always uses `"general"` |
+| evidence_ids | list[str] | `EvidenceItem.evidence_id` references |
+| supporting_source_ids | list[str] | distinct `SourceConfig.id` agreeing |
+| contradicting_source_ids | list[str] | distinct `SourceConfig.id` conflicting |
+| confidence | float [0,1] | |
+| status | ClaimStatus | `confirmed` \| `supported` \| `single_source` \| `unverified` \| `conflicted` -- see docs/RESEARCH_INTELLIGENCE.md "Claim status ladder" |
+
+## EvidenceItem (STEP 3)
+
+One piece of traceable evidence backing a claim -- always resolvable back
+to the `SourceItem` (and URL) it came from.
+
+| field | type | notes |
+|---|---|---|
+| evidence_id | str | |
+| source_item_id | str | `SourceItem.source_id` this evidence came from |
+| source_key | str | `SourceConfig.id` |
+| url | str | original `SourceItem.url` -- provenance, never re-fetched |
+| title | str | |
+| published_at | datetime | |
+| excerpt | str | bounded to `ResearchConfig.max_excerpt_length` (default 240 chars) -- never a full article body |
+| is_primary_source | bool | default `false` |
+| reliability_tier | ReliabilityTier | |
+
+## ConflictRecord (STEP 3)
+
+A detected (or potential) contradiction between two pieces of evidence
+for the same claim -- see docs/RESEARCH_INTELLIGENCE.md "Conflict
+detection".
+
+| field | type | notes |
+|---|---|---|
+| conflict_id | str | |
+| claim_id | str \| None | `ResearchClaim` this conflict was found within |
+| evidence_id_a, evidence_id_b | str | |
+| source_key_a, source_key_b | str | |
+| conflict_type | str | `status_keyword` \| `negation` \| `numeric` \| `date` |
+| reason | str | human-readable |
+| severity | ConflictSeverity | `potential` \| `minor` \| `major` |
+
+## SourceAssessment (STEP 3)
+
+Per-`source_key` rollup of what a Research run saw for one source.
+
+| field | type | notes |
+|---|---|---|
+| source_key, source_name | str | |
+| reliability_tier | ReliabilityTier | |
+| reliability_score | float [0,1] | |
+| is_primary_source | bool | default `false` |
+| item_count | int >= 0 | SourceItems selected from this source |
+| evidence_count | int >= 0 | EvidenceItems contributed by this source |
 
 ## OpportunityScore
 
@@ -164,13 +243,16 @@ Not itself persisted to SQLite -- it's config, loaded fresh each run via
 ## SQLite schema
 
 One table per persisted model, plus `trace_sequences` for atomic trace-ID
-sequence allocation, plus three STEP 2 acquisition-audit tables:
+sequence allocation, plus three STEP 2 acquisition-audit tables and three
+STEP 3 research-detail tables:
 
 ```
 trace_sequences(vertical, seq_date, last_seq)          PK (vertical, seq_date)
 trends(trend_id, trace_id, vertical, topic, ..., freshness, source_quality,
        source_count, cross_source_confirmation)        PK trend_id, trace_id UNIQUE
-research(research_id, trend_id, trace_id, ...)          PK research_id, FK trend_id -> trends
+research(research_id, trend_id, trace_id, ..., source_assessments_json,
+         primary_source_present, independent_source_count,
+         research_status, researched_at)                PK research_id, FK trend_id -> trends
 scores(score_id, trend_id, trace_id, ...)                PK score_id, FK trend_id -> trends
 drafts(draft_id, trend_id, trace_id, ..., compliance_*)  PK draft_id, FK trend_id -> trends
 reviews(review_id, draft_id, trace_id, decision, ...)     PK review_id, draft_id UNIQUE, FK draft_id -> drafts
@@ -187,7 +269,29 @@ source_fetch_runs(run_id, source_key, vertical, started_at,
                    items_deduplicated)                     PK run_id
 source_failures(failure_id, source_key, vertical, occurred_at,
                  stage, error_type, message)                PK failure_id
+
+-- STEP 3 --
+research_claims(claim_id, research_id, text, normalized_text, claim_type,
+                 evidence_ids_json, supporting_source_ids_json,
+                 contradicting_source_ids_json, confidence,
+                 status)                                    PK claim_id, FK research_id -> research
+research_evidence(evidence_id, research_id, source_item_id, source_key,
+                   url, title, published_at, excerpt,
+                   is_primary_source, reliability_tier)     PK evidence_id, FK research_id -> research
+research_conflicts(conflict_id, research_id, claim_id, evidence_id_a,
+                    evidence_id_b, source_key_a, source_key_b,
+                    conflict_type, reason, severity)         PK conflict_id, FK research_id -> research
 ```
+
+`save_research` persists the `research` row plus every claim/evidence/
+conflict it carries in one connection. Like `save_trend`, there is never
+an UPDATE path for claims/evidence/conflicts -- their ids are always
+freshly allocated (`echo.core.ids.IdFactory`), so a re-run of research for
+the same trend produces an entirely new `research_id` and its own fresh
+child rows, never mutating a prior run's (`INSERT ... ON CONFLICT DO
+NOTHING`). `EchoRepository.get_research(research_id)` returns a fully
+hydrated `ResearchPacket` (claims/evidence/conflicts attached);
+`get_research_by_trend(trend_id)` returns the latest run.
 
 List/dict-valued fields (`keywords`, `sources`, `key_facts`,
 `compliance_flags`) are stored as JSON text columns. All SQL lives in
@@ -197,20 +301,26 @@ The **Human Review Gate queue** (`echo review`) is computed, not stored: it
 is every row in `drafts` with no matching row in `reviews`
 (`EchoRepository.list_drafts_pending_review`).
 
-### STEP 2 schema migration
+### Schema migration
 
 `echo.storage.db._migrate_schema` additively upgrades any older database
 in place via `ALTER TABLE ... ADD COLUMN`, guarded by checking
 `PRAGMA table_info(<table>)` first per table (SQLite has no `ADD COLUMN IF
-NOT EXISTS`). This runs every `init_db()` call and is a no-op once the
-columns exist. Nothing is ever dropped or renamed. Two generations of
-additive columns exist so far:
+NOT EXISTS`). New tables use `CREATE TABLE IF NOT EXISTS` in `SCHEMA`
+directly. This runs every `init_db()` call and is a no-op once the
+columns/tables exist. Nothing is ever dropped or renamed. Three
+generations of additive changes exist so far:
 
 - The `trends` table's four STEP 2 columns (`freshness`, `source_quality`,
   `source_count`, `cross_source_confirmation`).
 - The `source_fetch_runs` table's two Pre-Commit Hardening columns
   (`items_age_filtered`, `items_item_limit_filtered`), added when the
   ingestion upper bounds (above) were introduced.
+- STEP 3: the `research` table's five new columns
+  (`source_assessments_json`, `primary_source_present`,
+  `independent_source_count`, `research_status`, `researched_at`), plus
+  the three new `research_claims` / `research_evidence` /
+  `research_conflicts` tables.
 
 A database created by an older version of this schema upgrades in place
-the next time `echo init` runs against it, in either case.
+the next time `echo init` runs against it, in every case.

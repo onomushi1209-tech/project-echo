@@ -4,6 +4,13 @@ These rules apply to every contributor, human or AI. When in doubt, prefer
 the smallest, safest change consistent with these rules over asking; if a
 rule genuinely blocks the work, stop and ask rather than working around it.
 
+Agent entry contract: `../AGENTS.md`. Current authorization, baseline and
+handoff: `../PROJECT_STATE.json`. Repeatable closeout and commit eligibility:
+`VERIFICATION_GATE.md`. Use the existing interpreter with
+`python -B scripts/verify.py`; in PowerShell invoke the application as
+`python -B -m echo.cli` to avoid the `echo` alias. Verification never grants
+permission to stage, commit, migrate the existing DB or start a new phase.
+
 1. **Separate Echo Core from Verticals.** `echo.core` (and the stage
    service packages `echo.trend`/`research`/`scoring`/`content`/
    `compliance`/`review`) must never import from `echo.verticals` or branch
@@ -23,9 +30,14 @@ rule genuinely blocks the work, stop and ask rather than working around it.
    `echo.source` or `echo.trend` code -- sources are entirely
    config-driven via `config/sources/<vertical>.yaml`
    (`echo.source.config.SourceConfig`), including their `reliability_tier`.
-   `echo.brains.RealTrendBrain` gets vertical/source data injected at
-   construction time by its caller (the CLI) precisely so it never needs
-   to import `echo.verticals` itself.
+   `echo.brains.RealTrendBrain`/`RealResearchBrain` get vertical/source
+   data injected at construction time by their caller (the CLI) precisely
+   so neither ever needs to import `echo.verticals`. `echo.research`
+   likewise never imports `echo.source` -- source-registry facts
+   (reliability tier, primary-source flag) reach it only via
+   `echo.research.evidence.SourceRegistryInfo`, injected the same way.
+   Generic tier-to-score mapping is in `echo.core.reliability`; the old
+   `echo.source.reliability` import remains a STEP 2 compatibility export.
 
 3. **All content passes through the Human Review Gate.** No pipeline stage
    may publish or auto-approve content. COMPLIANCE is informational only
@@ -49,14 +61,14 @@ rule genuinely blocks the work, stop and ask rather than working around it.
    documents the variable names only, with no real values.
 
 7. **Don't implement outside the current STEP's scope.** Check the active
-   step's scope guard before adding a feature. As of STEP 2: no X API
+   step's scope guard before adding a feature. As of STEP 3: no X API
    posting/automation, no browser automation, no OpenAI/Anthropic/Gemini
-   API calls, no LLM-generated content, no production Research/Content
-   brain, no dashboard, no affiliate/monetization system, no newsletter,
-   no "Echo Hub", no automated self-learning, no multi-vertical production
-   runs. Reserved packages (`echo.performance`, `echo.audience`,
-   `echo.monetization`, `echo.memory`) stay as placeholder `__init__.py`
-   files until their step is scoped.
+   API calls, no LLM-generated content or LLM-based claim extraction, no
+   production Content brain, no dashboard, no affiliate/monetization
+   system, no newsletter, no "Echo Hub", no automated self-learning, no
+   multi-vertical production runs. Reserved packages (`echo.performance`,
+   `echo.audience`, `echo.monetization`, `echo.memory`) stay as
+   placeholder `__init__.py` files until their step is scoped.
 
 8. **Don't add unnecessary dependencies.** The dependency set is
    deliberately small (pydantic, typer, pyyaml, python-dotenv, pytest).
@@ -98,10 +110,14 @@ rule genuinely blocks the work, stop and ask rather than working around it.
     recording what was observed, not silently omitted and not enabled on
     a guess.
 
-13. **Keep STEP 2 scoring/clustering deterministic.** No ML models or
-    embeddings for deduplication, clustering, or trend signal
-    calculation in STEP 2 -- use documented, testable, closed-form
-    functions (token overlap, time decay, etc.), each in its own module
-    under `echo.trend`/`echo.source.dedup`. A future step may swap in an
-    embedding-based similarity function, but the call signature these
-    modules expose should stay stable so that's a contained change.
+13. **Keep STEP 2/3 scoring/clustering/research deterministic.** No ML
+    models, embeddings, or LLM calls for deduplication, clustering, trend
+    signal calculation, claim extraction, claim grouping, conflict
+    detection, or research confidence/status/summary -- use documented,
+    testable, closed-form functions (token overlap, time decay, keyword/
+    negation/numeric/date heuristics, etc.), each in its own module under
+    `echo.trend`/`echo.source.dedup`/`echo.research`. A future step may
+    swap in an embedding- or LLM-based implementation for any one of
+    these, but the call signature each module exposes should stay stable
+    so that's a contained change -- see docs/RESEARCH_INTELLIGENCE.md
+    "LLM-free design".

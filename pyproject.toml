@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "project-echo"
 version = "0.1.0"
-description = "Project Echo -- AI Media Operating System (STEP 1 Foundation)"
+description = "Project Echo -- AI Media Operating System (STEP 1/2/3 and Efficiency Foundation)"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.0,<3.0",

@@ -8,8 +8,12 @@
     echo ingest          - fetch -> normalize -> deduplicate -> store SourceItems
     echo trends detect   - cluster stored SourceItems into TrendCandidates
     echo trends list     - list persisted TrendCandidates
+    echo research run    - research a TrendCandidate into a ResearchPacket
+    echo research show   - show a persisted ResearchPacket's summary
+    echo research claims - list a ResearchPacket's claims
+    echo research conflicts - list a ResearchPacket's detected conflicts
 
-No X posting, no external AI APIs -- STEP 1/2 Foundation only.
+No X posting, no external AI APIs -- STEP 1/2/3 Foundation only.
 """
 
 from __future__ import annotations
@@ -17,12 +21,15 @@ from __future__ import annotations
 import typer
 
 from echo.brains import default_brains
+from echo.brains.real_research_brain import RealResearchBrain
 from echo.brains.real_trend_brain import RealTrendBrain
 from echo.config.settings import get_settings
 from echo.core.ids import IdFactory
 from echo.core.pipeline import EchoPipeline, PipelineDependencies
 from echo.core.trace import TraceIDGenerator
 from echo.models.enums import DecisionType, FetchStatus, RejectReason, SourceType
+from echo.models.research import ResearchPacket
+from echo.research.evidence import SourceRegistryInfo
 from echo.review.service import pending_queue, record_decision
 from echo.source.adapters import ADAPTERS, AdapterError, load_fixture
 from echo.source.http_client import fetch as http_fetch
@@ -34,13 +41,15 @@ from echo.trend.service import partition_trends_by_novelty
 from echo.verticals.ai.dummy_data import sample_sources
 from echo.verticals.registry import load_vertical_config
 
-app = typer.Typer(help="Project Echo -- AI Media Operating System (STEP 1/2 Foundation)")
+app = typer.Typer(help="Project Echo -- AI Media Operating System (STEP 1/2/3 Foundation)")
 review_app = typer.Typer(help="Inspect and decide on the Human Review Gate queue.")
 sources_app = typer.Typer(help="Inspect the Source Registry for a vertical.")
 trends_app = typer.Typer(help="Detect and inspect TrendCandidates from stored SourceItems.")
+research_app = typer.Typer(help="Run and inspect Research Intelligence for a TrendCandidate.")
 app.add_typer(review_app, name="review")
 app.add_typer(sources_app, name="sources")
 app.add_typer(trends_app, name="trends")
+app.add_typer(research_app, name="research")
 
 
 @app.command()
@@ -307,6 +316,7 @@ def trends_detect(vertical: str = typer.Option("ai", help="Vertical id.")) -> No
         persisted = candidate in to_persist
         status = "" if persisted else "  [SKIPPED -- already-known, low novelty, not persisted]"
         typer.echo(f"[{candidate.trace_id}] {candidate.topic}{status}")
+        typer.echo(f"    trend_id={candidate.trend_id}  persisted={persisted}")
         typer.echo(
             f"    freshness={candidate.freshness:.2f} velocity={candidate.velocity:.2f} "
             f"novelty={candidate.novelty:.2f} relevance={candidate.relevance:.2f}"
@@ -332,11 +342,159 @@ def trends_list() -> None:
     typer.echo(f"{len(candidates)} trend candidate(s):\n")
     for candidate in candidates:
         typer.echo(f"[{candidate.trace_id}] {candidate.topic}")
+        typer.echo(f"    trend_id={candidate.trend_id}")
         typer.echo(
             f"    velocity={candidate.velocity:.2f} novelty={candidate.novelty:.2f} "
             f"relevance={candidate.relevance:.2f} source_count={candidate.source_count}"
         )
         typer.echo("")
+
+
+@research_app.command("run")
+def research_run(
+    trend_id: str = typer.Argument(..., help="TrendCandidate.trend_id to research."),
+) -> None:
+    """Research a TrendCandidate into a ResearchPacket (claims, evidence,
+    conflicts, confidence, status) using RealResearchBrain, and persist it.
+
+    Run `echo trends detect` (or `echo trends list`) first to find a
+    trend_id. Uses the trend's own `vertical` -- never a separately
+    supplied one -- so the Source Registry / SourceItems looked up always
+    match the trend being researched.
+    """
+    settings = get_settings()
+    repository = EchoRepository(settings.database_path)
+    repository.initialize()
+
+    trend = repository.get_trend(trend_id)
+    if trend is None:
+        typer.echo(f"No trend found with id '{trend_id}'.")
+        raise typer.Exit(code=1)
+
+    source_items = repository.list_source_items(vertical=trend.vertical)
+    if not source_items:
+        typer.echo("No stored SourceItems for this vertical -- run `echo ingest` first.")
+        raise typer.Exit(code=1)
+
+    source_registry = load_source_registry(trend.vertical, config_dir=settings.config_dir)
+    registry_info = {
+        source.id: SourceRegistryInfo(
+            name=source.name, reliability_tier=source.reliability_tier, is_primary_source=source.primary_source
+        )
+        for source in source_registry
+    }
+
+    trace_generator = TraceIDGenerator(
+        vertical=trend.vertical, sequence_provider=repository.next_trace_sequence
+    )
+    ids = IdFactory(trace_generator)
+    brain = RealResearchBrain(
+        source_registry_info=registry_info,
+        research_config=settings.research_config(),
+        signal_config=settings.trend_signal_config(),
+    )
+
+    packet = brain.research(trend, source_items, ids)
+    repository.save_research(packet)
+
+    stats = brain.last_run
+    if stats is not None:
+        typer.echo(
+            f"sources_considered={stats.sources_considered} sources_selected={stats.sources_selected} "
+            f"candidates_clustered={stats.candidates_clustered} candidates_truncated={stats.candidates_truncated} "
+            f"claims_extracted={stats.claims_extracted} claims_grouped={stats.claims_grouped} "
+            f"conflicts_detected={stats.conflicts_detected}\n"
+        )
+
+    typer.echo("Research complete\n")
+    _print_research_report(packet)
+
+
+@research_app.command("show")
+def research_show(
+    research_id: str = typer.Argument(..., help="ResearchPacket.research_id to show."),
+) -> None:
+    """Show a persisted ResearchPacket's summary."""
+    settings = get_settings()
+    repository = EchoRepository(settings.database_path)
+
+    packet = repository.get_research(research_id)
+    if packet is None:
+        typer.echo(f"No research found with id '{research_id}'.")
+        raise typer.Exit(code=1)
+
+    _print_research_report(packet)
+
+
+@research_app.command("claims")
+def research_claims(
+    research_id: str = typer.Argument(..., help="ResearchPacket.research_id to list claims for."),
+) -> None:
+    """List a ResearchPacket's claims: status, confidence, evidence/source counts."""
+    settings = get_settings()
+    repository = EchoRepository(settings.database_path)
+
+    claims = repository.list_claims_by_research(research_id)
+    if not claims:
+        typer.echo(f"No claims found for research '{research_id}'.")
+        return
+
+    typer.echo(f"{len(claims)} claim(s) for research '{research_id}':\n")
+    for claim in claims:
+        typer.echo(f"[{claim.claim_id}] {claim.status.value.upper()} confidence={claim.confidence:.2f}")
+        typer.echo(f"    {claim.text}")
+        typer.echo(
+            f"    evidence={len(claim.evidence_ids)} supporting={claim.supporting_source_ids} "
+            f"contradicting={claim.contradicting_source_ids}"
+        )
+        typer.echo("")
+
+
+@research_app.command("conflicts")
+def research_conflicts(
+    research_id: str = typer.Argument(..., help="ResearchPacket.research_id to list conflicts for."),
+) -> None:
+    """List a ResearchPacket's detected conflicts."""
+    settings = get_settings()
+    repository = EchoRepository(settings.database_path)
+
+    conflicts = repository.list_conflicts_by_research(research_id)
+    if not conflicts:
+        typer.echo(f"No conflicts found for research '{research_id}'.")
+        return
+
+    typer.echo(f"{len(conflicts)} conflict(s) for research '{research_id}':\n")
+    for conflict in conflicts:
+        typer.echo(
+            f"[{conflict.conflict_id}] {conflict.severity.value.upper()} ({conflict.conflict_type}) "
+            f"-- {conflict.source_key_a} vs {conflict.source_key_b}"
+        )
+        typer.echo(f"    {conflict.reason}")
+        typer.echo("")
+
+
+def _print_research_report(packet: ResearchPacket) -> None:
+    status_counts: dict[str, int] = {}
+    for claim in packet.claims:
+        status_counts[claim.status.value] = status_counts.get(claim.status.value, 0) + 1
+
+    typer.echo(f"Topic:\n{packet.summary}\n")
+    typer.echo(f"Status:\n{packet.research_status.value.upper()}\n")
+    typer.echo(f"Confidence:\n{packet.confidence:.2f}\n")
+    typer.echo(f"Primary source:\n{'YES' if packet.primary_source_present else 'NO'}\n")
+    typer.echo(f"Independent sources:\n{packet.independent_source_count}\n")
+
+    typer.echo("Claims:")
+    if packet.claims:
+        for status_value, count in sorted(status_counts.items()):
+            typer.echo(f"  {count} {status_value}")
+    else:
+        typer.echo("  0")
+    typer.echo("")
+
+    typer.echo(f"Evidence:\n{len(packet.evidence)}\n")
+    typer.echo(f"Conflicts:\n{len(packet.conflicts)}\n")
+    typer.echo(f"Research ID:\n{packet.research_id}")
 
 
 def main() -> None:

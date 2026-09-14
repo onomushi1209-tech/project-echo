@@ -17,9 +17,10 @@ Entertainment, ...) is defined entirely by:
    `echo.verticals.<id>` (e.g. `echo.verticals.ai`).
 4. A set of "brain" implementations satisfying the Protocols in
    `echo.core.interfaces` (`echo.brains`). STEP 1 shipped only dummy
-   brains; STEP 2 adds `RealTrendBrain`, which is still not vertical-
-   specific in code -- all vertical/source data is injected into it at
-   construction time (see "Source & Trend Intelligence" below).
+   brains; STEP 2 adds `RealTrendBrain` and STEP 3 adds
+   `RealResearchBrain`, neither of which is vertical-specific in code --
+   all vertical/source data is injected into them at construction time
+   (see "Source & Trend Intelligence" and "Research Intelligence" below).
 
 Nothing in `echo.core`, `echo.trend`, `echo.research`, `echo.scoring`,
 `echo.content`, `echo.compliance`, or `echo.review` may import from
@@ -36,10 +37,11 @@ src/echo/
   core/         Vertical-agnostic engine: trace IDs, ID allocation, brain
                 Protocols, the pipeline orchestrator, shared text utils
                 (echo.core.text, used by dedup/clustering/relevance).
-  brains/       Swappable stage logic. DummyTrendBrain (STEP 1) and
-                RealTrendBrain (STEP 2, source-intelligence-aware) both
-                satisfy the same TrendBrain Protocol -- no external AI
-                APIs in either.
+  brains/       Swappable stage logic. DummyTrendBrain/DummyResearchBrain
+                (STEP 1) and RealTrendBrain (STEP 2)/RealResearchBrain
+                (STEP 3, source-intelligence-aware) each satisfy the same
+                Protocol as their Dummy sibling -- no external AI APIs in
+                any of them.
   source/       STEP 2: Source Registry, Fetch, Normalize, Deduplicate --
                 everything up to a clean SourceItem in storage. See
                 docs/SOURCE_INTELLIGENCE.md.
@@ -48,7 +50,12 @@ src/echo/
                 composes: clustering, freshness, velocity, novelty,
                 relevance, source_quality, cross_source. Each is
                 independent and individually testable.
-  research/     RESEARCH stage service.
+  research/     RESEARCH stage service (thin: brain call + persistence)
+                *plus* the STEP 3 Research Intelligence modules
+                RealResearchBrain composes: source_selection, extraction,
+                claims, conflicts, independence, confidence, status,
+                summary. Each is independent and individually testable.
+                See docs/RESEARCH_INTELLIGENCE.md.
   scoring/      SCORE stage service + the threshold gate.
   content/      CREATE stage service.
   compliance/   COMPLIANCE stage service (informational only -- see
@@ -63,7 +70,8 @@ src/echo/
   storage/      SQLite schema + repository. All SQL lives here.
   config/       Env-based settings (echo.config.settings).
   cli.py        Typer CLI: `echo init` / `echo demo` / `echo review` /
-                `echo sources` / `echo ingest` / `echo trends`.
+                `echo sources` / `echo ingest` / `echo trends` /
+                `echo research`.
 
 tests/          pytest suite (fully offline -- no network access).
 scripts/        Standalone scripts not run by pytest, e.g.
@@ -123,6 +131,45 @@ add a new source. In architectural terms, the only things that changed:
   construction time by the CLI, so `echo.brains` still never imports
   `echo.verticals` or `echo.storage`.
 
+## Research Intelligence (STEP 3)
+
+The remediation adds a neutral `echo.core.reliability` primitive; the STEP 2
+`echo.source.reliability` API remains a compatibility export. Research consumes
+the neutral primitive and injected registry facts. Packet trust aggregates only
+evidence contributors, while selection assessments retain zero-evidence sources.
+Research clustering receives a configurable candidate bound before clustering.
+Shared text normalization/token overlap includes a small deterministic Japanese
+branch while preserving the ASCII branch. See RESEARCH_INTELLIGENCE.md for limits.
+
+RESEARCH's output (`ResearchPacket`) can now be built by
+`RealResearchBrain` from real `SourceItem`s, not just
+`DummyResearchBrain`'s stub concatenation. See
+[RESEARCH_INTELLIGENCE.md](RESEARCH_INTELLIGENCE.md) for the full pipeline
+(Relevant Source Collection -> Fact/Claim Extraction -> Claim Grouping ->
+Conflict Detection -> Source Independence + Confidence Calculation),
+claim status ladder, conflict heuristics, and confidence engine. In
+architectural terms, the only things that changed:
+
+- `echo.research` gained algorithm modules alongside its existing thin
+  `service.py` (mirroring how `echo.trend` gained STEP 2's signal
+  modules) -- no single large `research.py`.
+- `RealResearchBrain` (`echo.brains`) satisfies the *same* `ResearchBrain`
+  Protocol as `DummyResearchBrain` -- `echo.core.pipeline` and
+  `echo.research.service.research_trend` did not change at all.
+  Source-registry data (reliability tier, primary-source flag, display
+  name) is injected into `RealResearchBrain` at construction time by the
+  CLI, so `echo.research` never imports `echo.source` or
+  `echo.verticals`.
+- `echo.research.source_selection` reuses `echo.trend.clustering`
+  (STEP 2) rather than re-implementing event clustering -- STEP 2's
+  clustering module stayed untouched.
+- `ResearchPacket` (`echo.models.research`) gained new, all-defaulted
+  fields (`claims`, `evidence`, `conflicts`, `source_assessments`,
+  `primary_source_present`, `independent_source_count`,
+  `research_status`, `researched_at`); `ResearchClaim` / `EvidenceItem` /
+  `ConflictRecord` / `SourceAssessment` are new, separate models. A
+  packet built the STEP 1 way still validates and persists unchanged.
+
 ## Traceability
 
 `echo.core.trace` generates IDs of the form
@@ -133,7 +180,11 @@ injected `IdFactory`) and is carried unchanged through
 `ContentDraft.trace_id`, and `ReviewDecision.trace_id`. `PublishedPost` and
 `PerformanceSnapshot` carry the same field so a future step can join
 Trend -> Research -> Score -> Draft -> Review -> Publish -> Performance ->
-Memory by trace ID alone.
+Memory by trace ID alone. Below `ResearchPacket`, STEP 3 adds a second,
+finer-grained traceability chain that does not use the trace ID:
+`SourceItem.source_id` -> `EvidenceItem.source_item_id`/`url` ->
+`ResearchClaim.evidence_ids` -> `ConflictRecord.evidence_id_a/b` -- see
+docs/RESEARCH_INTELLIGENCE.md "Evidence & provenance".
 
 ID *formatting/parsing* (`format_trace_id` / `parse_trace_id`) is pure and
 unit-testable. Sequence *allocation* is injected via a `SequenceProvider`
@@ -160,6 +211,10 @@ issues raw SQL. See [DATA_MODEL.md](DATA_MODEL.md) for the schema itself.
 - Swap `echo.trend.clustering`'s token-overlap similarity for an
   embedding-based one later without changing its call signature or any
   caller.
+- Swap any STEP 3 `echo.research` module (extraction, conflict detection,
+  summary) for an LLM-based implementation later without changing its
+  call signature or any caller -- see docs/RESEARCH_INTELLIGENCE.md
+  "LLM-free design".
 - Implement `echo.performance`, `echo.audience`, `echo.monetization`, and
   `echo.memory` once their steps are scoped; the models and storage tables
   they'll write to already exist (`PublishedPost`, `PerformanceSnapshot`).

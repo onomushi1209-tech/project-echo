@@ -12,10 +12,19 @@ from datetime import date, datetime
 from pathlib import Path
 
 from echo.models.draft import ContentDraft
-from echo.models.enums import ContentType, DecisionType, FetchStatus, RejectReason
+from echo.models.enums import (
+    ClaimStatus,
+    ConflictSeverity,
+    ContentType,
+    DecisionType,
+    FetchStatus,
+    ReliabilityTier,
+    RejectReason,
+    ResearchStatus,
+)
 from echo.models.performance import PerformanceSnapshot
 from echo.models.publish import PublishedPost
-from echo.models.research import ResearchPacket
+from echo.models.research import ConflictRecord, EvidenceItem, ResearchClaim, ResearchPacket, SourceAssessment
 from echo.models.review import ReviewDecision
 from echo.models.score import OpportunityScore
 from echo.models.source import SourceItem
@@ -117,23 +126,37 @@ class EchoRepository:
         finally:
             conn.close()
 
-    # -- research -----------------------------------------------------------
+    # -- research (STEP 3: claims/evidence/conflicts persist alongside) -----
 
     def save_research(self, research: ResearchPacket) -> None:
+        """Persists the research row plus every claim/evidence/conflict it
+        carries, in one connection. Claims/evidence/conflicts always have
+        freshly-allocated ids (see echo.core.ids.IdFactory), so -- like
+        ``save_trend`` -- there is never an UPDATE path for them, only
+        INSERT ... ON CONFLICT DO NOTHING: a re-run of research for the
+        same trend produces an entirely new ``research_id`` and its own
+        fresh child rows, never mutating a prior research run's."""
         conn = self._connect()
         try:
             conn.execute(
                 """
                 INSERT INTO research (research_id, trend_id, trace_id, summary, key_facts_json,
-                                       sources_json, source_quality, conflicting_information, confidence)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                       sources_json, source_quality, conflicting_information, confidence,
+                                       source_assessments_json, primary_source_present,
+                                       independent_source_count, research_status, researched_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (research_id) DO UPDATE SET
                     summary = excluded.summary,
                     key_facts_json = excluded.key_facts_json,
                     sources_json = excluded.sources_json,
                     source_quality = excluded.source_quality,
                     conflicting_information = excluded.conflicting_information,
-                    confidence = excluded.confidence
+                    confidence = excluded.confidence,
+                    source_assessments_json = excluded.source_assessments_json,
+                    primary_source_present = excluded.primary_source_present,
+                    independent_source_count = excluded.independent_source_count,
+                    research_status = excluded.research_status,
+                    researched_at = excluded.researched_at
                 """,
                 (
                     research.research_id,
@@ -145,20 +168,150 @@ class EchoRepository:
                     research.source_quality,
                     int(research.conflicting_information),
                     research.confidence,
+                    json.dumps([a.model_dump(mode="json") for a in research.source_assessments]),
+                    int(research.primary_source_present),
+                    research.independent_source_count,
+                    research.research_status.value,
+                    research.researched_at.isoformat() if research.researched_at else None,
                 ),
             )
+            for claim in research.claims:
+                self._insert_claim(conn, research.research_id, claim)
+            for evidence in research.evidence:
+                self._insert_evidence(conn, research.research_id, evidence)
+            for conflict in research.conflicts:
+                self._insert_conflict(conn, research.research_id, conflict)
             conn.commit()
         finally:
             conn.close()
 
+    def _insert_claim(self, conn: sqlite3.Connection, research_id: str, claim: ResearchClaim) -> None:
+        conn.execute(
+            """
+            INSERT INTO research_claims (claim_id, research_id, text, normalized_text, claim_type,
+                                          evidence_ids_json, supporting_source_ids_json,
+                                          contradicting_source_ids_json, confidence, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (claim_id) DO NOTHING
+            """,
+            (
+                claim.claim_id,
+                research_id,
+                claim.text,
+                claim.normalized_text,
+                claim.claim_type,
+                json.dumps(claim.evidence_ids),
+                json.dumps(claim.supporting_source_ids),
+                json.dumps(claim.contradicting_source_ids),
+                claim.confidence,
+                claim.status.value,
+            ),
+        )
+
+    def _insert_evidence(self, conn: sqlite3.Connection, research_id: str, evidence: EvidenceItem) -> None:
+        conn.execute(
+            """
+            INSERT INTO research_evidence (evidence_id, research_id, source_item_id, source_key, url,
+                                            title, published_at, excerpt, is_primary_source, reliability_tier)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (evidence_id) DO NOTHING
+            """,
+            (
+                evidence.evidence_id,
+                research_id,
+                evidence.source_item_id,
+                evidence.source_key,
+                evidence.url,
+                evidence.title,
+                evidence.published_at.isoformat(),
+                evidence.excerpt,
+                int(evidence.is_primary_source),
+                evidence.reliability_tier.value,
+            ),
+        )
+
+    def _insert_conflict(self, conn: sqlite3.Connection, research_id: str, conflict: ConflictRecord) -> None:
+        conn.execute(
+            """
+            INSERT INTO research_conflicts (conflict_id, research_id, claim_id, evidence_id_a, evidence_id_b,
+                                             source_key_a, source_key_b, conflict_type, reason, severity)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (conflict_id) DO NOTHING
+            """,
+            (
+                conflict.conflict_id,
+                research_id,
+                conflict.claim_id,
+                conflict.evidence_id_a,
+                conflict.evidence_id_b,
+                conflict.source_key_a,
+                conflict.source_key_b,
+                conflict.conflict_type,
+                conflict.reason,
+                conflict.severity.value,
+            ),
+        )
+
+    def get_research(self, research_id: str) -> ResearchPacket | None:
+        """Fully hydrated: includes this research run's claims/evidence/
+        conflicts, not just the scalar `research` row."""
+        conn = self._connect()
+        try:
+            row = conn.execute("SELECT * FROM research WHERE research_id = ?", (research_id,)).fetchone()
+            if row is None:
+                return None
+            claims = [_row_to_claim(r) for r in conn.execute(
+                "SELECT * FROM research_claims WHERE research_id = ?", (research_id,)
+            ).fetchall()]
+            evidence = [_row_to_evidence(r) for r in conn.execute(
+                "SELECT * FROM research_evidence WHERE research_id = ?", (research_id,)
+            ).fetchall()]
+            conflicts = [_row_to_conflict(r) for r in conn.execute(
+                "SELECT * FROM research_conflicts WHERE research_id = ?", (research_id,)
+            ).fetchall()]
+            return _row_to_research(row, claims=claims, evidence=evidence, conflicts=conflicts)
+        finally:
+            conn.close()
+
     def get_research_by_trend(self, trend_id: str) -> ResearchPacket | None:
+        """Latest research run for a trend, fully hydrated -- see get_research."""
         conn = self._connect()
         try:
             row = conn.execute(
-                "SELECT * FROM research WHERE trend_id = ? ORDER BY rowid DESC LIMIT 1",
+                "SELECT research_id FROM research WHERE trend_id = ? ORDER BY rowid DESC LIMIT 1",
                 (trend_id,),
             ).fetchone()
-            return _row_to_research(row) if row else None
+        finally:
+            conn.close()
+        return self.get_research(row["research_id"]) if row else None
+
+    def list_claims_by_research(self, research_id: str) -> list[ResearchClaim]:
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM research_claims WHERE research_id = ?", (research_id,)
+            ).fetchall()
+            return [_row_to_claim(r) for r in rows]
+        finally:
+            conn.close()
+
+    def list_evidence_by_research(self, research_id: str) -> list[EvidenceItem]:
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM research_evidence WHERE research_id = ?", (research_id,)
+            ).fetchall()
+            return [_row_to_evidence(r) for r in rows]
+        finally:
+            conn.close()
+
+    def list_conflicts_by_research(self, research_id: str) -> list[ConflictRecord]:
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM research_conflicts WHERE research_id = ?", (research_id,)
+            ).fetchall()
+            return [_row_to_conflict(r) for r in rows]
         finally:
             conn.close()
 
@@ -568,7 +721,13 @@ def _row_to_trend(row: sqlite3.Row) -> TrendCandidate:
     )
 
 
-def _row_to_research(row: sqlite3.Row) -> ResearchPacket:
+def _row_to_research(
+    row: sqlite3.Row,
+    claims: list[ResearchClaim] | None = None,
+    evidence: list[EvidenceItem] | None = None,
+    conflicts: list[ConflictRecord] | None = None,
+) -> ResearchPacket:
+    row_keys = row.keys()
     return ResearchPacket(
         research_id=row["research_id"],
         trend_id=row["trend_id"],
@@ -579,6 +738,72 @@ def _row_to_research(row: sqlite3.Row) -> ResearchPacket:
         source_quality=row["source_quality"],
         conflicting_information=bool(row["conflicting_information"]),
         confidence=row["confidence"],
+        claims=claims or [],
+        evidence=evidence or [],
+        conflicts=conflicts or [],
+        source_assessments=(
+            [SourceAssessment(**item) for item in json.loads(row["source_assessments_json"])]
+            if "source_assessments_json" in row_keys and row["source_assessments_json"]
+            else []
+        ),
+        primary_source_present=(
+            bool(row["primary_source_present"]) if "primary_source_present" in row_keys else False
+        ),
+        independent_source_count=(
+            row["independent_source_count"] if "independent_source_count" in row_keys else 0
+        ),
+        research_status=(
+            ResearchStatus(row["research_status"])
+            if "research_status" in row_keys and row["research_status"]
+            else ResearchStatus.READY
+        ),
+        researched_at=(
+            datetime.fromisoformat(row["researched_at"])
+            if "researched_at" in row_keys and row["researched_at"]
+            else None
+        ),
+    )
+
+
+def _row_to_claim(row: sqlite3.Row) -> ResearchClaim:
+    return ResearchClaim(
+        claim_id=row["claim_id"],
+        text=row["text"],
+        normalized_text=row["normalized_text"],
+        claim_type=row["claim_type"],
+        evidence_ids=json.loads(row["evidence_ids_json"]),
+        supporting_source_ids=json.loads(row["supporting_source_ids_json"]),
+        contradicting_source_ids=json.loads(row["contradicting_source_ids_json"]),
+        confidence=row["confidence"],
+        status=ClaimStatus(row["status"]),
+    )
+
+
+def _row_to_evidence(row: sqlite3.Row) -> EvidenceItem:
+    return EvidenceItem(
+        evidence_id=row["evidence_id"],
+        source_item_id=row["source_item_id"],
+        source_key=row["source_key"],
+        url=row["url"],
+        title=row["title"],
+        published_at=datetime.fromisoformat(row["published_at"]),
+        excerpt=row["excerpt"],
+        is_primary_source=bool(row["is_primary_source"]),
+        reliability_tier=ReliabilityTier(row["reliability_tier"]),
+    )
+
+
+def _row_to_conflict(row: sqlite3.Row) -> ConflictRecord:
+    return ConflictRecord(
+        conflict_id=row["conflict_id"],
+        claim_id=row["claim_id"],
+        evidence_id_a=row["evidence_id_a"],
+        evidence_id_b=row["evidence_id_b"],
+        source_key_a=row["source_key_a"],
+        source_key_b=row["source_key_b"],
+        conflict_type=row["conflict_type"],
+        reason=row["reason"],
+        severity=ConflictSeverity(row["severity"]),
     )
 
 

@@ -34,6 +34,15 @@ class IdFactory:
     def research_id(self) -> str:
         return new_entity_id("research")
 
+    def claim_id(self) -> str:
+        return new_entity_id("claim")
+
+    def evidence_id(self) -> str:
+        return new_entity_id("evidence")
+
+    def conflict_id(self) -> str:
+        return new_entity_id("conflict")
+
     def score_id(self) -> str:
         return new_entity_id("score")
 

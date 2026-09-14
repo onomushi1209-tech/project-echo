@@ -12,6 +12,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from echo.research.config import ResearchConfig
 from echo.trend.signal_config import TrendSignalConfig
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -67,6 +68,36 @@ class Settings:
                     "ECHO_TREND_PERSISTENCE_NOVELTY_THRESHOLD",
                     defaults.trend_persistence_novelty_threshold,
                 )
+            ),
+        )
+
+    def research_config(self) -> ResearchConfig:
+        """A handful of the most likely-to-need-tuning Research
+        Intelligence knobs, overridable via env var; everything else uses
+        ResearchConfig's own documented defaults. See
+        docs/RESEARCH_INTELLIGENCE.md."""
+        defaults = ResearchConfig()
+        return ResearchConfig(
+            max_research_candidates=int(
+                os.getenv("ECHO_MAX_RESEARCH_CANDIDATES", defaults.max_research_candidates)
+            ),
+            max_research_sources=int(
+                os.getenv("ECHO_MAX_RESEARCH_SOURCES", defaults.max_research_sources)
+            ),
+            claim_grouping_similarity_threshold=float(
+                os.getenv(
+                    "ECHO_CLAIM_GROUPING_SIMILARITY_THRESHOLD",
+                    defaults.claim_grouping_similarity_threshold,
+                )
+            ),
+            minimum_evidence_items=int(
+                os.getenv("ECHO_MINIMUM_EVIDENCE_ITEMS", defaults.minimum_evidence_items)
+            ),
+            minimum_independent_sources=int(
+                os.getenv("ECHO_MINIMUM_INDEPENDENT_SOURCES", defaults.minimum_independent_sources)
+            ),
+            minimum_confidence=float(
+                os.getenv("ECHO_MINIMUM_RESEARCH_CONFIDENCE", defaults.minimum_confidence)
             ),
         )
 

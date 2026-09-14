@@ -80,3 +80,47 @@ class FetchStatus(str, Enum):
 
     SUCCESS = "success"
     FAILED = "failed"
+
+
+# -- STEP 3: Research Intelligence -------------------------------------------
+
+
+class ClaimStatus(str, Enum):
+    """How well-supported a ResearchClaim is, given its evidence.
+
+    Informational only -- see docs/RESEARCH_INTELLIGENCE.md "Claim status
+    ladder" for the exact deterministic rule that assigns each value.
+    """
+
+    CONFIRMED = "confirmed"  # >=2 independent sources agree, one tier_a/primary, no conflict
+    SUPPORTED = "supported"  # >=2 independent sources agree, none tier_a/primary, no conflict
+    SINGLE_SOURCE = "single_source"  # exactly 1 independent source, primary or tier_a/b
+    UNVERIFIED = "unverified"  # exactly 1 independent source, non-primary tier_c
+    CONFLICTED = "conflicted"  # a conflict was detected among this claim's evidence
+
+
+class ConflictSeverity(str, Enum):
+    """How seriously a detected ConflictRecord should be weighed.
+
+    ``POTENTIAL`` is for heuristics that flagged a plausible but ambiguous
+    mismatch (see docs/RESEARCH_INTELLIGENCE.md "Conflict detection") --
+    STEP 3 heuristics deliberately under-claim rather than over-claim a
+    confirmed contradiction.
+    """
+
+    POTENTIAL = "potential"
+    MINOR = "minor"
+    MAJOR = "major"
+
+
+class ResearchStatus(str, Enum):
+    """The state of a ResearchPacket's research process -- not a
+    publish/reject decision. COMPLIANCE and the Human Review Gate keep
+    that responsibility; this is purely informational (see
+    docs/DEVELOPMENT_RULES.md)."""
+
+    READY = "ready"
+    NEEDS_MORE_SOURCES = "needs_more_sources"
+    CONFLICTED = "conflicted"
+    LOW_CONFIDENCE = "low_confidence"
+    INSUFFICIENT_EVIDENCE = "insufficient_evidence"
