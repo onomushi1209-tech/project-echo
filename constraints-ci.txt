@@ -1,0 +1,24 @@
+# Runtime/test closure: verified local Python 3.14.6 environment, 2026-09-15.
+# Build backend absent locally: setuptools 84.0.0 resolved from PyPI for
+# pyproject.toml setuptools>=68; validated only in the external CI venv.
+annotated-doc==0.0.5
+annotated-types==0.8.0
+colorama==0.4.6
+iniconfig==2.3.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.2
+pip==26.1.2
+pluggy==1.6.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+pytest==8.4.2
+python-dotenv==1.2.2
+PyYAML==6.0.3
+rich==15.0.0
+setuptools==84.0.0
+shellingham==1.5.4
+typer==0.27.1
+typing_extensions==4.16.0
+typing-inspection==0.4.2

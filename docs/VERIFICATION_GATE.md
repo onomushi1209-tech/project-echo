@@ -1,8 +1,99 @@
 # Project Echo Verification Gate
 
-This is the repeatable offline closeout for STEP 3 + Core Efficiency Foundation.
+This is the repeatable offline checkpoint closeout, with a separate ordinary CI
+regression gate for STEP 3 + Efficiency Foundation Expansion v1.
 Read `../PROJECT_STATE.json` for the approved branch, checkpoint parent, exact
 checkpoint scope, evidence and handoff. Nothing here grants commit or live authority.
+
+## CI REGRESSION GATE versus CHECKPOINT LIFECYCLE GATE
+
+**CI PASS != checkpoint approval.** GitHub CI is a regression signal for an
+ordinary push to `main` or a pull request targeting `main`. It does not interpret
+the checkpoint parent, approved checkpoint path set, input digest or acceptance
+record. A normal commit, detached HEAD or PR merge checkout is supported when
+HEAD equals the event's full expected SHA. State remains historical checkpoint
+evidence; CI never rewrites it or supplies staging, commit, push or live authority.
+
+```powershell
+python -B scripts/ci_verify.py --expected-sha <full-tested-commit-sha>
+```
+
+The adapter verifies the standalone Git root, Project Echo package identity,
+clean worktree/index and filesystem/index/HEAD tree equality using the existing
+verifier's read-only helpers and text normalization. It snapshots ignored files
+and index bytes, runs guarded imports plus CLI sanity, then the **full pytest
+suite exactly once**, and repeats identity/hygiene checks even after failure.
+Success requires nonzero collection, every collected test passed, no failed or
+skipped tests and no blocked side effects. Counts grow with the suite; there is no
+fixed historical test-count threshold. The report identifies the tested SHA.
+There are no targeted or STEP 3 reruns within CI. Linked worktrees are not supported
+by this initial adapter.
+
+CI setup can download official Actions, the exact Python runtime and constrained
+packages. Test execution uses the existing offline worker guard: no application
+network, real `.env` reads, writes to the checkout/existing database or arbitrary
+subprocesses. Only bounded fixture Git operations in external temporary roots are
+allowed. No business credentials or production database are supplied by the job.
+As with the checkpoint guard, this protects trusted tests and is not an OS sandbox
+against malicious pull-request code. Worker stdout/stderr and exception text are
+suppressed; only validated numeric summaries and fixed stage/authority fields are
+reported, preventing test failure output from echoing inherited environment values.
+The first failed stage stops execution; no retry or later test stage follows.
+An exit-zero stderr warning alone does not constitute failure.
+
+`.github/workflows/ci.yml` uses one `windows-2025` job, Python **3.14.6 x64**,
+`contents: read`, credential persistence disabled, no dependency cache and a
+10-minute timeout. No `pull_request_target`, secrets, deployments, artifact upload,
+automatic retry or continue-on-error are configured. Package builds use a copy of
+`pyproject.toml` and `src` under the runner temporary directory, so setuptools does
+not write build/egg-info files into the checkout. Installation uses constraints and
+`--no-build-isolation` after installing the constrained backend; `pip check` verifies
+the resulting dependency contract. A failed native command ends the setup step.
+
+Official release metadata consulted for this implementation:
+
+| Action | Stable release | Complete commit SHA | Source |
+|---|---|---|---|
+| actions/checkout | v7.0.1 | `3d3c42e5aac5ba805825da76410c181273ba90b1` | [Official release](https://github.com/actions/checkout/releases/tag/v7.0.1) |
+| actions/setup-python | v7.0.0 | `5fda3b95a4ea91299a34e894583c3862153e4b97` | [Official release](https://github.com/actions/setup-python/releases/tag/v7.0.0) |
+
+The official [Python versions manifest](https://github.com/actions/python-versions/blob/main/versions-manifest.json)
+listed stable `3.14.6` with `python-3.14.6-win32-x64.zip` in
+[release 3.14.6-27283001424](https://github.com/actions/python-versions/releases/tag/3.14.6-27283001424).
+Pins record the resolution at implementation time; updates need explicit source
+review and fresh constrained-environment validation.
+
+`constraints-ci.txt` contains only the installed Project Echo runtime/dev closure,
+pip and the build backend. Runtime/test/pip pins come from the existing validated
+Python 3.14.6 environment, not a machine-wide freeze. That environment had no
+setuptools distribution; `setuptools==84.0.0` was separately resolved from
+[PyPI](https://pypi.org/project/setuptools/84.0.0/) for the declared `setuptools>=68`
+build contract. The external fresh venv validation checks this addition without
+changing the user's Python installation. No editable/local project entry belongs
+in constraints. Build/test dependencies remain separate from application authority.
+
+The **checkpoint lifecycle gate** below remains `scripts/verify.py` in worktree,
+staged or committed mode. It validates State semantics, the checkpoint parent,
+scope and v2 digest in addition to regression/sanity/hygiene evidence. Its strict
+single-parent committed predicate is intentionally not the ordinary CI entrypoint.
+Local tests and a fresh local CI venv are not evidence of GitHub-hosted execution;
+remote CI observations can exist only after a separately authorized future push.
+
+## Explicit local checkpoint review Skill
+
+Invoke `$echo-checkpoint-review` explicitly for read-only Project Echo checkpoint
+identity, lifecycle and evidence review. Its only files are
+`.agents/skills/echo-checkpoint-review/SKILL.md` and `agents/openai.yaml` beneath
+that directory. Repository-local discovery, required YAML `name`/`description`
+frontmatter, and `policy.allow_implicit_invocation: false` were confirmed against
+the installed skill-creator metadata reference and the official
+[Skill documentation](https://learn.chatgpt.com/docs/build-skills).
+There is no global installation, tool dependency or executable Skill helper.
+The Skill reads the canonical project documents and delegates deterministic
+checks to `scripts/verify.py`; it never embeds checkpoint hashes, counts, path
+allowlists or a second digest implementation. Wrong project or unsupported
+identity means STOP. Git mutation requests end at the read-only review boundary.
+Structured content/prompt review is distinct from a live Skill invocation test.
 
 ## Checkpoint lifecycle and State
 
@@ -185,14 +276,14 @@ scope and input digest include them, but do not replace content review.
 | Project State / Handoff | ACTIVE | One JSON document binds checkpoint identity, historical evidence, limitations and Git-derived resume policy |
 | Existing modules/config/stats | REUSED | Common text/reliability, clustering reuse, deterministic functions, bounded candidates and counts |
 | Subagent read-only review | ACTIVE for this pass | Independent correctness, architecture and test review; single writer |
-| Codex Skills | DEFER | No repeated cross-project procedure yet justifies a separate skill; reuse local verifier first |
+| Codex Skills | LOCAL EXPLICIT REVIEW | One read-only Project Echo checkpoint review Skill delegates to the existing verifier |
 | Global AGENTS | DEFER | Local contract suffices; changing other projects/global settings is outside scope |
-| Git Worktree | DEFER until clean checkpoint | Preserve this known dirty implementation and avoid moving user work |
-| GitHub Actions / CI | DEFER until clean checkpoint | First stabilize the local command; remote configuration/network is not authorized |
+| Git Worktree | DEFER | Consider only with at least two independent implementation tracks and verified linked-worktree support |
+| GitHub Actions / CI | REGRESSION WORKFLOW | One constrained Windows job; actual remote run remains external evidence after future authorized push |
 | Auto-review | DEFER as project automation | Human checkpoint and independent read-only review suffice; no new integration |
 | Scheduled Tasks | NOT NEEDED now | Offline development has no recurring authorized runtime task |
 | MCP / Plugins | NOT NEEDED now | No external service/data is needed for this phase |
 | Model Routing | NOT NEEDED now | No application model calls; extra routing would not improve this offline gate |
 
-No deferred component is installed or configured by this pass. Their state is
+No remaining deferred component is installed or configured by this pass. Their state is
 an adoption decision, not a claim about availability or current vendor features.

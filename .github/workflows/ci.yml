@@ -1,0 +1,46 @@
+name: Project Echo regression
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: windows-2025
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUTF8: '1'
+      PIP_NO_CACHE_DIR: '1'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14.6'
+          architecture: x64
+      - name: Install constrained dependencies outside checkout
+        shell: pwsh
+        run: |
+          python -B -m pip install --constraint constraints-ci.txt pip setuptools
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $packageRoot = Join-Path $env:RUNNER_TEMP 'echo-package'
+          New-Item -ItemType Directory -Path $packageRoot -ErrorAction Stop | Out-Null
+          Copy-Item -LiteralPath pyproject.toml -Destination $packageRoot -ErrorAction Stop
+          Copy-Item -LiteralPath src -Destination $packageRoot -Recurse -ErrorAction Stop
+          python -B -m pip install --constraint constraints-ci.txt --no-build-isolation "$packageRoot[dev]"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B -m pip check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Guarded regression gate
+        shell: pwsh
+        env:
+          EXPECTED_CI_SHA: ${{ github.sha }}
+        run: python -B scripts/ci_verify.py --expected-sha $env:EXPECTED_CI_SHA

@@ -2,13 +2,14 @@
   "schema_version": 2,
   "project": "Project Echo",
   "branch": "main",
-  "baseline_head": "a3ae594f003b962306af84ea94c51c069c85ed3d",
-  "baseline_subject": "feat: add source and trend intelligence",
+  "baseline_head": "4f69023a9b184347a259d56d8d252e5ba3aab6f6",
+  "baseline_subject": "feat: complete research intelligence and efficiency foundation",
   "completed_steps": [
     "STEP 1 Echo Foundation",
     "STEP 2 Source & Trend Intelligence",
     "STEP 3 Research Intelligence (product verification evidence recorded below)",
-    "Efficiency Foundation v1 (checkpoint lifecycle verification recorded below)"
+    "Efficiency Foundation v1 (checkpoint lifecycle verification recorded below)",
+    "Efficiency Foundation Expansion v1 (local CI and explicit checkpoint review Skill verification recorded below)"
   ],
   "test_baseline": {
     "audit": {
@@ -92,8 +93,14 @@
         "original_90_preserved": true
       },
       "full": {
-        "collected": 425,
-        "passed": 425,
+        "passed": 454,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0,
+        "collected": 454
+      },
+      "ci": {
+        "passed": 29,
         "failed": 0,
         "skipped": 0,
         "warnings": 0
@@ -113,65 +120,23 @@
   },
   "commit_authorized": false,
   "approved_change_paths": [
-    ".env.example",
-    "AGENTS.md",
+    ".agents/skills/echo-checkpoint-review/SKILL.md",
+    ".agents/skills/echo-checkpoint-review/agents/openai.yaml",
+    ".github/workflows/ci.yml",
     "PROJECT_STATE.json",
-    "README.md",
-    "docs/ARCHITECTURE.md",
-    "docs/DATA_MODEL.md",
-    "docs/DEVELOPMENT_RULES.md",
-    "docs/RESEARCH_INTELLIGENCE.md",
+    "constraints-ci.txt",
     "docs/VERIFICATION_GATE.md",
-    "pyproject.toml",
-    "scripts/verify.py",
-    "src/echo/brains/__init__.py",
-    "src/echo/brains/real_research_brain.py",
-    "src/echo/cli.py",
-    "src/echo/config/settings.py",
-    "src/echo/core/ids.py",
-    "src/echo/core/reliability.py",
-    "src/echo/core/text.py",
-    "src/echo/models/__init__.py",
-    "src/echo/models/enums.py",
-    "src/echo/models/research.py",
-    "src/echo/research/__init__.py",
-    "src/echo/research/claims.py",
-    "src/echo/research/confidence.py",
-    "src/echo/research/config.py",
-    "src/echo/research/conflicts.py",
-    "src/echo/research/evidence.py",
-    "src/echo/research/extraction.py",
-    "src/echo/research/independence.py",
-    "src/echo/research/source_selection.py",
-    "src/echo/research/status.py",
-    "src/echo/research/summary.py",
-    "src/echo/source/dedup.py",
-    "src/echo/source/reliability.py",
-    "src/echo/storage/db.py",
-    "src/echo/storage/repository.py",
-    "tests/test_architecture.py",
-    "tests/test_cli_research.py",
-    "tests/test_ingest.py",
-    "tests/test_real_research_brain.py",
-    "tests/test_research_claims.py",
-    "tests/test_research_confidence.py",
-    "tests/test_research_conflicts.py",
-    "tests/test_research_extraction.py",
-    "tests/test_research_independence.py",
-    "tests/test_research_models.py",
-    "tests/test_research_source_selection.py",
-    "tests/test_research_status.py",
-    "tests/test_research_storage.py",
-    "tests/test_verification.py"
+    "scripts/ci_verify.py",
+    "tests/test_ci_verification.py"
   ],
   "verification": {
     "status": "PASS",
     "mode": "worktree",
     "evidence_type": "guarded_offline_workers",
-    "verified_at_utc": "2026-09-05T23:16:57Z",
-    "command": "supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+    "verified_at_utc": "2026-09-14T23:44:04Z",
+    "command": "Supervised guarded raw workers: CI subset, verification, full, sanity, targeted, step3; separate fresh external CI venv adapter run",
     "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
-    "input_digest": "2be5c8dae9cb302178413d0d8582d780ee2e6a9eece23f0ecde2a8b53794117b",
+    "input_digest": "52dbad1a4f9406727e5eacd3a04af20337d636f7bf8a3f3bbb83900b1c5c813a",
     "digest_algorithm": "sha256-path-content-lf-state-v2",
     "imported_modules": 82,
     "cli_help_routes": 9,
@@ -182,31 +147,74 @@
     "worker_blocked_side_effects": [],
     "independent_review": {
       "status": "PASS",
-      "reviewed_at_utc": "2026-09-05T23:16:57Z",
+      "reviewed_at_utc": "2026-09-14T23:44:04Z",
       "reviewers": [
         {
-          "name": "STATE_TEMPORAL_REVIEW",
-          "scope": "Durable State, conditional resume protocol, identical State through external review/staging/single commit, no sync/self hash; implementation read-only review",
+          "name": "CI_FOUNDATION_REVIEW",
+          "scope": "Read-only implementation review of ordinary CI/checkpoint separation, Git identity, guards, dependency setup, action security and false-PASS risks; CF-01 corrected and re-reviewed",
           "status": "PASS"
         },
         {
-          "name": "STATE_INTEGRITY_REVIEW",
-          "scope": "State projection, minimal self exclusion, accepted evidence and tamper validation, all-mode lifecycle regressions; implementation read-only review",
+          "name": "SKILL_ISOLATION_REVIEW",
+          "scope": "Read-only content/metadata review of nine checkpoint prompts, Project Echo isolation, no fixed checkpoint data or duplicated verifier, explicit invocation; not a live Skill invocation test",
           "status": "PASS"
         }
       ]
+    },
+    "foundation_expansion": {
+      "ci_environment": {
+        "status": "PASS",
+        "python": "3.14.6",
+        "external_fresh_venv": true,
+        "constrained_package_count": 21,
+        "constraints_exact_match": true,
+        "dependency_contracts_satisfied": true,
+        "pip_check": "PASS",
+        "project_installed": "project-echo==0.1.0",
+        "existing_interpreter_modified": false
+      },
+      "ci_local_result": {
+        "result": "PASS",
+        "tested_sha": "7ea26a5110881ebbe38130ee18820bf3f889a950",
+        "tree_entries": 146,
+        "stages": [
+          {
+            "stage": "sanity",
+            "exit": 0,
+            "modules": 82,
+            "cli_help_checks": 9,
+            "blocked_count": 0
+          },
+          {
+            "stage": "full",
+            "exit": 0,
+            "collected": 454,
+            "passed": 454,
+            "failed": 0,
+            "skipped": 0,
+            "warnings": 0,
+            "blocked_count": 0
+          }
+        ],
+        "repository_unchanged": true,
+        "checkpoint_approval": false,
+        "git_authority": false,
+        "live_authority": false
+      },
+      "ci_fixture_scope": "External local Git fixture from candidate tracked files plus approved additions before State sealing; no real repository Git mutation; its SHA is not a predicted checkpoint commit",
+      "workflow_static_validation": "PASS",
+      "github_hosted_execution_claimed": false,
+      "skill_schema": "Confirmed installed skill-creator references/openai_yaml.md and official Skill documentation; repository-local SKILL.md plus policy.allow_implicit_invocation false",
+      "skill_metadata_validator": "PASS",
+      "skill_prompt_content_cases": 9,
+      "skill_runtime_invocation_claimed": false
     }
   },
   "handoff": {
     "what_changed": [
-      "Deterministic ingest test clocks; exclusive lexical opposite-status checks",
-      "Evidence-contribution trust statistics and all-unverified readiness guard",
-      "CLI trend_id handoff and neutral reliability helper with STEP 2 exports",
-      "Minimal Japanese Unicode extraction/bigrams and pre-cluster candidate bounds",
-      "Project AGENTS, reusable verification, canonical state/handoff and efficiency inventory",
-      "Explicit worktree/index/HEAD verification with baseline_head fixed as checkpoint parent; no self commit hash or repository-granted Git authority",
-      "Durable Git-derived resume protocol replaces mutable current/next-action cursors",
-      "State semantic projection binds all checkpoint metadata except the active input_digest value; accepted evidence validation is mode-independent"
+      "Minimal ordinary-checkout Windows CI with constrained external builds and guarded full-suite execution",
+      "One explicit Project Echo-local read-only checkpoint review Skill",
+      "CI/checkpoint separation, dependency provenance and durable new checkpoint scope"
     ],
     "limitations": [
       "Japanese support is deterministic normalization/extraction/character overlap, not full semantic NLP; conflict keyword/negation vocabulary remains English",
@@ -222,7 +230,8 @@
       "Architecture checks resolve relative/package imports and protect RealResearchBrain; canonical module CLI exercised",
       "Reject symlinks in approved/worktree inputs; explicitly bind Windows Git executable and verify serialized argv; align documented gate order",
       "LC-01: replaced ephemeral cursors with a durable Git-derived resume protocol; identical State survives review/staging/commit without synchronization",
-      "LC-02: included complete semantic State except the self-digest value in v2; rejected invalid evidence, unresolved blockers, unsafe authority and missing handoff even after resealing"
+      "LC-02: included complete semantic State except the self-digest value in v2; rejected invalid evidence, unresolved blockers, unsafe authority and missing handoff even after resealing",
+      "CF-01: retain first CI failure stage and tested SHA when final hygiene also fails; report a separate hygiene_failed Boolean and reject without later workers; combined failure regression passes"
     ],
     "resume_protocol": {
       "method": "derive_from_git_and_external_authority",
@@ -252,7 +261,7 @@
     ]
   },
   "state_model": "durable_checkpoint",
-  "checkpoint_subject": "STEP 3 + Efficiency Foundation v1 checkpoint lifecycle",
+  "checkpoint_subject": "Efficiency Foundation Expansion v1",
   "verification_history": [
     {
       "status": "PASS",
@@ -317,6 +326,39 @@
         "repository_unchanged": true,
         "resolution": "Set executable=GIT_EXECUTABLE without weakening the allowlist; fresh complete verification PASS"
       }
+    },
+    {
+      "status": "PASS",
+      "mode": "worktree",
+      "evidence_type": "guarded_offline_workers",
+      "verified_at_utc": "2026-09-05T23:16:57Z",
+      "command": "supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "input_digest": "2be5c8dae9cb302178413d0d8582d780ee2e6a9eece23f0ecde2a8b53794117b",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "imported_modules": 82,
+      "cli_help_routes": 9,
+      "installed_entrypoint": "echo.cli:main",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-05T23:16:57Z",
+        "reviewers": [
+          {
+            "name": "STATE_TEMPORAL_REVIEW",
+            "scope": "Durable State, conditional resume protocol, identical State through external review/staging/single commit, no sync/self hash; implementation read-only review",
+            "status": "PASS"
+          },
+          {
+            "name": "STATE_INTEGRITY_REVIEW",
+            "scope": "State projection, minimal self exclusion, accepted evidence and tamper validation, all-mode lifecycle regressions; implementation read-only review",
+            "status": "PASS"
+          }
+        ]
+      }
     }
   ],
   "review_history": [
@@ -330,6 +372,183 @@
       "decision": "NOT APPROVED - LIFECYCLE REMEDIATION REQUIRED",
       "input_digest": "abc295b5fcef5fe7436c3ea25d1c06f395c9c928baba4bc803a5496ef40f566e",
       "digest_algorithm": "sha256-path-content-lf-v1"
+    }
+  ],
+  "checkpoint_history": [
+    {
+      "baseline_head": "a3ae594f003b962306af84ea94c51c069c85ed3d",
+      "baseline_subject": "feat: add source and trend intelligence",
+      "checkpoint_subject": "STEP 3 + Efficiency Foundation v1 checkpoint lifecycle",
+      "approved_change_paths": [
+        ".env.example",
+        "AGENTS.md",
+        "PROJECT_STATE.json",
+        "README.md",
+        "docs/ARCHITECTURE.md",
+        "docs/DATA_MODEL.md",
+        "docs/DEVELOPMENT_RULES.md",
+        "docs/RESEARCH_INTELLIGENCE.md",
+        "docs/VERIFICATION_GATE.md",
+        "pyproject.toml",
+        "scripts/verify.py",
+        "src/echo/brains/__init__.py",
+        "src/echo/brains/real_research_brain.py",
+        "src/echo/cli.py",
+        "src/echo/config/settings.py",
+        "src/echo/core/ids.py",
+        "src/echo/core/reliability.py",
+        "src/echo/core/text.py",
+        "src/echo/models/__init__.py",
+        "src/echo/models/enums.py",
+        "src/echo/models/research.py",
+        "src/echo/research/__init__.py",
+        "src/echo/research/claims.py",
+        "src/echo/research/confidence.py",
+        "src/echo/research/config.py",
+        "src/echo/research/conflicts.py",
+        "src/echo/research/evidence.py",
+        "src/echo/research/extraction.py",
+        "src/echo/research/independence.py",
+        "src/echo/research/source_selection.py",
+        "src/echo/research/status.py",
+        "src/echo/research/summary.py",
+        "src/echo/source/dedup.py",
+        "src/echo/source/reliability.py",
+        "src/echo/storage/db.py",
+        "src/echo/storage/repository.py",
+        "tests/test_architecture.py",
+        "tests/test_cli_research.py",
+        "tests/test_ingest.py",
+        "tests/test_real_research_brain.py",
+        "tests/test_research_claims.py",
+        "tests/test_research_confidence.py",
+        "tests/test_research_conflicts.py",
+        "tests/test_research_extraction.py",
+        "tests/test_research_independence.py",
+        "tests/test_research_models.py",
+        "tests/test_research_source_selection.py",
+        "tests/test_research_status.py",
+        "tests/test_research_storage.py",
+        "tests/test_verification.py"
+      ],
+      "handoff": {
+        "what_changed": [
+          "Deterministic ingest test clocks; exclusive lexical opposite-status checks",
+          "Evidence-contribution trust statistics and all-unverified readiness guard",
+          "CLI trend_id handoff and neutral reliability helper with STEP 2 exports",
+          "Minimal Japanese Unicode extraction/bigrams and pre-cluster candidate bounds",
+          "Project AGENTS, reusable verification, canonical state/handoff and efficiency inventory",
+          "Explicit worktree/index/HEAD verification with baseline_head fixed as checkpoint parent; no self commit hash or repository-granted Git authority",
+          "Durable Git-derived resume protocol replaces mutable current/next-action cursors",
+          "State semantic projection binds all checkpoint metadata except the active input_digest value; accepted evidence validation is mode-independent"
+        ],
+        "limitations": [
+          "Japanese support is deterministic normalization/extraction/character overlap, not full semantic NLP; conflict keyword/negation vocabulary remains English",
+          "Pre-cluster input is bounded; history scanning and candidate ranking still scale with input size",
+          "Existing data/echo.db remains at its prior STEP 1 schema; no runtime migration is authorized",
+          "Technical verification supplies no Git or live authority; baseline_head is the checkpoint parent before and after commit",
+          "CP-01 MEDIUM NON-BLOCKING: before a feature re-saves changed content under the same research ID, implement either immutable/reject semantics or fully consistent transactional replacement; not fixed by lifecycle remediation",
+          "CP-02 LOW NON-BLOCKING: research documentation overstates configurability of the fixed 0.3 reliability coefficient; deferred without documentation changes"
+        ],
+        "review_resolutions": [
+          "Reject symbol-only and whitespace-padded Japanese noise; preserve English sentences with short Japanese product names",
+          "Scan YAML/text and suppress matched detector values; fail if snapshot enumeration is unreadable",
+          "Architecture checks resolve relative/package imports and protect RealResearchBrain; canonical module CLI exercised",
+          "Reject symlinks in approved/worktree inputs; explicitly bind Windows Git executable and verify serialized argv; align documented gate order",
+          "LC-01: replaced ephemeral cursors with a durable Git-derived resume protocol; identical State survives review/staging/commit without synchronization",
+          "LC-02: included complete semantic State except the self-digest value in v2; rejected invalid evidence, unresolved blockers, unsafe authority and missing handoff even after resealing"
+        ],
+        "resume_protocol": {
+          "method": "derive_from_git_and_external_authority",
+          "lifecycle_derivation": {
+            "worktree": "HEAD == baseline_head; clean index; approved dirty subset: verify worktree, then external review and staging authorization",
+            "staged": "HEAD == baseline_head; exact staged scope; no drift: verify staged, then external commit authorization",
+            "committed": "clean HEAD with single parent == baseline_head and exact scope: verify committed, then external push review"
+          },
+          "external_authority_required": [
+            "stage",
+            "commit",
+            "push"
+          ],
+          "otherwise": "STOP"
+        },
+        "prohibited_automatic_actions": [
+          "stage",
+          "commit",
+          "push",
+          "network",
+          "external_api",
+          "step4",
+          "affiliate_phase0",
+          "database_migration",
+          "install",
+          "scheduler"
+        ]
+      },
+      "accepted_test_evidence": {
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 197,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "collected": 425,
+          "passed": 425,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "python": "3.14.6"
+      }
+    }
+  ],
+  "implementation_verification_history": [
+    {
+      "stage": "dependency_inventory",
+      "outcome": "RUNNER_DIAGNOSTIC_FAILURE",
+      "reason": "Installed setuptools metadata absent; dependency inspection stopped with PackageNotFoundError. No existing Python modification or product source fix. Build-only setuptools separately resolved and validated in external venv."
+    },
+    {
+      "stage": "pre_fix_raw_workers",
+      "outcome": "STOPPED",
+      "passing_counts": {
+        "ci": 28,
+        "verification": 103,
+        "full": 453,
+        "imports": 82,
+        "cli": 9
+      },
+      "first_failed_stage": "targeted",
+      "passed": 0,
+      "setup_errors": 1,
+      "blocked": [
+        "os.remove"
+      ],
+      "reason": "CI subset and targeted bootstrap reused one basetemp; Windows extended-path cleanup was rejected by the existing guard",
+      "later_step3_run": false,
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "resolution": "Fresh external temporary root per worker; no change to existing verifier or product tests; entire post-fix raw sequence passed"
+    },
+    {
+      "review": "CI_FOUNDATION_REVIEW",
+      "finding": "CF-01",
+      "initial_result": "CHANGES_REQUIRED",
+      "resolution": "First failure and identity preserved independently of final hygiene failure; corrective code and regression test passed fresh verification and read-only re-review"
     }
   ]
 }
