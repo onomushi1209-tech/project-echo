@@ -49,6 +49,7 @@ TARGETED = [
     "tests/test_real_research_brain.py", "tests/test_cli_research.py",
     "tests/test_research_extraction.py", "tests/test_research_source_selection.py",
     "tests/test_architecture.py", "tests/test_verification.py",
+    "tests/test_affiliate_foundation.py",
 ]
 SECRET_PATTERNS = [
     re.compile(r"AKIA[0-9A-Z]{16}"),
@@ -488,7 +489,8 @@ def sanity() -> dict:
             raise VerificationFailure("Import resolved outside project: " + name)
     from echo.cli import app
     commands = [[], ["research"], ["research", "run"], ["research", "show"], ["research", "claims"],
-                ["research", "conflicts"], ["sources"], ["trends"], ["review"]]
+                ["research", "conflicts"], ["sources"], ["trends"], ["review"],
+                ["affiliate"], ["affiliate", "demo"]]
     for command in commands:
         result = CliRunner().invoke(app, [*command, "--help"])
         if result.exit_code or result.exception:

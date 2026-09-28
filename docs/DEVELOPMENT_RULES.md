@@ -42,9 +42,11 @@ permission to stage, commit, migrate the existing DB or start a new phase.
 3. **All content passes through the Human Review Gate.** No pipeline stage
    may publish or auto-approve content. COMPLIANCE is informational only
    (it annotates `ContentDraft.compliance_risk_score` /
-   `compliance_flags`); only a human decision recorded via
-   `echo.review.service.record_decision` (APPROVE/REJECT/EDIT/SKIP)
-   finalizes a draft's fate.
+   `compliance_flags`) in the existing STEP 1/2 pipeline; only a human
+   decision recorded via `echo.review.service.record_decision`
+   (APPROVE/REJECT/EDIT/SKIP) finalizes a draft's fate. The separate offline
+   Affiliate Phase 0 compliance evaluator is fail-closed, does not replace this
+   gate and can never publish.
 
 4. **Persist decisions not to publish, with their reason.** Every
    `ReviewDecision` -- including REJECT and SKIP -- is saved to SQLite,
@@ -60,15 +62,16 @@ permission to stage, commit, migrate the existing DB or start a new phase.
    or in git history. Real values go in `.env` (gitignored); `.env.example`
    documents the variable names only, with no real values.
 
-7. **Don't implement outside the current STEP's scope.** Check the active
-   step's scope guard before adding a feature. As of STEP 3: no X API
-   posting/automation, no browser automation, no OpenAI/Anthropic/Gemini
-   API calls, no LLM-generated content or LLM-based claim extraction, no
-   production Content brain, no dashboard, no affiliate/monetization
-   system, no newsletter, no "Echo Hub", no automated self-learning, no
-   multi-vertical production runs. Reserved packages (`echo.performance`,
-   `echo.audience`, `echo.monetization`, `echo.memory`) stay as
-   placeholder `__init__.py` files until their step is scoped.
+7. **Don't implement outside the current phase's scope.** STEP 1/2/3 and the
+   Efficiency Foundation are established. Affiliate Phase 0 is limited to the
+   offline models, fixture/boundary adapters, deterministic scoring/signals,
+   proposal metadata, fail-closed checks, KPI calculations and demo described
+   in `docs/AFFILIATE_PHASE_0.md`. No account access, credentials, external
+   Affiliate API, live link generation, social API/posting, image generation,
+   persistence, database migration, production Content brain, newsletter,
+   "Echo Hub", automated self-learning or multi-vertical production run is
+   authorized. `echo.monetization` is no longer a placeholder; live integration
+   and remaining vertical packages stay deferred until separately scoped.
 
 8. **Don't add unnecessary dependencies.** The dependency set is
    deliberately small (pydantic, typer, pyyaml, python-dotenv, pytest).
@@ -121,3 +124,12 @@ permission to stage, commit, migrate the existing DB or start a new phase.
     these, but the call signature each module exposes should stay stable
     so that's a contained change -- see docs/RESEARCH_INTELLIGENCE.md
     "LLM-free design".
+
+14. **Keep Affiliate Phase 0 evidence fail-closed.** A destination marked
+    verified must reference fresh, exact URL evidence bound to its service and
+    provider item. A marketing claim must match the declared evidence type and
+    its deterministic rendering; unsupported freeform claims remain blocked.
+    BuyNow signals preserve fixture/verified status, suppress conflicts and
+    never carry live-action authority. Compliance requires X disclosure and an
+    explicitly supplied recent-scene inventory. Do not infer a live adapter,
+    destination, claim, attribution result or approval from synthetic fixtures.

@@ -7,12 +7,12 @@ working-tree scope against state before editing. Preserve existing user work.
 
 ## Phase and authority
 
-- Current phase: STEP 3 Research Intelligence + Core Efficiency Foundation
-  remediation/checkpoint review. STEP 3 exists in the working tree until an
-  explicitly authorized checkpoint commits it.
-- No implied authority for STEP 4, Japan Affiliate Phase 0, affiliate
-  integration, posting, external APIs, live execution, network, Scheduler,
-  plugins, installs or OS/global configuration. A PASS never grants any of these.
+- Current candidate: STEP 1/2/3 and the Efficiency Foundation are complete at
+  `118d3efd59d19f1a5e9a329835810cc990d1a477`; Affiliate Phase 0 is an offline,
+  unstaged foundation candidate based on that commit.
+- No authority for STEP 4, live affiliate integration, account/API access,
+  affiliate-link creation, social posting, live execution, Scheduler, plugins,
+  installs or OS/global configuration. A PASS never grants any of these.
 - Default to offline work. Never inspect or print secret values, create
   credentials, or read a real `.env` during verification. Presence checks only.
 - Preserve `data/echo.db`. Use external temporary fixture databases for tests;
@@ -23,8 +23,9 @@ working-tree scope against state before editing. Preserve existing user work.
 - Follow `docs/DEVELOPMENT_RULES.md`: Core and stage services do not import
   vertical implementations. Research does not import source acquisition.
   Generic reliability/text helpers live in Core; registry facts are injected.
-- SQL stays in storage. Keep public STEP 1/2 interfaces compatible. Human
-  Review remains the only approval gate; research status is informational.
+- Keep affiliate adapter details out of Core/STEP 1/2. SQL stays in storage;
+  Phase 0 adds no persistence. Keep public STEP 1/2 interfaces compatible.
+  Human Review remains the only approval gate; research status is informational.
 - Minimal scoped changes; no unrelated refactor or extra dependencies.
   New files must be necessary for the authorized fix or its verification.
 - No parallel writes. Subagents may perform read-only reviews when requested;
@@ -35,7 +36,7 @@ working-tree scope against state before editing. Preserve existing user work.
 - Never discard user work. Stop on unexpected unrelated changes or when the
   approved path set no longer explains the worktree. Do not auto-clean artifacts.
 - `git add`, commit and push require explicit authority for that action.
-  No reset, clean, rebase, amend or force operations in this remediation.
+  No reset, clean, rebase, amend or force operations in this implementation pass.
 - Use the existing interpreter/dependencies. Do not repair or replace the
   environment silently. Use `python -B scripts/verify.py` from the repo root;
   it is offline, keeps test output outside the repository and grants no Git authority.
@@ -56,4 +57,5 @@ working-tree scope against state before editing. Preserve existing user work.
   in state; do not create duplicate handoff narratives or claim unrun checks.
 - Record limitations separately from blockers. Passing tests means technical
   verification, not commit approval or execution authority.
-- Report results and stop. Do not advance to Affiliate Phase 0 automatically.
+- Report results and stop. Do not advance to live Affiliate integration or
+  another application phase automatically.

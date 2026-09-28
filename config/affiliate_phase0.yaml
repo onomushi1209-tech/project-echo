@@ -1,0 +1,56 @@
+score:
+  formula_version: opportunity-v0
+  weights:
+    - component: commercial_attractiveness
+      weight: "0.18"
+    - component: urgency
+      weight: "0.12"
+    - component: demand
+      weight: "0.15"
+    - component: trust
+      weight: "0.14"
+    - component: affiliate_economics
+      weight: "0.16"
+    - component: contextual_fit
+      weight: "0.15"
+    - component: evidence_confidence
+      weight: "0.05"
+    - component: freshness
+      weight: "0.05"
+scoring_max_evidence_age_hours: 168
+buy_now:
+  signal_freshness:
+    - evidence_type: discount
+      max_age_hours: 24
+    - evidence_type: sale_end
+      max_age_hours: 24
+    - evidence_type: coupon
+      max_age_hours: 24
+    - evidence_type: point_multiplier
+      max_age_hours: 24
+    - evidence_type: ranking
+      max_age_hours: 24
+    - evidence_type: review_count
+      max_age_hours: 168
+    - evidence_type: review_rating
+      max_age_hours: 168
+    - evidence_type: availability
+      max_age_hours: 12
+    - evidence_type: seasonality
+      max_age_hours: 720
+    - evidence_type: trend_relevance
+      max_age_hours: 72
+compliance:
+  max_price_age_hours: 24
+  max_promotion_age_hours: 6
+  max_destination_age_hours: 24
+  required_platforms:
+    - x
+  require_affiliate_disclosure: true
+  require_verified_destination: true
+  require_verified_asset_rights: true
+visual:
+  max_slide1_headline_characters: 24
+  require_product_asset_rights: true
+  require_scene_diversity: true
+  people_default: false

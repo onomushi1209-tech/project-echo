@@ -12,8 +12,10 @@
     echo research show   - show a persisted ResearchPacket's summary
     echo research claims - list a ResearchPacket's claims
     echo research conflicts - list a ResearchPacket's detected conflicts
+    echo affiliate demo - run the offline Affiliate Phase 0 fixture workflow
 
-No X posting, no external AI APIs -- STEP 1/2/3 Foundation only.
+No X posting, no external AI APIs, and no affiliate integration --
+the affiliate demo uses synthetic offline fixtures only.
 """
 
 from __future__ import annotations
@@ -41,15 +43,56 @@ from echo.trend.service import partition_trends_by_novelty
 from echo.verticals.ai.dummy_data import sample_sources
 from echo.verticals.registry import load_vertical_config
 
-app = typer.Typer(help="Project Echo -- AI Media Operating System (STEP 1/2/3 Foundation)")
+app = typer.Typer(help="Project Echo -- research, review, and offline Affiliate Phase 0 foundation")
 review_app = typer.Typer(help="Inspect and decide on the Human Review Gate queue.")
 sources_app = typer.Typer(help="Inspect the Source Registry for a vertical.")
 trends_app = typer.Typer(help="Detect and inspect TrendCandidates from stored SourceItems.")
 research_app = typer.Typer(help="Run and inspect Research Intelligence for a TrendCandidate.")
+affiliate_app = typer.Typer(help="Offline affiliate candidate, evidence, scoring, compliance, and proposal tools.")
 app.add_typer(review_app, name="review")
 app.add_typer(sources_app, name="sources")
 app.add_typer(trends_app, name="trends")
 app.add_typer(research_app, name="research")
+app.add_typer(affiliate_app, name="affiliate")
+
+
+@affiliate_app.command("demo")
+def affiliate_demo() -> None:
+    """Run the deterministic Rakuten/Rakuyoko Phase 0 fixture flow without I/O."""
+    from echo.monetization.fixtures import run_offline_demo
+
+    result = run_offline_demo()
+    typer.echo("Project Echo Zero — Affiliate Phase 0 OFFLINE fixture demo")
+    typer.echo("No network, credentials, affiliate URLs, database writes, or posting.\n")
+    score_by_id = {item.product_id: item for item in result.scores}
+    signal_counts = {key: len(value) for key, value in result.signals_by_product.items()}
+    typer.echo("Candidate ranking:")
+    for rank, candidate in enumerate(result.ranking, start=1):
+        score_result = score_by_id[candidate.product_id]
+        score = score_result.final_score
+        price = f"JPY {candidate.offer.price.amount}" if candidate.offer.price else "price unknown"
+        typer.echo(
+            f"  {rank}. {candidate.name} | {price} | score={score:.3f} "
+            f"| buy_now_signals={signal_counts[candidate.product_id]} "
+            f"| affiliate_destination={candidate.offer.affiliate_destination.status.value}"
+        )
+        breakdown = ", ".join(
+            f"{item.component.value}={item.value:.2f}×{item.weight:.2f}"
+            for item in score_result.components
+        )
+        typer.echo(f"     score components: {breakdown}")
+    typer.echo("\nRoomBundle:")
+    for slide in result.proposal.carousel.slides:
+        labels = ", ".join(f"{label.product_name} (JPY {label.price})" for label in slide.labels)
+        typer.echo(f"  slide {slide.slide_number} [{slide.kind.value}]: {labels}")
+    failed = [item.code.value for item in result.compliance.checks if not item.passed]
+    typer.echo("\nCompliance:")
+    typer.echo(f"  ready_for_human_approval={result.compliance.ready_for_human_approval}")
+    typer.echo(f"  failed_checks={','.join(failed) if failed else 'none'}")
+    typer.echo("  human_approval=required via existing Human Review Gate")
+    typer.echo(f"  live_publish_authorized={result.compliance.live_publish_authorized}")
+    unknown = [item.capability for item in result.rakuyoko.capabilities if item.status.value == "unknown"]
+    typer.echo(f"\nRakuyoko unverified integration capabilities: {', '.join(unknown)}")
 
 
 @app.command()

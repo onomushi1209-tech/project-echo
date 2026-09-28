@@ -2,14 +2,15 @@
   "schema_version": 2,
   "project": "Project Echo",
   "branch": "main",
-  "baseline_head": "4f69023a9b184347a259d56d8d252e5ba3aab6f6",
-  "baseline_subject": "feat: complete research intelligence and efficiency foundation",
+  "baseline_head": "118d3efd59d19f1a5e9a329835810cc990d1a477",
+  "baseline_subject": "feat: add CI and checkpoint review skill",
   "completed_steps": [
     "STEP 1 Echo Foundation",
     "STEP 2 Source & Trend Intelligence",
     "STEP 3 Research Intelligence (product verification evidence recorded below)",
     "Efficiency Foundation v1 (checkpoint lifecycle verification recorded below)",
-    "Efficiency Foundation Expansion v1 (local CI and explicit checkpoint review Skill verification recorded below)"
+    "Efficiency Foundation Expansion v1 (local CI and explicit checkpoint review Skill verification recorded below)",
+    "Project Echo Zero Affiliate Phase 0 offline foundation candidate; no live integration"
   ],
   "test_baseline": {
     "audit": {
@@ -73,6 +74,12 @@
       "python": "3.14.6"
     },
     "accepted": {
+      "affiliate": {
+        "passed": 176,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
       "verification": {
         "passed": 103,
         "failed": 0,
@@ -80,7 +87,7 @@
         "warnings": 0
       },
       "targeted": {
-        "passed": 197,
+        "passed": 373,
         "failed": 0,
         "skipped": 0,
         "warnings": 0
@@ -93,20 +100,53 @@
         "original_90_preserved": true
       },
       "full": {
-        "passed": 454,
+        "passed": 630,
         "failed": 0,
         "skipped": 0,
         "warnings": 0,
-        "collected": 454
-      },
-      "ci": {
-        "passed": 29,
-        "failed": 0,
-        "skipped": 0,
-        "warnings": 0
-      },
-      "python": "3.14.6"
-    }
+        "collected": 630
+      }
+    },
+    "previous_checkpoint_accepted": {
+      "baseline_head": "4f69023a9b184347a259d56d8d252e5ba3aab6f6",
+      "baseline_subject": "feat: complete research intelligence and efficiency foundation",
+      "accepted": {
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 197,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 454,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 454
+        },
+        "ci": {
+          "passed": 29,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "python": "3.14.6"
+      }
+    },
+    "python": "3.14.6"
   },
   "known_blockers": [],
   "live_authority": {
@@ -120,101 +160,90 @@
   },
   "commit_authorized": false,
   "approved_change_paths": [
-    ".agents/skills/echo-checkpoint-review/SKILL.md",
-    ".agents/skills/echo-checkpoint-review/agents/openai.yaml",
-    ".github/workflows/ci.yml",
+    "AGENTS.md",
     "PROJECT_STATE.json",
-    "constraints-ci.txt",
+    "README.md",
+    "config/affiliate_phase0.yaml",
+    "docs/AFFILIATE_PHASE_0.md",
+    "docs/AFFILIATE_VISUAL_POLICY.md",
+    "docs/ARCHITECTURE.md",
+    "docs/DATA_MODEL.md",
+    "docs/DEVELOPMENT_RULES.md",
     "docs/VERIFICATION_GATE.md",
-    "scripts/ci_verify.py",
-    "tests/test_ci_verification.py"
+    "scripts/verify.py",
+    "src/echo/cli.py",
+    "src/echo/models/__init__.py",
+    "src/echo/models/affiliate.py",
+    "src/echo/models/affiliate_kpi.py",
+    "src/echo/models/affiliate_visual.py",
+    "src/echo/monetization/__init__.py",
+    "src/echo/monetization/adapters.py",
+    "src/echo/monetization/compliance.py",
+    "src/echo/monetization/config.py",
+    "src/echo/monetization/evidence.py",
+    "src/echo/monetization/fixtures.py",
+    "src/echo/monetization/kpi.py",
+    "src/echo/monetization/scoring.py",
+    "src/echo/monetization/signals.py",
+    "src/echo/monetization/visuals.py",
+    "tests/test_affiliate_foundation.py"
   ],
   "verification": {
     "status": "PASS",
-    "mode": "worktree",
+    "mode": "staged",
     "evidence_type": "guarded_offline_workers",
-    "verified_at_utc": "2026-09-14T23:44:04Z",
-    "command": "Supervised guarded raw workers: CI subset, verification, full, sanity, targeted, step3; separate fresh external CI venv adapter run",
-    "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
-    "input_digest": "52dbad1a4f9406727e5eacd3a04af20337d636f7bf8a3f3bbb83900b1c5c813a",
     "digest_algorithm": "sha256-path-content-lf-state-v2",
-    "imported_modules": 82,
-    "cli_help_routes": 9,
+    "input_digest": "dcd5b7ad59f9f62c6cbd2804de66552617bb1792e10934467f22968bf2538725",
+    "verified_at_utc": "2026-09-28T23:24:44Z",
+    "command": "Supervised existing scripts/verify.py guarded preliminary workers: complete Affiliate, verification, canonical targeted, STEP 3, full, sanity; State was PENDING during collection. Canonical staged gate follows the seal.",
+    "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+    "imported_modules": 94,
+    "cli_help_routes": 11,
     "installed_entrypoint": "echo.cli:main",
     "repository_unchanged_during_gate": true,
     "index_unchanged_during_gate": true,
     "existing_database_unchanged": true,
     "worker_blocked_side_effects": [],
+    "env_present": false,
+    "diff_check": "PASS (worktree and cached before/after fresh workers)",
     "independent_review": {
       "status": "PASS",
-      "reviewed_at_utc": "2026-09-14T23:44:04Z",
+      "reviewed_at_utc": "2026-09-28T22:42:00Z",
       "reviewers": [
         {
-          "name": "CI_FOUNDATION_REVIEW",
-          "scope": "Read-only implementation review of ordinary CI/checkpoint separation, Git identity, guards, dependency setup, action security and false-PASS risks; CF-01 corrected and re-reviewed",
-          "status": "PASS"
+          "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
         },
         {
-          "name": "SKILL_ISOLATION_REVIEW",
-          "scope": "Read-only content/metadata review of nine checkpoint prompts, Project Echo isolation, no fixed checkpoint data or duplicated verifier, explicit invocation; not a live Skill invocation test",
-          "status": "PASS"
+          "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
         }
-      ]
-    },
-    "foundation_expansion": {
-      "ci_environment": {
-        "status": "PASS",
-        "python": "3.14.6",
-        "external_fresh_venv": true,
-        "constrained_package_count": 21,
-        "constraints_exact_match": true,
-        "dependency_contracts_satisfied": true,
-        "pip_check": "PASS",
-        "project_installed": "project-echo==0.1.0",
-        "existing_interpreter_modified": false
-      },
-      "ci_local_result": {
-        "result": "PASS",
-        "tested_sha": "7ea26a5110881ebbe38130ee18820bf3f889a950",
-        "tree_entries": 146,
-        "stages": [
-          {
-            "stage": "sanity",
-            "exit": 0,
-            "modules": 82,
-            "cli_help_checks": 9,
-            "blocked_count": 0
-          },
-          {
-            "stage": "full",
-            "exit": 0,
-            "collected": 454,
-            "passed": 454,
-            "failed": 0,
-            "skipped": 0,
-            "warnings": 0,
-            "blocked_count": 0
-          }
-        ],
-        "repository_unchanged": true,
-        "checkpoint_approval": false,
-        "git_authority": false,
-        "live_authority": false
-      },
-      "ci_fixture_scope": "External local Git fixture from candidate tracked files plus approved additions before State sealing; no real repository Git mutation; its SHA is not a predicted checkpoint commit",
-      "workflow_static_validation": "PASS",
-      "github_hosted_execution_claimed": false,
-      "skill_schema": "Confirmed installed skill-creator references/openai_yaml.md and official Skill documentation; repository-local SKILL.md plus policy.allow_implicit_invocation false",
-      "skill_metadata_validator": "PASS",
-      "skill_prompt_content_cases": 9,
-      "skill_runtime_invocation_claimed": false
+      ],
+      "carry_forward": {
+        "source_input_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
+        "recorded_at_utc": "2026-09-28T23:26:09Z",
+        "authorization": "External EOF hygiene completion instruction permits prior functional acceptance to carry forward subject to fresh verification.",
+        "basis": "Only one trailing LF removed from each of three named files; Python AST and significant token sequences equal; document text/policy equal; all other candidate content unchanged; complete fresh guarded verification passed.",
+        "new_product_review_performed": false
+      }
     }
   },
   "handoff": {
     "what_changed": [
       "Minimal ordinary-checkout Windows CI with constrained external builds and guarded full-suite execution",
       "One explicit Project Echo-local read-only checkpoint review Skill",
-      "CI/checkpoint separation, dependency provenance and durable new checkpoint scope"
+      "CI/checkpoint separation, dependency provenance and durable new checkpoint scope",
+      "Offline Rakuten-shaped fixture normalization, explicit Rakuyoko unknown-capability boundary, evidence-backed signals, explainable scoring, product-set carousel, compliance and KPI foundation.",
+      "Fail-closed copy/evidence association, exact leading PR disclosure, digest-bound Human Review note, and explicit product asset rights metadata.",
+      "SIG-01: one source-neutral typed value/provenance contract rejects negative, neutral and unsupported buying evidence; both factory and public signal model enforce eligible positive support, preserve original evidence and bound expiry.",
+      "SCORE-01: six component-specific normalized assessments require relevant, current, non-conflicted support with offer linkage; confidence and freshness derive from actual positive weighted contributing evidence with explicit explanations.",
+      "SIG-02: public signals require expiry after effective validity start and observation, within any evidence ceiling; model/deserialization consistency stays separate from deterministic evaluation-time checks.",
+      "SCORE-02: one shared normalized product/service/family conflict rule compares overlapping applicability independently of observation identity; current-asof freshness filtering preserves succession. Scoring includes known sibling offers, uses typed conflict membership, and preserves input-order determinism.",
+      "EOF hygiene: removed only one trailing blank-line LF from each of three existing Affiliate candidate files; recorded the staged whitespace failure and fresh guarded evidence, preserving all previous histories and false authorities."
     ],
     "limitations": [
       "Japanese support is deterministic normalization/extraction/character overlap, not full semantic NLP; conflict keyword/negation vocabulary remains English",
@@ -222,7 +251,20 @@
       "Existing data/echo.db remains at its prior STEP 1 schema; no runtime migration is authorized",
       "Technical verification supplies no Git or live authority; baseline_head is the checkpoint parent before and after commit",
       "CP-01 MEDIUM NON-BLOCKING: before a feature re-saves changed content under the same research ID, implement either immutable/reject semantics or fully consistent transactional replacement; not fixed by lifecycle remediation",
-      "CP-02 LOW NON-BLOCKING: research documentation overstates configurability of the fixed 0.3 reliability coefficient; deferred without documentation changes"
+      "CP-02 LOW NON-BLOCKING: research documentation overstates configurability of the fixed 0.3 reliability coefficient; deferred without documentation changes",
+      "No verified live destination adapter exists. Verified destinations require fresh typed evidence binding the exact URL to service and provider item; current fixture adapters leave destinations uncreated/unverified.",
+      "Scene history is not persisted in Phase 0. The builder requires an explicit prior-scene inventory, and compliance fails closed when it is omitted.",
+      "Affiliate Phase 0 has no live Rakuten link/destination adapter; fixture destinations remain uncreated and unverified.",
+      "Rakuyoko product search, affiliate attribution/destination, bundle API and content workflow remain UNKNOWN/UNVERIFIED pending an official public contract.",
+      "All publish-facing copy must be exact evidence-rendered claims; non-identity facts carry their verified product name, captions begin with exactly PR, and item annotations bind to that same product.",
+      "The Human Review digest binding uses the reserved first line of the existing reviewer_note field. Phase 0 provides the model contract only; any future review bridge must show the digest to the human and persist the exact decision. No review UI or database change is included.",
+      "Visual compliance checks provenance, rights, official-asset and transformation metadata, and product-appearance declarations, but cannot inspect actual image pixels or verify a platform native rendering.",
+      "Scene history is not persisted in Phase 0; the builder requires an explicit prior-scene inventory and compliance fails closed when it is omitted.",
+      "Phase 0 remains offline: no live retailer, affiliate-link, or social publishing adapter, account/API access, platform runtime, or persistence was implemented.",
+      "VIS-01 MEDIUM NON-BLOCKING: whitespace-only scene dimension changes can bypass fingerprint equality; defer normalization until before persistent scene history or production visual rotation.",
+      "Opportunity Score's six input values remain normalized caller assessments over validated factual support; confidence measures verified contributing factual-component coverage, not probabilistic certainty or commercial prediction.",
+      "BuyNowSignal model enforces positive typed semantics/provenance/basis/expiry, while evaluation-time freshness and cross-record conflict membership require derive_buy_now_signals with its explicit as_of and candidate evidence.",
+      "Cross-offer scoring requires the caller to provide its known evidence_candidates inventory; the target is always included and only same-product/service siblings affect support. The single-candidate API cannot infer undisclosed evidence. Conflict membership retains evidence family and ID."
     ],
     "review_resolutions": [
       "Reject symbol-only and whitespace-padded Japanese noise; preserve English sentences with short Japanese product names",
@@ -231,7 +273,23 @@
       "Reject symlinks in approved/worktree inputs; explicitly bind Windows Git executable and verify serialized argv; align documented gate order",
       "LC-01: replaced ephemeral cursors with a durable Git-derived resume protocol; identical State survives review/staging/commit without synchronization",
       "LC-02: included complete semantic State except the self-digest value in v2; rejected invalid evidence, unresolved blockers, unsafe authority and missing handoff even after resealing",
-      "CF-01: retain first CI failure stage and tested SHA when final hygiene also fails; report a separate hygiene_failed Boolean and reject without later workers; combined failure regression passes"
+      "CF-01: retain first CI failure stage and tested SHA when final hygiene also fails; report a separate hygiene_failed Boolean and reject without later workers; combined failure regression passes",
+      "AFFILIATE-SAFETY-01: closed freeform publish-copy bypass by requiring canonical copy/captions/headlines/annotations to be exact typed evidence renderings with item attribution.",
+      "AFFILIATE-SAFETY-02: bound approval digest to the existing ReviewDecision reviewer_note marker; older approvals without the exact first-line digest cannot be rebound.",
+      "AFFILIATE-SAFETY-03: require exact PR caption prefix and label plus first-view metadata; actual platform rendering remains a documented limitation.",
+      "AFFILIATE-SAFETY-04: require matching verified product identity evidence for every displayed name and bind annotations to a claim for that same product.",
+      "AFFILIATE-RIGHTS-01: reject product assets missing official-asset or transformation-allowed metadata.",
+      "FINAL-STATE-DIGEST-01: corrected the self-digest input to use the serialized candidate PROJECT_STATE projection; preserved the preflight stop and followed it with a fresh full raw-worker PASS.",
+      "SIG-01: closed negative/neutral/arbitrary-text false positives and the independent review's direct-construction bypass; shared family/value/provenance contract, canonical interpretation basis and bounded expiry regressions pass.",
+      "SCORE-01: unrelated/identity/contradictory citations cannot boost factual components or caller confidence; invalid whole features zero, verified factual-component coverage and nonidentity freshness are derived; reverse-order/tie/high-quality regressions pass.",
+      "SCORE-FIXTURE-LINKAGE: corrected synthetic score feature source-field references to itemPrice/endTime/itemName after the first SCORE failure; preserved failure and restarted from SIG.",
+      "SIG-MODEL-REVIEW: preserved the preliminary PASS and NOT READY independent review before model-boundary correction; final fresh full sequence and both independent re-reviews pass.",
+      "STATE-TIMESTAMP-PREFLIGHT: preserved the pre-worker seal failure; use the existing exact-second UTC evidence contract without weakening timestamp validation. Fresh verification restarted at SIG and passed all stages; both reviewers checked transparent PENDING history before final recording.",
+      "SIG-02: effective-start and observation floors plus evidence ceiling reject empty/impossible signal intervals across direct construction/model_validate/JSON; [start,end) boundaries and malformed declared windows tested.",
+      "SCORE-02: overlapping different-observation contradictions suppress whole features and derived confidence/freshness; stale/future/history-only conflict and non-overlap succession retain valid support.",
+      "TEMPORAL-REVIEW: preserve pre-correction 621/628 PASS evidence and NOT READY reviews. Resolve service sorting ties, missing sibling-offer scoring context and cross-family reused-ID suppression; final fresh sequence and both final read-only Luna reviews PASS.",
+      "TEMPORAL-SUPERVISOR: preserve first runner failure caused by reused targeted basetemp; distinct external temporary roots per stage keep the original side-effect guard unchanged. Restarted from SIG-02 after each correction.",
+      "EOF-HYGIENE: cached diff-check exit 2 occurred before staged tests/commit/push. Three byte-only EOF removals preserve Python AST/tokens and document policy; fresh complete guarded sequence passed and existing acceptance carried forward by semantic equivalence. Worktree checks of untracked files are an execution observation, not a new product blocker."
     ],
     "resume_protocol": {
       "method": "derive_from_git_and_external_authority",
@@ -261,7 +319,7 @@
     ]
   },
   "state_model": "durable_checkpoint",
-  "checkpoint_subject": "Efficiency Foundation Expansion v1",
+  "checkpoint_subject": "Affiliate Phase 0 Foundation",
   "verification_history": [
     {
       "status": "PASS",
@@ -359,6 +417,327 @@
           }
         ]
       }
+    },
+    {
+      "status": "PASS",
+      "mode": "worktree",
+      "evidence_type": "guarded_offline_workers",
+      "verified_at_utc": "2026-09-14T23:44:04Z",
+      "command": "Supervised guarded raw workers: CI subset, verification, full, sanity, targeted, step3; separate fresh external CI venv adapter run",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "input_digest": "52dbad1a4f9406727e5eacd3a04af20337d636f7bf8a3f3bbb83900b1c5c813a",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "imported_modules": 82,
+      "cli_help_routes": 9,
+      "installed_entrypoint": "echo.cli:main",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-14T23:44:04Z",
+        "reviewers": [
+          {
+            "name": "CI_FOUNDATION_REVIEW",
+            "scope": "Read-only implementation review of ordinary CI/checkpoint separation, Git identity, guards, dependency setup, action security and false-PASS risks; CF-01 corrected and re-reviewed",
+            "status": "PASS"
+          },
+          {
+            "name": "SKILL_ISOLATION_REVIEW",
+            "scope": "Read-only content/metadata review of nine checkpoint prompts, Project Echo isolation, no fixed checkpoint data or duplicated verifier, explicit invocation; not a live Skill invocation test",
+            "status": "PASS"
+          }
+        ]
+      },
+      "foundation_expansion": {
+        "ci_environment": {
+          "status": "PASS",
+          "python": "3.14.6",
+          "external_fresh_venv": true,
+          "constrained_package_count": 21,
+          "constraints_exact_match": true,
+          "dependency_contracts_satisfied": true,
+          "pip_check": "PASS",
+          "project_installed": "project-echo==0.1.0",
+          "existing_interpreter_modified": false
+        },
+        "ci_local_result": {
+          "result": "PASS",
+          "tested_sha": "7ea26a5110881ebbe38130ee18820bf3f889a950",
+          "tree_entries": 146,
+          "stages": [
+            {
+              "stage": "sanity",
+              "exit": 0,
+              "modules": 82,
+              "cli_help_checks": 9,
+              "blocked_count": 0
+            },
+            {
+              "stage": "full",
+              "exit": 0,
+              "collected": 454,
+              "passed": 454,
+              "failed": 0,
+              "skipped": 0,
+              "warnings": 0,
+              "blocked_count": 0
+            }
+          ],
+          "repository_unchanged": true,
+          "checkpoint_approval": false,
+          "git_authority": false,
+          "live_authority": false
+        },
+        "ci_fixture_scope": "External local Git fixture from candidate tracked files plus approved additions before State sealing; no real repository Git mutation; its SHA is not a predicted checkpoint commit",
+        "workflow_static_validation": "PASS",
+        "github_hosted_execution_claimed": false,
+        "skill_schema": "Confirmed installed skill-creator references/openai_yaml.md and official Skill documentation; repository-local SKILL.md plus policy.allow_implicit_invocation false",
+        "skill_metadata_validator": "PASS",
+        "skill_prompt_content_cases": 9,
+        "skill_runtime_invocation_claimed": false
+      }
+    },
+    {
+      "status": "PASS",
+      "mode": "worktree",
+      "evidence_type": "guarded_offline_workers",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "input_digest": "dea80ccc608c4ab3e80cb077edfe8a71097170c7311baa2bd08d5f4151539d90",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-27T23:57:44Z",
+        "reviewers": [
+          {
+            "name": "AFFILIATE_ARCHITECTURE_REVIEW",
+            "scope": "Read-only review of the exact Phase 0 path scope, STEP 1/2 boundaries, and PENDING State after the sealed-digest preflight failure was preserved for fresh verification.",
+            "status": "PASS"
+          },
+          {
+            "name": "AFFILIATE_SAFETY_VISUAL_REVIEW",
+            "scope": "Read-only review of fail-closed compliance/visual safety and confirmation that active verification is PENDING with no accepted evidence until a fresh full sequence.",
+            "status": "PASS"
+          }
+        ]
+      },
+      "verified_at_utc": "2026-09-28T00:05:05Z",
+      "command": "Supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "imported_modules": 94,
+      "cli_help_routes": 11,
+      "installed_entrypoint": "echo.cli:main",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "env_present": false,
+      "test_baseline": {
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 226,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "collected": 483,
+          "passed": 483,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        }
+      },
+      "historical_subject": "Affiliate Phase 0 before SIG-01/SCORE-01 remediation"
+    },
+    {
+      "status": "PASS",
+      "mode": "worktree",
+      "evidence_type": "guarded_offline_workers",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "input_digest": "aa77b54d17261bfe2f2079984cfa512dabdefb9b30747da2b945424c33da0ade",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T21:26:50Z",
+        "reviewers": [
+          {
+            "name": "BUY_NOW_SIGNAL_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of shared typed positive-value/provenance contract, public construction/deserialization, explicit bounded expiry, contextual time/conflicts and tests. Subsequent State-only timestamp failure/history inspected; corrected source verdict remains PASS."
+          },
+          {
+            "name": "OPPORTUNITY_SCORE_EVIDENCE_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of component relevance, whole-feature zeroing, offer linkage, conflicts, verified positive weighted confidence, freshness, explanations and determinism. Subsequent State-only timestamp failure/history inspected; corrected source verdict remains PASS."
+          }
+        ]
+      },
+      "verified_at_utc": "2026-09-28T21:24:30Z",
+      "command": "Supervised scripts/verify.py guarded workers: SIG selection, SCORE selection, complete Affiliate, verification, targeted, step3, full, sanity",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "imported_modules": 94,
+      "cli_help_routes": 11,
+      "installed_entrypoint": "echo.cli:main",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "env_present": false,
+      "remediation_regressions": {
+        "sig": {
+          "passed": 53,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "score": {
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "affiliate": {
+          "passed": 104,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        }
+      },
+      "historical_subject": "Affiliate Phase 0 before SIG-02/SCORE-02 temporal remediation",
+      "accepted": {
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 301,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 558,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 558
+        }
+      }
+    },
+    {
+      "status": "PASS",
+      "mode": "worktree",
+      "evidence_type": "guarded_offline_workers",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "input_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
+      "verified_at_utc": "2026-09-28T22:39:32Z",
+      "imported_modules": 94,
+      "cli_help_routes": 11,
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T22:42:00Z",
+        "reviewers": [
+          {
+            "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
+          },
+          {
+            "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
+          }
+        ]
+      },
+      "historical_subject": "Affiliate Phase 0 final temporal acceptance before EOF hygiene remediation",
+      "accepted": {
+        "sig2": {
+          "passed": 47,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "score2": {
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "previous_sig": {
+          "passed": 56,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "previous_score": {
+          "passed": 24,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "affiliate": {
+          "passed": 176,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 373,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 630,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 630
+        }
+      },
+      "evidence_disposition": "Historical accepted PASS for f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99; not active evidence for the EOF-remediated candidate."
     }
   ],
   "review_history": [
@@ -549,6 +928,1341 @@
       "finding": "CF-01",
       "initial_result": "CHANGES_REQUIRED",
       "resolution": "First failure and identity preserved independently of final hygiene failure; corrective code and regression test passed fresh verification and read-only re-review"
+    }
+  ],
+  "verification_attempt_history": [
+    {
+      "stage": "focused-test-process-startup",
+      "status": "BLOCKED_ENVIRONMENT",
+      "tests_started": false,
+      "later_stages_run": false,
+      "resolution": "The first sandboxed Python process launch was denied before tests; the same approved interpreter was then run with the required elevated process permission."
+    },
+    {
+      "stage": "focused-test-collection",
+      "status": "FAIL",
+      "passed": 0,
+      "failed": 0,
+      "test_body_started": false,
+      "reason": "The first collection attempt imported product_set_product_ids from the wrong module.",
+      "resolution": "The helper was moved to the model module that owns ProductSet.",
+      "later_stages_run": false
+    },
+    {
+      "stage": "focused-tests",
+      "status": "FAIL",
+      "passed": 17,
+      "failed": 1,
+      "skipped": null,
+      "warnings": null,
+      "reason": "The stale-price test fixture replaced the evidence observation time without updating the candidate price evidence reference.",
+      "resolution": "The fixture now changes the referenced evidence record in place. Later code-review findings also received fresh fixes; a complete new gate sequence is pending.",
+      "later_stages_run": false
+    },
+    {
+      "stage": "raw-worker-supervisor-preflight",
+      "status": "STOPPED",
+      "tests_started": false,
+      "later_stages_run": false,
+      "reason": "The supervisor called the full accepted-evidence State validator while the candidate was intentionally PENDING; preflight stopped before any worker launched.",
+      "resolution": "Diagnosed as supervisor misuse, not a product or test failure. The next fresh supervisor checks identity and exact scope without requiring sealed acceptance evidence."
+    },
+    {
+      "stage": "targeted",
+      "status": "FAIL",
+      "passed": 211,
+      "failed": 1,
+      "skipped": 0,
+      "warnings": 0,
+      "failure_node": "tests/test_affiliate_foundation.py::test_visible_item_names_require_verified_matching_identity_evidence",
+      "failure_kind": "pydantic ValidationError",
+      "tests_started": true,
+      "later_stages_run": false,
+      "blocked_side_effects": [],
+      "index_unchanged": true,
+      "existing_database_unchanged": true,
+      "candidate_scope_unchanged": true,
+      "reason": "The regression fixture removed the required Slide 1 overview headline while isolating renamed-label evidence.",
+      "resolution": "Reworked the fixture to keep a valid overview headline and matching new label/claim while retaining the old identity evidence; the next full sequence starts after independent re-review."
+    },
+    {
+      "stage": "candidate-phase0-guarded-workers",
+      "status": "PASS",
+      "tested_baseline_head": "118d3efd59d19f1a5e9a329835810cc990d1a477",
+      "scope_path_count": 27,
+      "command": "Supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+      "stages": [
+        {
+          "stage": "verification",
+          "status": "PASS",
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "targeted",
+          "status": "PASS",
+          "passed": 226,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "step3",
+          "status": "PASS",
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "full",
+          "status": "PASS",
+          "collected": 483,
+          "passed": 483,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "sanity",
+          "status": "PASS",
+          "imported_modules": 94,
+          "cli_help_routes": 11,
+          "installed_entrypoint": "echo.cli:main"
+        }
+      ],
+      "blocked_side_effects": [],
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "existing_database_unchanged": true,
+      "real_env_present": false,
+      "later_stages_run": true,
+      "raw_worker_output": "External temporary capture removed after structured summaries were retained."
+    },
+    {
+      "stage": "sealed-worktree-digest-preflight",
+      "status": "FAIL",
+      "tests_started": false,
+      "later_stages_run": false,
+      "reason": "The final worktree command produced no structured result; read-only diagnosis returned Checkpoint digest/approval evidence mismatch before worker launch.",
+      "diagnostic": "The digest had been calculated from the pre-update on-disk State instead of the serialized candidate State projection.",
+      "raw_capture": "External stdout/stderr capture was removed by the wrapper after result parsing failed; no test output was exposed.",
+      "resolution": "Recalculate the self-digest using the candidate PROJECT_STATE bytes with only verification.input_digest projected out; run a fresh complete raw-worker sequence before the final gate.",
+      "follow_up_outcome": "The corrected State was reviewed with active verification PENDING; the subsequent fresh full raw-worker sequence passed all five stages."
+    },
+    {
+      "stage": "candidate-phase0-fresh-guarded-workers",
+      "status": "PASS",
+      "tested_baseline_head": "118d3efd59d19f1a5e9a329835810cc990d1a477",
+      "scope_path_count": 27,
+      "command": "Supervised scripts/verify.py --worker stages: verification, targeted, step3, full, sanity",
+      "tests_started": true,
+      "later_stages_run": true,
+      "stages": [
+        {
+          "stage": "verification",
+          "status": "PASS",
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "targeted",
+          "status": "PASS",
+          "passed": 226,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "step3",
+          "status": "PASS",
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "full",
+          "status": "PASS",
+          "collected": 483,
+          "passed": 483,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "sanity",
+          "status": "PASS",
+          "imported_modules": 94,
+          "cli_help_routes": 11,
+          "installed_entrypoint": "echo.cli:main"
+        }
+      ],
+      "blocked_side_effects": [],
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "existing_database_unchanged": true,
+      "real_env_present": false,
+      "raw_worker_output": "External temporary capture removed after structured summaries were retained."
+    },
+    {
+      "stage": "SIG-01/SCORE-01 preliminary guarded sequence",
+      "status": "FAIL",
+      "verified_at_utc": "2026-09-28T21:06:38.266964Z",
+      "stages": [
+        {
+          "stage": "sig",
+          "passed": 43,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        {
+          "stage": "score",
+          "passed": 16,
+          "failed": 1,
+          "skipped": 0,
+          "warnings": 0
+        }
+      ],
+      "failure_node": "tests/test_affiliate_foundation.py::test_score_t10_confidence_requires_verified_contributing_factual_components",
+      "reason": "Fixture feature citations used price/sale_end/identity labels while the normalizer records itemPrice/endTime/itemName as source_field; the missing citations silently omitted three assessments, producing coverage 3/5 instead of the intended 5/5.",
+      "resolution": "Corrected fixture source-field linkage within the existing 27-path candidate; the expected verified coverage is preserved. A fresh full sequence is required.",
+      "later_stages_run": false,
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "existing_database_unchanged": true,
+      "blocked_side_effects": []
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 43,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 22,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 93,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 290,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 547,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T21:10:26.980487Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-01/SCORE-01 corrected preliminary sequence",
+      "evidence_disposition": "Historical PASS before public-model reviewer correction; not active accepted evidence."
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 53,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 104,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 301,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 558,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T21:18:41.841421Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-01/SCORE-01 final fresh guarded sequence after reviewer correction",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T21:21:10.219497Z",
+        "reviewers": [
+          {
+            "name": "BUY_NOW_SIGNAL_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of typed positive/negative/neutral/unsupported semantics, shared provenance contract, public construction/deserialization, expiry, contextual freshness/conflicts, regression coverage; no remaining SIG-01 blocker."
+          },
+          {
+            "name": "OPPORTUNITY_SCORE_EVIDENCE_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of component-compatible typed support, whole-feature zeroing, price/rate linkage, conflict reuse, verified positive weighted contributing confidence, freshness, explanations, determinism and regressions; no remaining SCORE-01 blocker."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "remediation-state-seal-preflight",
+      "status": "FAIL",
+      "tests_started": false,
+      "later_stages_run": false,
+      "attempted_input_digest": "b328687256053f25ae0b70a517d11932e954f227f998692ee3de621c617e82d0",
+      "reason": "Accepted verification/review timestamps included fractional seconds; check_state requires exact YYYY-MM-DDTHH:MM:SSZ.",
+      "attempted_verified_at_utc": "2026-09-28T21:18:41.841421Z",
+      "attempted_reviewed_at_utc": "2026-09-28T21:21:10.219497Z",
+      "resolution": "Normalize active accepted timestamps to exact second precision without weakening verifier; clear active acceptance and restart the full guarded sequence.",
+      "recorded_at_utc": "2026-09-28T21:22:14Z",
+      "test_evidence_preserved_in_prior_attempt": true
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 53,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 104,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 301,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 558,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T21:24:30Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-01/SCORE-01 fresh guarded sequence after State timestamp correction",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T21:26:50Z",
+        "reviewers": [
+          {
+            "name": "BUY_NOW_SIGNAL_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of shared typed positive-value/provenance contract, public construction/deserialization, explicit bounded expiry, contextual time/conflicts and tests. Subsequent State-only timestamp failure/history inspected; corrected source verdict remains PASS."
+          },
+          {
+            "name": "OPPORTUNITY_SCORE_EVIDENCE_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final read-only re-review of component relevance, whole-feature zeroing, offer linkage, conflicts, verified positive weighted confidence, freshness, explanations and determinism. Subsequent State-only timestamp failure/history inspected; corrected source verdict remains PASS."
+          }
+        ]
+      }
+    },
+    {
+      "status": "FAIL",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 47,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 56,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 24,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 167,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 1,
+          "blocked": [
+            "os.rmdir"
+          ],
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T22:14:24Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-02/SCORE-02 temporal sequence attempt 1",
+      "failure_class": "runner_supervisor",
+      "reason": "Selected and complete Affiliate workers reused targeted basetemp; canonical targeted first tmp_path setup removes the existing directory and the unchanged worker guard rejected os.rmdir. No temporal regression failed.",
+      "resolution": "Give every stage a distinct external temporary root; preserve guard and restart all stages from SIG-02.",
+      "later_stages_run": false
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 47,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 56,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 24,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 167,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 364,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 621,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T22:20:33Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-02/SCORE-02 preliminary PASS before independent conflict review corrections",
+      "evidence_disposition": "Historical PASS at 621 full tests, superseded by same-root cross-service ordering and cross-offer scoring-context corrections; not active accepted evidence."
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 47,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 56,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 24,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 174,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 371,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 628,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T22:33:59Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-02/SCORE-02 fresh preliminary PASS before cross-family membership review correction",
+      "evidence_disposition": "Historical PASS at 628 full tests; subsequently superseded by same-root cross-family reused-ID isolation correction. Not active accepted evidence."
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 47,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "sig2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "score2"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 56,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_sig"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 24,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "previous_score"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 176,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 373,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 630,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T22:39:32Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 0,
+      "stage": "SIG-02/SCORE-02 final fresh guarded sequence after all independent temporal corrections",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T22:42:00Z",
+        "reviewers": [
+          {
+            "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
+          },
+          {
+            "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
+          }
+        ]
+      }
+    },
+    {
+      "stage": "Affiliate Phase 0 one-pass checkpoint staged identity",
+      "status": "FAIL",
+      "recorded_at_utc": "2026-09-28T23:21:33Z",
+      "input_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
+      "exact_path_stage_succeeded": true,
+      "staged_scope_exact": true,
+      "staged_path_count": 27,
+      "failure_command": "git diff --no-ext-diff --no-textconv --no-renames --cached --check",
+      "cached_diff_check_exit": 2,
+      "identity_supervisor_exit": 1,
+      "diagnostics": [
+        "docs/AFFILIATE_PHASE_0.md:249: new blank line at EOF.",
+        "docs/AFFILIATE_VISUAL_POLICY.md:86: new blank line at EOF.",
+        "src/echo/models/affiliate_kpi.py:47: new blank line at EOF."
+      ],
+      "staged_tests_started": false,
+      "staged_full_verifier_started": false,
+      "staged_checks_only_started": false,
+      "real_repository_stage_count": 1,
+      "real_repository_commit_count": 0,
+      "real_repository_push_count": 0,
+      "later_gates_run": false,
+      "source_semantics_changed": false,
+      "resolution_authority": "External user EOF HYGIENE REMEDIATION + ONE-PASS CHECKPOINT COMPLETION GATE; only three EOF paths and necessary State evidence/history/reseal."
+    },
+    {
+      "status": "PASS",
+      "stages": [
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 176,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "affiliate"
+        },
+        {
+          "stage": "verification",
+          "exit": 0,
+          "blocked": [],
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "verification"
+        },
+        {
+          "stage": "targeted",
+          "exit": 0,
+          "blocked": [],
+          "passed": 373,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "targeted"
+        },
+        {
+          "stage": "step3",
+          "exit": 0,
+          "blocked": [],
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "step3"
+        },
+        {
+          "stage": "full",
+          "exit": 0,
+          "blocked": [],
+          "passed": 630,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "label": "full"
+        },
+        {
+          "stage": "sanity",
+          "exit": 0,
+          "blocked": [],
+          "modules": 94,
+          "cli_help_checks": 11,
+          "entrypoint": "echo.cli:main",
+          "label": "sanity"
+        }
+      ],
+      "verified_at_utc": "2026-09-28T23:24:44Z",
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "database_unchanged": true,
+      "scope": 27,
+      "staged": 27,
+      "worktree_diff_check": 0,
+      "cached_diff_check": 0,
+      "stage": "EOF hygiene fresh guarded verification before final State seal",
+      "evidence_disposition": "Measured complete preliminary workers under PENDING State; canonical staged lifecycle validation follows sealing and State-only restage. Not a pre-seal checkpoint PASS claim."
+    }
+  ],
+  "final_read_only_review_history": [
+    {
+      "subject": "Affiliate Phase 0 Foundation",
+      "reviewed_input_digest": "dea80ccc608c4ab3e80cb077edfe8a71097170c7311baa2bd08d5f4151539d90",
+      "decision": "NOT APPROVED ? REMEDIATION REQUIRED",
+      "findings": [
+        {
+          "id": "SIG-01",
+          "severity": "HIGH",
+          "blocking": true,
+          "finding": "Negative/neutral/unsupported evidence values can emit positive BuyNowSignals."
+        },
+        {
+          "id": "SCORE-01",
+          "severity": "HIGH",
+          "blocking": true,
+          "finding": "Unrelated or conflicted evidence can justify positive components and caller-supplied maximum confidence."
+        },
+        {
+          "id": "VIS-01",
+          "severity": "MEDIUM",
+          "blocking": false,
+          "finding": "Whitespace-only scene dimension changes may evade fingerprint equality; deferred."
+        }
+      ],
+      "recorded_at_utc": "2026-09-28T21:04:27.964565Z"
+    },
+    {
+      "subject": "Affiliate Phase 0 Foundation",
+      "reviewed_input_digest": "aa77b54d17261bfe2f2079984cfa512dabdefb9b30747da2b945424c33da0ade",
+      "decision": "NOT APPROVED ? REMEDIATION REQUIRED",
+      "recorded_at_utc": "2026-09-28T22:07:09Z",
+      "findings": [
+        {
+          "id": "SIG-02",
+          "severity": "HIGH",
+          "blocking": true,
+          "finding": "Public positive signal expiry can precede or equal evidence valid_from, leaving an empty applicability interval."
+        },
+        {
+          "id": "SCORE-02",
+          "severity": "HIGH",
+          "blocking": true,
+          "finding": "Different observed_at hides incompatible price values with simultaneously applicable overlapping validity windows."
+        }
+      ],
+      "independent_review": [
+        {
+          "name": "FINAL_SIG_SCORE_CLOSURE_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "NOT READY",
+          "scope": "SIG-02/SCORE-02 temporal closure gaps confirmed by static read-only source/test review."
+        },
+        {
+          "name": "FINAL_CHECKPOINT_LIFECYCLE_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Durable State/history/verifier; post-commit State edit not required. No real staging or commit performed."
+        }
+      ]
+    }
+  ],
+  "remediation_review_history": [
+    {
+      "recorded_at_utc": "2026-09-28T21:16:10.354867Z",
+      "reviewers": [
+        {
+          "name": "BUY_NOW_SIGNAL_REVIEW",
+          "status": "NOT READY",
+          "finding": "Public BuyNowSignal direct construction admitted negative/unsupported supporting evidence despite safe factory output."
+        },
+        {
+          "name": "OPPORTUNITY_SCORE_EVIDENCE_REVIEW",
+          "status": "PASS",
+          "scope": "Component relevance/linkage, conflict suppression, verified contributing confidence, explanation, determinism and tests."
+        }
+      ],
+      "resolution": "Moved the shared value/provenance contract into the domain model layer; services reuse it. Public signal construction/deserialization now requires positive eligible typed support, matching interpretation basis and bounded expiry. Added public-boundary and exact-expiry regressions; fresh verification and re-review pending."
+    },
+    {
+      "recorded_at_utc": "2026-09-28T22:29:07Z",
+      "reviewers": [
+        {
+          "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Public non-empty intervals, observed floor, ceiling, construction/validate/JSON, deterministic as_of boundaries and regression coverage."
+        },
+        {
+          "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "NOT READY",
+          "findings": [
+            {
+              "id": "SCORE-02-ordering",
+              "blocking": true,
+              "finding": "Service-separated conflict groups may tie on final sorting and follow candidate insertion order."
+            },
+            {
+              "id": "SCORE-02-inventory",
+              "blocking": true,
+              "finding": "Separate overlapping offers detected by the helper were not passed to single-candidate scoring; T12 integration coverage incomplete."
+            }
+          ]
+        }
+      ],
+      "resolution": "Tie-break conflict output with affected IDs; add optional sibling evidence_candidates context always including the target, isolate product/service, pass demo inventory, strengthen T12 and add ordering/succession/isolation regressions. Fresh sequence and re-review pending."
+    },
+    {
+      "reviewers": [
+        {
+          "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "NOT READY",
+          "closed_findings": [
+            "SCORE-02-ordering",
+            "SCORE-02-inventory"
+          ],
+          "findings": [
+            {
+              "id": "SCORE-02-family-membership",
+              "blocking": true,
+              "finding": "Cross-offer bare conflict IDs can suppress a distinct unrelated family with the same ID; record IDs are only candidate-local."
+            }
+          ]
+        }
+      ],
+      "resolution": "Preserve evidence family in conflict-to-support association, add discount/coupon sibling-ID collision regressions, keep shared canonical conflict engine. Restart full sequence from SIG-02; final independent review pending.",
+      "recorded_at_utc": "2026-09-28T22:36:27Z"
+    },
+    {
+      "recorded_at_utc": "2026-09-28T22:42:00Z",
+      "status": "PASS",
+      "reviewers": [
+        {
+          "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
+        },
+        {
+          "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
+        }
+      ],
+      "closed_findings": [
+        "SIG-02",
+        "SCORE-02",
+        "SCORE-02-ordering",
+        "SCORE-02-inventory",
+        "SCORE-02-family-membership"
+      ],
+      "resolution": "All temporal review corrections verified by a complete fresh guarded sequence; no checkpoint/Git/live approval follows."
+    },
+    {
+      "recorded_at_utc": "2026-09-28T23:21:33Z",
+      "status": "PENDING",
+      "scope": "Three EOF-only file endings and necessary Project State history/evidence/reseal",
+      "eof_changes": [
+        {
+          "path": "docs/AFFILIATE_PHASE_0.md",
+          "removed_bytes": 1,
+          "line_ending": "LF",
+          "old_sha": "ab4db337c3454c098421262f134d7c30276263918ae8b9f53d24c74ca060ac6d",
+          "new_sha": "f009ef03d9bf6d83516a891f36c0329ed54bf019f339b6ae3c4da4374316229d",
+          "eof_only": true,
+          "text_unchanged": true,
+          "prior_staged_oid": "dbf727d5f60c501967582ecf17450af5a6ed8e19"
+        },
+        {
+          "path": "docs/AFFILIATE_VISUAL_POLICY.md",
+          "removed_bytes": 1,
+          "line_ending": "LF",
+          "old_sha": "34ceac63c5e3c2b901fe7e4de1fa5e475766a7abcda1725502e807d1664800ab",
+          "new_sha": "66b3c722fe09cd48a45d50d66a41fcd9b29c36dd384e1207fef7a4cd93619e74",
+          "eof_only": true,
+          "text_unchanged": true,
+          "prior_staged_oid": "7476ea1b8495b75b7d5fdbd4d996f2350fdc7712"
+        },
+        {
+          "path": "src/echo/models/affiliate_kpi.py",
+          "removed_bytes": 1,
+          "line_ending": "LF",
+          "old_sha": "623cc60c0cc6fcf921cc5fcc7a3eb1d4a15e24ddfdcfca9c2e33be760b5076b2",
+          "new_sha": "8ce15255e2f8099ccb1b338925c9c9c808299545950430c614d275bafe89d39e",
+          "eof_only": true,
+          "text_unchanged": true,
+          "ast_equal": true,
+          "tokens_equal": true,
+          "prior_staged_oid": "852cee1f0e66b6738bea23bbb1db94691dbfe0e5"
+        }
+      ],
+      "product_semantics_changed": false,
+      "python_ast_equal": true,
+      "python_tokens_equal": true,
+      "document_policy_text_equal": true,
+      "cached_diff_check_after_three_path_restage_exit": 0,
+      "staged_scope_exact": true,
+      "staged_path_count": 27,
+      "unstaged_empty_before_state_update": true,
+      "acceptance_disposition": "Prior functional acceptance remains semantically applicable by exact EOF-only equivalence; fresh guarded evidence and State reseal are still pending.",
+      "process_observation": "Worktree git diff --check omitted the then-untracked new files; cached diff checking exposed EOF whitespace after staging. Future checkpointability claims for new files require a staged/cached whitespace check. This is an execution observation, not a new product blocker; verifier and framework unchanged."
+    },
+    {
+      "recorded_at_utc": "2026-09-28T23:26:09Z",
+      "status": "PASS",
+      "scope": "EOF hygiene and State evidence/reseal; no product review reopened",
+      "resolution": "Three extra EOF LFs removed without semantic change; explicit three-path restage passed cached whitespace check. Complete fresh guarded workers passed with actual counts. Prior functional acceptance remains applicable by semantic equivalence.",
+      "resolved_failure_stage": "Affiliate Phase 0 one-pass checkpoint staged identity",
+      "resolved_historical_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
+      "fresh_verified_at_utc": "2026-09-28T23:24:44Z",
+      "actual_test_counts": {
+        "affiliate": {
+          "passed": 176,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 373,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 630,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 630
+        }
+      },
+      "product_semantics_changed": false,
+      "python_ast_equal": true,
+      "python_tokens_equal": true,
+      "document_policy_text_equal": true,
+      "cached_diff_check_exit": 0,
+      "worktree_diff_check_exit": 0,
+      "previous_acceptance_carried_forward": true,
+      "verification_runner_unchanged": true,
+      "deferred_findings_unchanged": [
+        "VIS-01",
+        "CP-01",
+        "CP-02"
+      ]
     }
   ]
 }

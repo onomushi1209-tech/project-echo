@@ -1,7 +1,8 @@
 # Project Echo Verification Gate
 
 This is the repeatable offline checkpoint closeout, with a separate ordinary CI
-regression gate for STEP 3 + Efficiency Foundation Expansion v1.
+regression gate for STEP 3, Efficiency Foundation Expansion v1 and any approved
+offline feature candidate recorded in Project State.
 Read `../PROJECT_STATE.json` for the approved branch, checkpoint parent, exact
 checkpoint scope, evidence and handoff. Nothing here grants commit or live authority.
 
@@ -179,8 +180,8 @@ The script writes evidence only to stdout and never updates Project State itself
 | 1 | Git scope | State semantics, branch, mode-specific HEAD/parent relation and exact scope rules above pass |
 | 2 | Diff checks | Unstaged and staged `git diff --check` succeed |
 | 3 | Verifier regressions | Temporary Git lifecycle, digest, scope and worker-guard regressions pass |
-| 4 | Import and CLI sanity | Every Echo module resolves under this `src`; nine help routes and installed `echo.cli:main` mapping succeed |
-| 5 | Targeted regressions | H1/H2/H3/M1/M2/M3/M4 and verifier regressions pass |
+| 4 | Import and CLI sanity | Every Echo module resolves under this `src`; eleven help routes, including `affiliate` and `affiliate demo`, plus installed `echo.cli:main` mapping succeed |
+| 5 | Targeted regressions | H1/H2/H3/M1/M2/M3/M4, Affiliate Phase 0 contracts and verifier regressions pass |
 | 6 | STEP 3 and full pytest | All STEP 3 tests, then all repository tests pass; failed=0; report skips/warnings |
 | 7 | Hygiene | No added/changed/removed repo files, existing DB/cache/index unchanged during execution |
 | 8 | Secrets | `.env` presence only; approved/tracked text has no recognized high-confidence secret pattern; manually review diffs without disclosing secrets |

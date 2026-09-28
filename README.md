@@ -6,10 +6,10 @@ vertical-agnostic pipeline engine; each **vertical** (AI, Tech, Crypto,
 Business, Entertainment, ...) plugs into it through config and swappable
 "brains" without Core ever hard-coding vertical-specific behavior.
 
-This repository currently implements **STEP 1: Echo Foundation**,
-**STEP 2: Source & Trend Intelligence**, and **STEP 3: Research
-Intelligence**. See [Scope](#scope) below for what is intentionally not
-implemented yet.
+This repository implements **STEP 1: Echo Foundation**, **STEP 2: Source &
+Trend Intelligence**, **STEP 3: Research Intelligence**, the **Efficiency
+Foundation**, and the offline **Project Echo Zero Affiliate Phase 0**.
+Live affiliate integration and publishing remain out of scope.
 
 ## Quick start
 
@@ -24,6 +24,7 @@ as the canonical CLI invocation, for example:
 ```powershell
 python -B -m echo.cli --help
 python -B -m echo.cli research --help
+python -B -m echo.cli affiliate demo
 python -B scripts/verify.py
 ```
 
@@ -137,20 +138,31 @@ publish decision. `RealResearchBrain` coexists with STEP 1's
 [docs/RESEARCH_INTELLIGENCE.md](docs/RESEARCH_INTELLIGENCE.md) for
 details.
 
+**Affiliate Phase 0** adds an offline Rakuten-shaped item fixture, an explicit
+Rakuyoko capability boundary, evidence-backed BuyNow signals, explainable
+Opportunity Score v0, multi-item room bundles, visual/provenance contracts,
+fail-closed compliance bound to the existing Human Review Gate, and nullable
+revenue/KPI models. The demo is synthetic and does not contact a service,
+create links, read a database, generate images or publish content. See
+[docs/AFFILIATE_PHASE_0.md](docs/AFFILIATE_PHASE_0.md) and
+[docs/AFFILIATE_VISUAL_POLICY.md](docs/AFFILIATE_VISUAL_POLICY.md).
+
 ## Documentation
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- Core vs. Vertical separation, package layout, extension points
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md) -- data models and SQLite schema
 - [docs/SOURCE_INTELLIGENCE.md](docs/SOURCE_INTELLIGENCE.md) -- Source Registry, fetch/dedup/clustering/scoring, adding a new source
 - [docs/RESEARCH_INTELLIGENCE.md](docs/RESEARCH_INTELLIGENCE.md) -- claims, evidence, conflicts, confidence, research status
+- [docs/AFFILIATE_PHASE_0.md](docs/AFFILIATE_PHASE_0.md) -- offline affiliate architecture, official capability inventory, compliance and KPI contracts
+- [docs/AFFILIATE_VISUAL_POLICY.md](docs/AFFILIATE_VISUAL_POLICY.md) -- product-first lifestyle visual and carousel policy
 - [docs/DEVELOPMENT_RULES.md](docs/DEVELOPMENT_RULES.md) -- rules every contributor (human or AI) must follow
 
 ## Scope
 
-Neither STEP 1, STEP 2, nor STEP 3 implement: X posting, browser
-automation, OpenAI/Anthropic/Gemini API calls, LLM-generated content, a
-production Content brain, a dashboard, an affiliate/monetization system,
-a newsletter, "Echo Hub", automated self-learning, or running multiple
-verticals in production. See
+Neither STEP 1/2/3 nor Affiliate Phase 0 implement: X/Instagram/Threads
+posting, browser automation, external AI APIs or LLM-generated content, a
+production Content brain, a dashboard, live affiliate integration or link
+creation, a newsletter, "Echo Hub", automated self-learning, or running
+multiple verticals in production. See
 [docs/DEVELOPMENT_RULES.md](docs/DEVELOPMENT_RULES.md) for the full rule
 and rationale.

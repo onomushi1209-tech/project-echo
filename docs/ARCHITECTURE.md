@@ -63,7 +63,7 @@ src/echo/
   review/       Human Review Gate service (APPROVE/REJECT/EDIT/SKIP).
   performance/  Reserved for a future step (post-performance ingestion).
   audience/     Reserved for a future step.
-  monetization/ Reserved for a future step.
+  monetization/ Offline Affiliate Phase 0 adapters and deterministic logic.
   memory/       Reserved for a future step (long-term learning).
   verticals/    Vertical registry + per-vertical fixtures (e.g. ai/).
   models/       Pydantic data models shared by every package above.
@@ -71,7 +71,7 @@ src/echo/
   config/       Env-based settings (echo.config.settings).
   cli.py        Typer CLI: `echo init` / `echo demo` / `echo review` /
                 `echo sources` / `echo ingest` / `echo trends` /
-                `echo research`.
+                `echo research` / `echo affiliate demo`.
 
 tests/          pytest suite (fully offline -- no network access).
 scripts/        Standalone scripts not run by pytest, e.g.
@@ -79,6 +79,7 @@ scripts/        Standalone scripts not run by pytest, e.g.
 data/           SQLite database file lives here (gitignored).
 config/verticals/  Vertical YAML configs (e.g. ai.yaml).
 config/sources/    Source Registry YAML configs (e.g. ai.yaml), STEP 2.
+config/affiliate_phase0.yaml  Offline Affiliate score, freshness and visual policy.
 docs/           This documentation.
 ```
 
@@ -170,6 +171,33 @@ architectural terms, the only things that changed:
   `ConflictRecord` / `SourceAssessment` are new, separate models. A
   packet built the STEP 1 way still validates and persists unchanged.
 
+## Project Echo Zero Affiliate Phase 0
+
+Affiliate Phase 0 stays outside STEP 1/2 stage services. Source-neutral
+candidate, offer, typed evidence, item-level destination, ProductSet,
+visual-provenance, proposal and KPI contracts live under `echo.models`;
+offline provider fixtures and deterministic score/signal/compliance helpers
+live in `echo.monetization`. The Rakuten fixture shape follows the official
+Item Search API field contract, but no request or affiliate URL generation is
+implemented. The Rakuyoko adapter reports documented customer-facing facts
+and keeps undocumented external product/search/link workflows
+`UNKNOWN / UNVERIFIED`.
+
+Each ProductSet item keeps an independent product ID, price evidence,
+destination and fixed product asset. A shared scene does not imply a bundle
+link. The score is a config-weighted explanation over explicitly supplied,
+evidence-backed component assessments; missing or stale support contributes
+zero. Destination status is backed by fresh typed evidence for the exact URL,
+service and provider item; the fixture adapter cannot create verified links.
+Compliance checks X disclosure, deterministic claim/evidence matching, price
+and destination freshness, conflicts, product-first category-matched scene
+diversity, visual rights/appearance, duplicate content and approval. Human
+Approval binds the current proposal/evidence digest to the existing
+`ReviewDecision`, so a later change invalidates it. No second approval queue,
+DB table, migration or publisher is added, and `can_publish` always returns
+false. See [AFFILIATE_PHASE_0.md](AFFILIATE_PHASE_0.md) and
+[AFFILIATE_VISUAL_POLICY.md](AFFILIATE_VISUAL_POLICY.md).
+
 ## Traceability
 
 `echo.core.trace` generates IDs of the form
@@ -215,6 +243,7 @@ issues raw SQL. See [DATA_MODEL.md](DATA_MODEL.md) for the schema itself.
   summary) for an LLM-based implementation later without changing its
   call signature or any caller -- see docs/RESEARCH_INTELLIGENCE.md
   "LLM-free design".
-- Implement `echo.performance`, `echo.audience`, `echo.monetization`, and
-  `echo.memory` once their steps are scoped; the models and storage tables
-  they'll write to already exist (`PublishedPost`, `PerformanceSnapshot`).
+- Extend affiliate adapters/persistence only after a separately scoped phase;
+  this foundation does not create live links, post, or collect attribution.
+- Implement `echo.performance`, `echo.audience` and `echo.memory` once their
+  steps are scoped; existing STEP 1 models/tables remain unchanged.

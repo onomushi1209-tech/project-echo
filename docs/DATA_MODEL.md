@@ -324,3 +324,54 @@ generations of additive changes exist so far:
 
 A database created by an older version of this schema upgrades in place
 the next time `echo init` runs against it, in every case.
+
+## Affiliate Phase 0 models (offline; not persisted)
+
+These immutable Pydantic records are not SQLite rows, and Affiliate Phase 0
+does not add or migrate any table. Their contracts are detailed in
+[AFFILIATE_PHASE_0.md](AFFILIATE_PHASE_0.md).
+
+| Model | Purpose |
+|---|---|
+| `ProductCandidate`, `AffiliateOffer`, `AffiliateDestination` | Service-neutral item identity, commercial facts, and separate product/affiliate destinations per item; verified destinations require matching, fresh item-bound URL evidence |
+| `ProductEvidence`, `ProductEvidenceConflict` | One typed value with source, field, status, observation/validity times; destination evidence binds service, provider item and exact URL; contradictions remain explicit |
+| `BuyNowSignal`, `ScoreFeature`, `AffiliateOpportunityScore` | Evidence-linked signals with source status and no live-action authority; deterministic eight-component weighted score explanation |
+| `ProductSet`, `ProductSetItem` | Shared theme/scene and ordered product IDs, while every item's offer and destination stay separate |
+| `VisualAsset`, `LifestyleScene`, `CarouselPlan`, `SocialProposal` | Fixed product/context asset provenance, scene design, item labels, and canonical content plus platform variants |
+| `HumanApproval`, `ComplianceReport` | Digest-bound view of an existing `ReviewDecision`, with fail-closed checks and no publish authority |
+| `AffiliateKPIObservation`, `AffiliateKPIMetrics` | Nullable attribution observations and derived CTR/CVR/EPC/revenue-per-1,000/profit |
+
+Fixture evidence is marked `fixture`, distinct from verified source evidence;
+fixture signals cannot authorize an action and conflicted evidence is suppressed.
+Missing fields stay null; no data is inferred from a missing price, review,
+promotion or attribution value. Sale-end evidence requires an explicit deadline.
+
+Affiliate applicability uses inclusive starts and exclusive ends. A positive
+signal's expiry exceeds its evidence's `valid_from` (or `observed_at` when no
+start is declared), also exceeds observation, and stays at or below any explicit
+evidence end. Public construction and deserialization reject empty intervals;
+evaluation-time freshness and activity remain deterministic `as_of` checks.
+The shared conflict layer groups product/service/family independently of record
+observation time, compares normalized typed values over overlapping windows,
+and preserves non-overlapping succession. Signals/scoring bound current support
+with their freshness policy, so historical/future conflicts do not permanently
+poison current evidence. A conflict's observation field is a deterministic
+affected-record anchor, while original records retain their individual times.
+Scoring accepts known sibling offers through `evidence_candidates`, always
+includes the scored candidate, and isolates conflicts to the same product/service.
+The offline demo supplies its full inventory; undisclosed records cannot be
+inferred by a single-candidate evaluation. Conflict IDs also break ordering ties
+between service-separated groups.
+Conflict membership retains evidence family as well as ID when scoring across
+offers; an unrelated family's reused ID cannot invalidate the cited fact.
+
+`BuyNowSignal` retains its complete supporting `ProductEvidence`, a normalized
+positive interpretation and its basis. Evidence-kind-specific typed contracts
+prevent negative, neutral or arbitrary text from becoming positive signals.
+`ScoreContribution` includes evidence types and a validation/derivation basis.
+Six score assessments require component-relevant, current, non-conflicted
+support; an invalid citation zeroes the whole feature. Confidence derives only
+from verified evidence actually supporting positive weighted factual components,
+and freshness derives from contributing non-identity evidence. Caller-provided
+confidence/freshness values cannot override these formulas. See the Phase 0
+contract for the explicit mappings and formulas; no persistence change is added.
