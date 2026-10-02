@@ -17,13 +17,14 @@ from echo.models.affiliate_visual import (
     ProductVisualLabel, SlideKind,
     RightsStatus, SocialPlatform, SocialProposal, VisualAsset, VisualAssetKind,
 )
-from echo.models.discovery import DiscoveryPage, DiscoveryQuery, DiscoverySource, ProviderObservation
+from echo.models.discovery import DiscoveryIdentityMismatch, DiscoveryPage, DiscoveryQuery, DiscoverySource, HydrationReport, ProviderObservation
 from echo.monetization.compliance import evaluate_compliance
 from echo.monetization.config import AffiliatePhase0Config, DiscoveryPolicy, load_phase0_config, load_discovery_policy
 from echo.monetization.evidence import evidence_is_current, find_conflicting_evidence, interpret_evidence_value
 from echo.monetization.scoring import rank_candidates, score_candidate
 from echo.monetization.signals import derive_buy_now_signals
 from echo.monetization.visuals import build_carousel_plan
+from echo.monetization.hydration import hydrate_ranked
 
 
 class DiscoveryProvider(Protocol):
@@ -44,6 +45,8 @@ class DiscoveryResult:
     bundle_notes: tuple[str, ...]
     human_approval_required: bool = True
     can_publish: bool = False
+    hydration: HydrationReport = field(default_factory=HydrationReport)
+    logical_requests: int = 0
 
 
 def _merge(observations: tuple[ProviderObservation, ...], *, as_of: datetime,
@@ -201,14 +204,36 @@ def discover_products(provider: DiscoveryProvider, queries: tuple[DiscoveryQuery
         raise ValueError("bounded product queries and an aware evaluation time are required")
     from collections import defaultdict
     observations = []
+    pages = {}
+    attempted = set()
+    mismatches = set()
+    def fetch(query):
+        key = query.model_dump_json(exclude={"category", "lifestyle_context", "complementary_role"})
+        if key in mismatches:
+            raise DiscoveryIdentityMismatch("hydration_identity_mismatch")
+        if key not in pages:
+            if len(attempted) >= policy.runtime_request_budget:
+                raise ValueError("discovery_request_budget_exhausted")
+            attempted.add(key)  # Failed/mismatched acquisitions consume budget too.
+            try:
+                pages[key] = provider.discover(query, observed_at=as_of)
+            except DiscoveryIdentityMismatch:
+                mismatches.add(key)
+                raise
+        # Acquisition is shared; caller category/context/role associations are not.
+        return pages[key].model_copy(update={"observations":tuple(
+            o.model_copy(update={"query":query, "candidate":o.candidate.model_copy(update={"category":query.category})})
+            for o in pages[key].observations)})
     for query in queries:
         maximum = 34 if query.source == DiscoverySource.RANKING else 100
         for page in range(query.page, min(maximum + 1, query.page + policy.pages_per_query)):
             current = DiscoveryQuery.model_validate({**query.model_dump(), "page": page})
-            result = provider.discover(current, observed_at=as_of)
+            result = fetch(current)
             observations.extend(result.observations)
             if result.not_found or not result.observations or result.total_pages is not None and page >= result.total_pages:
                 break
+    extra, hydration = hydrate_ranked(tuple(observations), fetch, as_of=as_of, policy=policy, config=config)
+    observations.extend(extra)
     observations = tuple(sorted(observations, key=lambda o: (o.candidate.product_id, o.candidate.offer.offer_id, o.query.model_dump_json())))
     max_age = timedelta(hours=config.scoring_max_evidence_age_hours)
     candidates = tuple(_assess(c, policy, as_of=as_of, max_age=max_age) for c in _merge(observations,
@@ -264,4 +289,5 @@ def discover_products(provider: DiscoveryProvider, queries: tuple[DiscoveryQuery
         if bundle is None:
             bundle_notes.append("bundle_requires_explicit_shared_context_complementary_roles_verified_individual_evidence_and_destinations")
     return DiscoveryResult(observations, candidates, scores, selected, signals, exclusions,
-                           tuple(proposals), tuple(reports), bundle, tuple(bundle_notes))
+                           tuple(proposals), tuple(reports), bundle, tuple(bundle_notes),
+                           hydration=hydration, logical_requests=len(attempted))

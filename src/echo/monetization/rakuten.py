@@ -21,7 +21,7 @@ from echo.models.affiliate import (
     EvidenceType, PriceQuote, ProductCandidate, ProductEvidence,
 )
 from echo.models.discovery import (
-    DiscoveryPage, DiscoveryQuery, DiscoverySource, GenreNode, GenreResult,
+    DiscoveryIdentityMismatch, DiscoveryPage, DiscoveryQuery, DiscoverySource, GenreNode, GenreResult,
     ProviderObservation, SourceAssetReference,
 )
 from echo.monetization.config import DiscoveryPolicy
@@ -136,7 +136,8 @@ class RakutenDiscoveryProvider:
                        authorized=lambda: live_readonly is True and env.get(LIVE_FLAG) == "1",
                        timeout=policy.timeout_seconds, max_bytes=policy.max_response_bytes,
                        max_attempts=policy.max_attempts, backoff_seconds=policy.backoff_seconds,
-                       max_requests=policy.max_queries * policy.pages_per_query)
+                       max_requests=policy.runtime_request_budget,
+                       minimum_interval=policy.request_interval_seconds)
         if sender is not None:
             options["sender"] = sender
         if sleeper is not None:
@@ -163,7 +164,8 @@ class RakutenDiscoveryProvider:
             source = next(key for key, endpoint in ENDPOINTS.items() if endpoint == request.endpoint)
             params = dict(request.parameters)
             key = source.value + ":" + params.get("page", "1")
-            value = fixtures.get(key + ":" + params.get("keyword", ""), fixtures.get(key))
+            selector = params.get("itemCode") or params.get("keyword", "")
+            value = fixtures.get(key + ":" + selector, fixtures.get(key) if "itemCode" not in params else None)
             if value is None:
                 return HttpResponse(404, b"")
             return HttpResponse(200, json.dumps(value, default=str).encode("utf-8"))
@@ -232,6 +234,8 @@ class RakutenDiscoveryProvider:
             rows = body.get("items", body.get("Items"))
             if not isinstance(rows, list) or len(rows) > 30:
                 raise ValueError()
+            if query.provider_item_id is not None and any(not isinstance(row, dict) or row.get("itemCode") != query.provider_item_id for row in rows):
+                raise DiscoveryIdentityMismatch("hydration_identity_mismatch")
             page = body.get("page", query.page)
             if type(page) is not int or page != query.page:
                 raise ValueError()
@@ -243,6 +247,8 @@ class RakutenDiscoveryProvider:
                 raise ValueError()
             observations = tuple(self._normalize(row, query, observed_at, body.get("lastBuildDate")) for row in rows)
             return DiscoveryPage(observations=observations, page=page, total_pages=page_count, total_items=count)
+        except DiscoveryIdentityMismatch:
+            raise
         except Exception:
             raise TransportError("malformed_response") from None
 
@@ -258,6 +264,9 @@ class RakutenDiscoveryProvider:
         prefix = f"{product_id}:{observation_id}"
         status = EvidenceStatus.FIXTURE if self.fixture else EvidenceStatus.VERIFIED
         updated = _aware_time(updated_raw) if isinstance(updated_raw, str) else None
+        # lastBuildDate anchors conservative Ranking snapshot applicability only.
+        # It is never a per-item merchant modification timestamp. Search observations
+        # are fresh observations of the returned values, not merchant update times.
         evidence_time = min(observed_at, updated) if updated is not None else observed_at
         source_ref = ENDPOINTS[query.source]  # No credential-bearing request URL in provenance.
         evidence = []; notes = []; raw_timing = []
@@ -346,4 +355,5 @@ class RakutenDiscoveryProvider:
             source_url=source_url, returned_affiliate_url=affiliate_url if self.credentials._affiliate_id else None,
             assets=tuple(assets), shop_name=row.get("shopName"), shop_code=row.get("shopCode"),
             genre_id=str(row["genreId"]) if row.get("genreId") is not None else None,
-            source_updated_at_raw=updated_raw, raw_timing=tuple(raw_timing), normalization_notes=tuple(notes))
+            source_updated_at_raw=updated_raw, ranking_snapshot_at=updated,
+            raw_timing=tuple(raw_timing), normalization_notes=tuple(notes))

@@ -51,6 +51,7 @@ TARGETED = [
     "tests/test_architecture.py", "tests/test_verification.py",
     "tests/test_affiliate_foundation.py",
     "tests/test_affiliate_discovery.py",
+    "tests/test_ranked_hydration.py",
 ]
 SECRET_PATTERNS = [
     re.compile(r"AKIA[0-9A-Z]{16}"),

@@ -10,3 +10,8 @@ review_count_target: 100
 affiliate_percent_target: "10"
 observed_price_assessment: "0.50"
 contextual_identity_assessment: "0.50"
+ranking_hydration_enabled: true
+ranking_hydration_top_k: 5
+max_hydration_requests: 5
+runtime_request_budget: 8
+request_interval_seconds: 1

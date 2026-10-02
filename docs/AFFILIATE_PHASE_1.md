@@ -1,10 +1,13 @@
 # Project Echo Zero: Affiliate Phase 1 Discovery Foundation
 
-This candidate is based on the accepted Phase 0 commit
-`9faec201c0285bdb9307993b0bac9460f51131de`. It implements discovery and future
-live-readonly boundaries. Implementation and synthetic tests authorize no live
+The original Phase 1 Foundation was based on the accepted Phase 0 commit
+`9faec201c0285bdb9307993b0bac9460f51131de`. The Phase 1.1 ranked hydration checkpoint
+is based on the accepted Phase 1 commit `42a344ae68e67b890f35ec9167a0f53850c33326`.
+It implements discovery and guarded live-readonly boundaries. Implementation and synthetic tests authorize no live
 requests, credential provisioning, image runtime, publishing or Git mutation.
-Project State records the exact candidate, measured results and handoff.
+Project State records the exact checkpoint, measured results and handoff,
+including the separately authorized bounded live observation. It supplies no
+continuing live authority.
 
 ## Official contract reviewed on 2026-09-29
 
@@ -113,6 +116,56 @@ only. No downloads, image generation, likeness/people or imitation is performed.
 Compliance reuses PR disclosure, exact price/destination/claim and scene history
 checks. Without verified rights and recent-scene history it fails closed.
 Human Approval remains required and `can_publish=false`. Nothing is posted.
+
+## Ranked candidate hydration (Phase 1.1)
+
+Official contracts were rechecked on 2026-10-03. Ranking `lastBuildDate` is the
+overall ranking's time of last update, not a per-item merchant modification time.
+Its parsed value is retained as `ranking_snapshot_at`; the raw string and each
+source observation remain available. Ranking values keep their conservative
+snapshot applicability anchor. An old snapshot cannot satisfy a current offer
+merely because the HTTP response was retrieved now.
+
+The official Item Search contract supports exact `itemCode` lookup. With hydration
+enabled, discovery preselects at most five ranked products lacking eligible
+current price/availability, ordered by eligible rank then stable service/item
+identity. A suitable current Search observation in the same execution avoids
+redundant hydration. Each selected item gets one exact lookup, including unavailable
+products so a negative availability response remains visible. A different returned
+itemCode or multiple records are rejected. Empty/not-found results and incomplete
+offers have fixed outcomes; no replacement loop seeks a sixth product. Malformed
+responses and transport failures abort acquisition.
+
+Search `observed_at` records when Project Echo observed the returned values, not
+when a merchant changed them. Hydrated observations retain their own evidence IDs;
+Ranking rank and historical fields are not replaced. The existing field-wise merge,
+typed evidence windows and conflict predicates decide applicability. Different
+prices with overlapping eligible windows still conflict; only declared expiry or
+the existing freshness policy can make an older fact historical. There is no
+latest-value or provider-name exception to canonical conflict detection.
+
+Configuration bounds hydration top K and requests to five and all discovery
+logical requests to eight. Duplicate intents are memoized within the execution.
+Acquisition is sequential; the live transport spaces wire attempts by at least
+one second, including internal retries. No pagination is added by hydration.
+Generic explicit discovery page settings remain bounded by the total request cap.
+
+Score v0, minimum score .50, weights, confidence, freshness, exact-price and
+availability gates are unchanged. Negative/missing hydrated fields do not become
+positive support. Human Approval and unknown image rights remain fail-closed;
+no product history, persistence, publishing or image rendering is introduced.
+
+The synthetic fixture demonstrates an old Ranking offer plus a current exact
+Search response, earning a qualifying score from unchanged legitimate components:
+
+```powershell
+python -B -m echo.cli affiliate discover --source ranking --fixture tests/fixtures/affiliate/ranked_hydration.json
+```
+
+Ordinary CLI mode remains offline. Live use still requires separate explicit
+authority and the process-local live flag. The Phase 1.1 implementation/live gate
+may checkpoint only after at least one real candidate qualifies; a zero-yield
+runtime stops before staging. VIS-01, CP-01 and CP-02 remain deferred.
 
 ## Offline use and deferred runtime
 

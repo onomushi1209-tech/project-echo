@@ -17,6 +17,23 @@ class DiscoverySource(str, Enum):
     GENRES = "genres"
 
 
+class DiscoveryIdentityMismatch(RuntimeError):
+    """Fixed, source-neutral diagnostic; never includes the returned identity."""
+
+
+class HydrationOutcome(AffiliateModel):
+    provider_item_id: str = Field(repr=False)
+    status: Literal["success", "not_found", "identity_mismatch", "out_of_stock", "missing_exact_price", "availability_unknown"]
+    affiliate_destination_present: bool = False
+
+
+class HydrationReport(AffiliateModel):
+    selected_count: int = Field(default=0, ge=0, le=5)
+    requests: int = Field(default=0, ge=0, le=5)
+    skipped_current_search: int = Field(default=0, ge=0)
+    outcomes: tuple[HydrationOutcome, ...] = ()
+
+
 class DiscoveryQuery(AffiliateModel):
     source: DiscoverySource = DiscoverySource.SEARCH
     keyword: str | None = Field(default=None, min_length=1, max_length=128)
@@ -80,6 +97,7 @@ class ProviderObservation(AffiliateModel):
     shop_code: str | None = None
     genre_id: str | None = None
     source_updated_at_raw: str | None = None
+    ranking_snapshot_at: datetime | None = None
     raw_timing: tuple[tuple[str, str], ...] = ()
     normalization_notes: tuple[str, ...] = ()
 

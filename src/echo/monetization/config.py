@@ -98,6 +98,17 @@ class DiscoveryPolicy(StrictConfig):
     affiliate_percent_target: Decimal = Field(default=Decimal("10"), gt=0, le=100)
     observed_price_assessment: Decimal = Field(default=Decimal("0.50"), ge=0, le=1)
     contextual_identity_assessment: Decimal = Field(default=Decimal("0.50"), ge=0, le=1)
+    ranking_hydration_enabled: bool = Field(default=True, strict=True)
+    ranking_hydration_top_k: int = Field(default=5, strict=True, ge=1, le=5)
+    max_hydration_requests: int = Field(default=5, strict=True, ge=1, le=5)
+    runtime_request_budget: int = Field(default=8, strict=True, ge=1, le=8)
+    request_interval_seconds: float = Field(default=1, ge=1, le=5, allow_inf_nan=False)
+
+    @model_validator(mode="after")
+    def _hydration_bounds(self) -> Self:
+        if self.ranking_hydration_top_k > self.max_hydration_requests or self.max_hydration_requests > self.runtime_request_budget:
+            raise ValueError("hydration preselection and request budgets must be bounded")
+        return self
 
 
 def load_discovery_policy(path: Path | None = None) -> DiscoveryPolicy:

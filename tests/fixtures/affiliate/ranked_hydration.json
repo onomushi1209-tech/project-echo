@@ -1,0 +1,15 @@
+{
+  "ranking:1": {
+    "page": 1,
+    "lastBuildDate": "2026-09-26T12:00:00+00:00",
+    "items": [
+      {"itemCode":"echo-hydration:lamp","itemName":"読書灯","rank":1,"itemPrice":4500,"availability":1,"reviewCount":180,"reviewAverage":4.8,"affiliateRate":10,"genreId":"990001","itemUrl":"https://shop.invalid/hydrated-lamp","affiliateUrl":"https://affiliate.invalid/hydrated-lamp","mediumImageUrls":[{"imageUrl":"https://assets.invalid/hydrated-lamp.jpg"}]}
+    ]
+  },
+  "search:1:echo-hydration:lamp": {
+    "page": 1, "pageCount": 1, "count": 1,
+    "items": [
+      {"itemCode":"echo-hydration:lamp","itemName":"読書灯","itemPrice":4500,"availability":1,"reviewCount":180,"reviewAverage":4.8,"affiliateRate":10,"genreId":"990001","itemUrl":"https://shop.invalid/hydrated-lamp","affiliateUrl":"https://affiliate.invalid/hydrated-lamp","mediumImageUrls":[{"imageUrl":"https://assets.invalid/hydrated-lamp.jpg"}]}
+    ]
+  }
+}

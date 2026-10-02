@@ -158,11 +158,19 @@ The default command uses synthetic fixtures:
 echo affiliate discover --keyword 照明 --top 5
 echo affiliate discover --source ranking --genre-id 990001
 echo affiliate discover --source genres --genre-id 0
+python -B -m echo.cli affiliate discover --source ranking --fixture tests/fixtures/affiliate/ranked_hydration.json
 ```
+
+Ranked candidate hydration uses exact Item Search `itemCode` lookups for bounded
+Ranking candidates lacking current offers. It preserves rank and independent
+commercial evidence, caps hydration at five and logical requests at eight, and
+retains the .50 quality threshold. The example above is synthetic/offline;
+rights and Human Approval still block publication. See `docs/AFFILIATE_PHASE_1.md`.
 
 Results and visual plans require Human Approval. No image generation, downloads
 or posting occur. Live-readonly execution requires separate authorization and
-the documented double guard; it has not been executed in this implementation.
+the documented double guard. Project State records one separately authorized,
+bounded readonly validation; that observation grants no continuing live authority.
 See [docs/AFFILIATE_PHASE_1.md](docs/AFFILIATE_PHASE_1.md).
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- Core vs. Vertical separation, package layout, extension points

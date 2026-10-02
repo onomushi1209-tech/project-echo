@@ -95,12 +95,14 @@ class ReadOnlyHttpTransport:
                  sleeper: Callable[[float], None] = time.sleep,
                  timeout: float = 10, max_bytes: int = 1048576,
                  max_attempts: int = 3, backoff_seconds: float = 0.25,
-                 max_requests: int = 20):
+                 max_requests: int = 20, minimum_interval: float = 0,
+                 clock: Callable[[], float] = time.monotonic):
         if (not allowed_endpoints or not math.isfinite(timeout) or not 0 < timeout <= 30
                 or type(max_bytes) is not int or not 1 <= max_bytes <= 2097152
                 or type(max_attempts) is not int or not 1 <= max_attempts <= 3
                 or not math.isfinite(backoff_seconds) or not 0 <= backoff_seconds <= 2
-                or type(max_requests) is not int or not 1 <= max_requests <= 50):
+                or type(max_requests) is not int or not 1 <= max_requests <= 50
+                or not math.isfinite(minimum_interval) or not 0 <= minimum_interval <= 5):
             raise TransportError("invalid_transport_policy")
         for endpoint in allowed_endpoints:
             self._https_endpoint(endpoint)
@@ -109,6 +111,8 @@ class ReadOnlyHttpTransport:
         self.timeout, self.max_bytes = timeout, max_bytes
         self.max_attempts, self.backoff_seconds = max_attempts, backoff_seconds
         self.max_requests = max_requests
+        self.minimum_interval, self.clock = minimum_interval, clock
+        self._last_attempt_at: float | None = None
         self._cache: dict[HttpRequest, dict | TransportError] = {}
 
     @staticmethod
@@ -147,6 +151,15 @@ class ReadOnlyHttpTransport:
             if not self._authorized():
                 raise TransportError("live_readonly_not_authorized", attempts=attempt - 1)
             try:
+                # Sequential pacing includes retries; cache hits make no wire attempt.
+                now = self.clock()
+                if self._last_attempt_at is not None:
+                    delay = max(0, self._last_attempt_at + self.minimum_interval - now)
+                    if delay:
+                        self.sleeper(delay)
+                self._last_attempt_at = self.clock()
+                if not self._authorized():
+                    raise TransportError("live_readonly_not_authorized")
                 response = self.sender(request, self.timeout, self.max_bytes)
                 if type(response.status) is not int or not isinstance(response.body, bytes):
                     raise TransportError("malformed_response")

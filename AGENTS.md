@@ -7,15 +7,17 @@ working-tree scope against state before editing. Preserve existing user work.
 
 ## Phase and authority
 
-- Accepted baseline: Affiliate Phase 0, STEP 1/2/3 and the Efficiency Foundation
-  at `9faec201c0285bdb9307993b0bac9460f51131de`. The current candidate is Affiliate
-  Phase 1 Rakuten Discovery Foundation, offline and unstaged on that parent.
+- Accepted baseline: Affiliate Phase 1 Rakuten Discovery Foundation, Affiliate
+  Phase 0, STEP 1/2/3 and the Efficiency Foundation at
+  `42a344ae68e67b890f35ec9167a0f53850c33326`. The checkpoint subject is Affiliate
+  Phase 1.1 Ranked Candidate Hydration on that parent. Project State records the
+  completed bounded readonly validation; it grants no continuing runtime authority.
 - No authority for STEP 4, live affiliate integration, account/API access,
   affiliate-link creation, social posting, live execution, Scheduler, plugins,
   installs or OS/global configuration. A PASS never grants any of these.
 - Default to offline work. Never inspect or print secret values, create
   credentials, or read a real `.env` during verification. Presence checks only.
-- Phase 1's future live-readonly factory requires explicit intent plus
+- Phase 1's live-readonly factory requires explicit intent plus
   `ECHO_RAKUTEN_LIVE_READONLY=1` before environment-only credential lookup.
   Implementing this guard grants no authority to supply credentials or call APIs.
   Rakuyoko has no authorized automated integration; image URLs are references,

@@ -99,6 +99,7 @@ def affiliate_discover(
         raise typer.Exit(2) from None
     typer.echo("Project Echo Zero discovery — " + ("live-readonly" if live_readonly else "offline fixtures"))
     typer.echo(f"Candidates={len(result.candidates)}; selected={len(result.selected)}; visual proposals={len(result.proposals)}")
+    typer.echo(f"Hydration requests={result.hydration.requests}; logical requests={result.logical_requests}")
     score_by_id = {s.product_id: s for s in result.scores}
     for rank, candidate in enumerate(result.selected, 1):
         # No raw names, URLs, bodies, credentials or provider exception text in diagnostics.
