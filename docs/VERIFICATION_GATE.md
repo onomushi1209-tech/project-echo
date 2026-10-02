@@ -268,6 +268,16 @@ Before commit eligibility, the reviewer must also examine new-file contents:
 normal `git diff --stat` / `--check` do not include untracked files. The verifier's
 scope and input digest include them, but do not replace content review.
 
+For the Phase 1 candidate, selected transport/adapter/pipeline tests precede the
+complete Affiliate suite, architecture/verifier tests, canonical targeted tests,
+STEP 3, full pytest and import/CLI sanity. Tests use synthetic injected senders;
+zero real provider calls or real credential reads are permitted. Sanity includes
+`affiliate discover --help` (12 CLI help routes). Directly inspect every new
+file for trailing whitespace and exactly one final LF before sealing. Do not
+stage to make an untracked file appear in `git diff --check`. Preserve prior
+attempts, complete two authorized read-only reviews, then freeze State and run
+the ordinary full worktree verifier and checks-only verifier in that order.
+
 ## Efficiency Foundation inventory
 
 | Component | State | Rationale |

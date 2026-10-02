@@ -11,6 +11,7 @@ from pydantic import ConfigDict, Field, BaseModel, model_validator
 from echo.models.affiliate import BUY_NOW_EVIDENCE_TYPES, EvidenceType, OpportunityScoreConfig
 from echo.models.affiliate_visual import VisualPolicy
 from echo.models.affiliate_visual import SocialPlatform
+from decimal import Decimal
 
 
 SIGNAL_EVIDENCE_TYPES = BUY_NOW_EVIDENCE_TYPES
@@ -82,3 +83,26 @@ def load_phase0_config(path: Path | None = None) -> AffiliatePhase0Config:
     if set(loaded) != {"score", "scoring_max_evidence_age_hours", "buy_now", "compliance", "visual"}:
         raise ValueError("Affiliate Phase 0 config has missing or unexpected top-level sections")
     return AffiliatePhase0Config.model_validate(loaded)
+
+
+class DiscoveryPolicy(StrictConfig):
+    top_n: int = Field(default=5, strict=True, ge=1, le=20)
+    minimum_score: Decimal = Field(default=Decimal("0.50"), ge=0, le=1)
+    pages_per_query: int = Field(default=1, strict=True, ge=1, le=5)
+    max_queries: int = Field(default=5, strict=True, ge=1, le=10)
+    timeout_seconds: float = Field(default=10, gt=0, le=30, allow_inf_nan=False)
+    max_response_bytes: int = Field(default=1048576, strict=True, ge=1, le=2097152)
+    max_attempts: int = Field(default=3, strict=True, ge=1, le=3)
+    backoff_seconds: float = Field(default=0.25, ge=0, le=2, allow_inf_nan=False)
+    review_count_target: int = Field(default=100, strict=True, ge=1)
+    affiliate_percent_target: Decimal = Field(default=Decimal("10"), gt=0, le=100)
+    observed_price_assessment: Decimal = Field(default=Decimal("0.50"), ge=0, le=1)
+    contextual_identity_assessment: Decimal = Field(default=Decimal("0.50"), ge=0, le=1)
+
+
+def load_discovery_policy(path: Path | None = None) -> DiscoveryPolicy:
+    config_path = path or Path(__file__).resolve().parents[3] / "config" / "affiliate_phase1.yaml"
+    loaded = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    if not isinstance(loaded, dict):
+        raise ValueError("discovery policy must be a YAML mapping")
+    return DiscoveryPolicy.model_validate(loaded)

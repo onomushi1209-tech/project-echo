@@ -1,0 +1,12 @@
+top_n: 5
+minimum_score: "0.50"
+pages_per_query: 1
+max_queries: 5
+timeout_seconds: 10
+max_response_bytes: 1048576
+max_attempts: 3
+backoff_seconds: 0.25
+review_count_target: 100
+affiliate_percent_target: "10"
+observed_price_assessment: "0.50"
+contextual_identity_assessment: "0.50"

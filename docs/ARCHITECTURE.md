@@ -2,6 +2,15 @@
 
 ## Core vs. Vertical
 
+Affiliate Phase 1 keeps source-neutral intents/observations in `models.discovery`
+and the provider Protocol/pipeline in `monetization.discovery`. The Rakuten
+implementation is `monetization.rakuten`; injectable HTTPS GET/JSON transport
+lives in `monetization.transport`. CLI composes them. Neither Core, stage
+services nor research import these adapters. Credentials stay outside model,
+config, provenance and console serialization. Phase 1 uses existing Phase 0
+signals, score v0, compliance, visual models and Human Review; it adds no SQL.
+See [AFFILIATE_PHASE_1.md](AFFILIATE_PHASE_1.md) for the exact official contract.
+
 Project Echo's central design constraint: **Echo Core knows nothing about
 any specific vertical.** A vertical (AI, Tech, Crypto, Business,
 Entertainment, ...) is defined entirely by:

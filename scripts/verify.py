@@ -50,6 +50,7 @@ TARGETED = [
     "tests/test_research_extraction.py", "tests/test_research_source_selection.py",
     "tests/test_architecture.py", "tests/test_verification.py",
     "tests/test_affiliate_foundation.py",
+    "tests/test_affiliate_discovery.py",
 ]
 SECRET_PATTERNS = [
     re.compile(r"AKIA[0-9A-Z]{16}"),
@@ -490,7 +491,7 @@ def sanity() -> dict:
     from echo.cli import app
     commands = [[], ["research"], ["research", "run"], ["research", "show"], ["research", "claims"],
                 ["research", "conflicts"], ["sources"], ["trends"], ["review"],
-                ["affiliate"], ["affiliate", "demo"]]
+                ["affiliate"], ["affiliate", "demo"], ["affiliate", "discover"]]
     for command in commands:
         result = CliRunner().invoke(app, [*command, "--help"])
         if result.exit_code or result.exception:

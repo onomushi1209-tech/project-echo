@@ -1,0 +1,23 @@
+{
+  "search:1": {
+    "page": 1, "pageCount": 2, "count": 6,
+    "items": [
+      {"itemCode":"echo-fixture:lamp","itemName":"読書灯","itemPrice":4500,"availability":1,"reviewCount":180,"reviewAverage":4.8,"affiliateRate":10,"pointRate":5,"shopName":"Synthetic Shop","shopCode":"echo-fixture","genreId":"990001","itemUrl":"https://shop.invalid/lamp","affiliateUrl":"https://affiliate.invalid/lamp","mediumImageUrls":[{"imageUrl":"https://assets.invalid/lamp.jpg"}]},
+      {"itemCode":"echo-fixture:rug","itemName":"小型ラグ","itemPrice":6000,"availability":1,"reviewCount":150,"reviewAverage":4.6,"affiliateRate":10,"pointRate":5,"genreId":"990002","itemUrl":"https://shop.invalid/rug","affiliateUrl":"https://affiliate.invalid/rug","mediumImageUrls":[{"imageUrl":"https://assets.invalid/rug.jpg"}]},
+      {"itemCode":"echo-fixture:weak","itemName":"弱い候補","itemPrice":2000,"availability":1,"reviewCount":0,"reviewAverage":0,"itemUrl":"https://shop.invalid/weak","mediumImageUrls":[]},
+      {"itemCode":"echo-fixture:out","itemName":"在庫なし","itemPrice":3000,"availability":0,"reviewCount":200,"reviewAverage":4.9,"affiliateRate":10,"pointRate":5,"itemUrl":"https://shop.invalid/out","affiliateUrl":"https://affiliate.invalid/out","mediumImageUrls":[]}
+    ]
+  },
+  "search:2": {"page":2,"pageCount":2,"count":6,"items":[
+    {"itemCode":"echo-fixture:missing","itemName":"価格未確認","availability":1,"reviewCount":200,"reviewAverage":4.9,"affiliateRate":10},
+    {"itemCode":"echo-fixture:unknown","itemName":"在庫未確認","itemPrice":4000,"reviewCount":200,"reviewAverage":4.9,"affiliateRate":10}
+  ]},
+  "ranking:1": {"page":1,"items":[
+    {"itemCode":"echo-fixture:lamp","itemName":"読書灯","rank":1,"itemPrice":4500,"availability":1,"reviewCount":180,"reviewAverage":4.8,"affiliateRate":10,"pointRate":5,"itemUrl":"https://shop.invalid/lamp","affiliateUrl":"https://affiliate.invalid/lamp","mediumImageUrls":[{"imageUrl":"https://assets.invalid/lamp.jpg"}]},
+    {"itemCode":"echo-fixture:weak","itemName":"弱い候補","rank":50,"itemPrice":2000,"availability":1,"reviewCount":0,"reviewAverage":0,"itemUrl":"https://shop.invalid/weak","mediumImageUrls":[]}
+  ]},
+  "genres:1": {"ancestors":[],"genre":{"genreId":"0","nameJa":"合成ルート","level":0},"siblings":[],"children":[
+    {"genreId":"990001","nameJa":"合成照明","level":1},
+    {"genreId":"990002","nameJa":"合成ラグ","level":1}
+  ]}
+}

@@ -149,11 +149,28 @@ create links, read a database, generate images or publish content. See
 
 ## Documentation
 
+**Affiliate Phase 1** adds Rakuten Item Search, Genre Search and Ranking adapters
+behind an injectable, bounded HTTPS transport. Discovery preserves independent
+observations, uses the existing score/signals and selects only qualifying items.
+The default command uses synthetic fixtures:
+
+```powershell
+echo affiliate discover --keyword 照明 --top 5
+echo affiliate discover --source ranking --genre-id 990001
+echo affiliate discover --source genres --genre-id 0
+```
+
+Results and visual plans require Human Approval. No image generation, downloads
+or posting occur. Live-readonly execution requires separate authorization and
+the documented double guard; it has not been executed in this implementation.
+See [docs/AFFILIATE_PHASE_1.md](docs/AFFILIATE_PHASE_1.md).
+
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- Core vs. Vertical separation, package layout, extension points
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md) -- data models and SQLite schema
 - [docs/SOURCE_INTELLIGENCE.md](docs/SOURCE_INTELLIGENCE.md) -- Source Registry, fetch/dedup/clustering/scoring, adding a new source
 - [docs/RESEARCH_INTELLIGENCE.md](docs/RESEARCH_INTELLIGENCE.md) -- claims, evidence, conflicts, confidence, research status
 - [docs/AFFILIATE_PHASE_0.md](docs/AFFILIATE_PHASE_0.md) -- offline affiliate architecture, official capability inventory, compliance and KPI contracts
+- [docs/AFFILIATE_PHASE_1.md](docs/AFFILIATE_PHASE_1.md) -- Rakuten discovery contracts, safety limits, offline CLI and future live-readonly boundary
 - [docs/AFFILIATE_VISUAL_POLICY.md](docs/AFFILIATE_VISUAL_POLICY.md) -- product-first lifestyle visual and carousel policy
 - [docs/DEVELOPMENT_RULES.md](docs/DEVELOPMENT_RULES.md) -- rules every contributor (human or AI) must follow
 

@@ -5,6 +5,17 @@ in `echo.models.enums` so they serialize as plain strings in SQLite and
 JSON. Every model that represents a stage of the pipeline carries
 `trace_id` -- see [ARCHITECTURE.md](ARCHITECTURE.md#traceability).
 
+## Affiliate discovery observations
+
+Affiliate discovery adds immutable `DiscoveryQuery`, `ProviderObservation`,
+`DiscoveryPage`, `SourceAssetReference`, `GenreNode` and `GenreResult` models.
+Observations preserve source-specific candidate evidence, source/affiliate URL
+roles, raw wall-time metadata and unknown asset rights. The in-memory discovery
+result groups by service plus official itemCode, retains all independent
+observations, and returns scored candidates, exclusions and proposal metadata.
+No new database table, repository method, migration or persisted discovery cache
+is introduced. Credential values are not model fields.
+
 ## SourceItem
 
 Raw material discovered from the outside world. Immutable (`frozen=True`).

@@ -133,3 +133,13 @@ permission to stage, commit, migrate the existing DB or start a new phase.
     never carry live-action authority. Compliance requires X disclosure and an
     explicitly supplied recent-scene inventory. Do not infer a live adapter,
     destination, claim, attribution result or approval from synthetic fixtures.
+
+15. **Keep discovery readonly and bounded.** Rakuten API details stay in its
+    provider adapter; source-neutral discovery imports neither HTTP nor Rakuten.
+    Use exact allowlisted HTTPS endpoints, deny redirects, cap payloads/retries
+    and memoize logical requests only within one execution. Explicit live intent
+    and the environment live flag precede environment-only credential reads.
+    Never print request values or raw provider errors. Preserve independent
+    conflicting observations, require current exact price/availability and a
+    quality threshold, and do not fill Top-N with weak products. Returned image
+    references prove no rights. Rakuyoko automation and publishing are deferred.

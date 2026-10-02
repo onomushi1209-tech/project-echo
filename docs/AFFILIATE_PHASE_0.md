@@ -2,6 +2,11 @@
 
 ## Scope and status
 
+This document describes the accepted Phase 0 baseline. Its no-HTTP/no-credential
+statements apply to that implementation. The separately scoped
+[Phase 1 discovery candidate](AFFILIATE_PHASE_1.md) adds guarded readonly adapters;
+it preserves these signal, scoring, rights and approval contracts.
+
 This is an offline foundation for Project Echo Zero's Rakuten-first affiliate
 workflow. It defines product/evidence, offer, room-bundle, scoring, proposal,
 visual provenance, compliance, existing Human Review, attribution and KPI

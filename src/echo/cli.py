@@ -13,6 +13,7 @@
     echo research claims - list a ResearchPacket's claims
     echo research conflicts - list a ResearchPacket's detected conflicts
     echo affiliate demo - run the offline Affiliate Phase 0 fixture workflow
+    echo affiliate discover - discover and preflight candidates; defaults to offline fixtures
 
 No X posting, no external AI APIs, and no affiliate integration --
 the affiliate demo uses synthetic offline fixtures only.
@@ -54,6 +55,56 @@ app.add_typer(sources_app, name="sources")
 app.add_typer(trends_app, name="trends")
 app.add_typer(research_app, name="research")
 app.add_typer(affiliate_app, name="affiliate")
+
+
+@affiliate_app.command("discover")
+def affiliate_discover(
+    provider: str = typer.Option("rakuten", "--provider"),
+    keyword: str | None = typer.Option(None, "--keyword"),
+    genre_id: str | None = typer.Option(None, "--genre-id"),
+    source: str = typer.Option("search", "--source"),
+    top: int | None = typer.Option(None, "--top", min=1, max=20),
+    fixture: str | None = typer.Option(None, "--fixture"),
+    live_readonly: bool = typer.Option(False, "--live-readonly"),
+) -> None:
+    """Discover products; all outputs remain proposals requiring Human Approval."""
+    from datetime import datetime, timezone
+    from pathlib import Path
+    from echo.models.discovery import DiscoveryQuery, DiscoverySource
+    from echo.monetization.config import DiscoveryPolicy, load_discovery_policy
+    from echo.monetization.discovery import discover_products
+    from echo.monetization.rakuten import RakutenDiscoveryProvider
+    from echo.monetization.fixtures import DEMO_AS_OF
+
+    if provider != "rakuten" or live_readonly and fixture is not None:
+        typer.echo("Unsupported provider or incompatible discovery mode.")
+        raise typer.Exit(2)
+    try:
+        policy = load_discovery_policy()
+        if top is not None:
+            policy = DiscoveryPolicy.model_validate({**policy.model_dump(), "top_n": top})
+        query = DiscoveryQuery(source=DiscoverySource(source), keyword=keyword or ("照明" if source == "search" and genre_id is None else None),
+            category_id=genre_id or ("0" if source == "genres" else None),
+            category="home", lifestyle_context="reading corner")
+        adapter = (RakutenDiscoveryProvider.live(live_readonly=True, policy=policy) if live_readonly
+                   else RakutenDiscoveryProvider.offline(Path(fixture) if fixture else None))
+        if query.source == DiscoverySource.GENRES:
+            genres = adapter.genres(query)
+            typer.echo(f"Genre lookup: found={not genres.not_found}, children={len(genres.children)}")
+            return
+        result = discover_products(adapter, (query,), as_of=datetime.now(timezone.utc) if live_readonly else DEMO_AS_OF, policy=policy)
+    except Exception:
+        # Provider exceptions and Pydantic errors may contain input values; console never does.
+        typer.echo("Discovery unavailable: check validated selectors and live-readonly authorization/configuration.")
+        raise typer.Exit(2) from None
+    typer.echo("Project Echo Zero discovery — " + ("live-readonly" if live_readonly else "offline fixtures"))
+    typer.echo(f"Candidates={len(result.candidates)}; selected={len(result.selected)}; visual proposals={len(result.proposals)}")
+    score_by_id = {s.product_id: s for s in result.scores}
+    for rank, candidate in enumerate(result.selected, 1):
+        # No raw names, URLs, bodies, credentials or provider exception text in diagnostics.
+        typer.echo(f"{rank}. score={score_by_id[candidate.product_id].final_score:.3f}; "
+                   f"affiliate_destination_ready={candidate.offer.affiliate_destination.status.value == 'verified'}")
+    typer.echo("Human Approval required; can_publish=false. No image generation or posting.")
 
 
 @affiliate_app.command("demo")

@@ -2,15 +2,16 @@
   "schema_version": 2,
   "project": "Project Echo",
   "branch": "main",
-  "baseline_head": "118d3efd59d19f1a5e9a329835810cc990d1a477",
-  "baseline_subject": "feat: add CI and checkpoint review skill",
+  "baseline_head": "9faec201c0285bdb9307993b0bac9460f51131de",
+  "baseline_subject": "feat: add affiliate phase 0 foundation",
   "completed_steps": [
     "STEP 1 Echo Foundation",
     "STEP 2 Source & Trend Intelligence",
     "STEP 3 Research Intelligence (product verification evidence recorded below)",
     "Efficiency Foundation v1 (checkpoint lifecycle verification recorded below)",
     "Efficiency Foundation Expansion v1 (local CI and explicit checkpoint review Skill verification recorded below)",
-    "Project Echo Zero Affiliate Phase 0 offline foundation candidate; no live integration"
+    "Project Echo Zero Affiliate Phase 0 offline foundation candidate; no live integration",
+    "Affiliate Phase 1 Rakuten Discovery Foundation: guarded readonly adapters and deterministic offline integration; no live runtime executed"
   ],
   "test_baseline": {
     "audit": {
@@ -74,12 +75,6 @@
       "python": "3.14.6"
     },
     "accepted": {
-      "affiliate": {
-        "passed": 176,
-        "failed": 0,
-        "skipped": 0,
-        "warnings": 0
-      },
       "verification": {
         "passed": 103,
         "failed": 0,
@@ -87,7 +82,7 @@
         "warnings": 0
       },
       "targeted": {
-        "passed": 373,
+        "passed": 481,
         "failed": 0,
         "skipped": 0,
         "warnings": 0
@@ -100,12 +95,43 @@
         "original_90_preserved": true
       },
       "full": {
-        "passed": 630,
+        "passed": 738,
         "failed": 0,
         "skipped": 0,
         "warnings": 0,
-        "collected": 630
-      }
+        "collected": 738
+      },
+      "affiliate": {
+        "passed": 284,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "transport": {
+        "passed": 37,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "adapters": {
+        "passed": 50,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "pipeline": {
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "architecture": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 0
+      },
+      "python": "3.14.6"
     },
     "previous_checkpoint_accepted": {
       "baseline_head": "4f69023a9b184347a259d56d8d252e5ba3aab6f6",
@@ -163,74 +189,55 @@
     "AGENTS.md",
     "PROJECT_STATE.json",
     "README.md",
-    "config/affiliate_phase0.yaml",
+    "config/affiliate_phase1.yaml",
     "docs/AFFILIATE_PHASE_0.md",
-    "docs/AFFILIATE_VISUAL_POLICY.md",
+    "docs/AFFILIATE_PHASE_1.md",
     "docs/ARCHITECTURE.md",
     "docs/DATA_MODEL.md",
     "docs/DEVELOPMENT_RULES.md",
     "docs/VERIFICATION_GATE.md",
     "scripts/verify.py",
     "src/echo/cli.py",
-    "src/echo/models/__init__.py",
-    "src/echo/models/affiliate.py",
-    "src/echo/models/affiliate_kpi.py",
-    "src/echo/models/affiliate_visual.py",
-    "src/echo/monetization/__init__.py",
-    "src/echo/monetization/adapters.py",
-    "src/echo/monetization/compliance.py",
+    "src/echo/models/discovery.py",
     "src/echo/monetization/config.py",
-    "src/echo/monetization/evidence.py",
-    "src/echo/monetization/fixtures.py",
-    "src/echo/monetization/kpi.py",
-    "src/echo/monetization/scoring.py",
-    "src/echo/monetization/signals.py",
-    "src/echo/monetization/visuals.py",
-    "tests/test_affiliate_foundation.py"
+    "src/echo/monetization/discovery.py",
+    "src/echo/monetization/rakuten.py",
+    "src/echo/monetization/transport.py",
+    "tests/fixtures/affiliate/rakuten_phase1.json",
+    "tests/test_affiliate_discovery.py"
   ],
   "verification": {
     "status": "PASS",
-    "mode": "staged",
+    "mode": "worktree",
     "evidence_type": "guarded_offline_workers",
     "digest_algorithm": "sha256-path-content-lf-state-v2",
-    "input_digest": "dcd5b7ad59f9f62c6cbd2804de66552617bb1792e10934467f22968bf2538725",
-    "verified_at_utc": "2026-09-28T23:24:44Z",
-    "command": "Supervised existing scripts/verify.py guarded preliminary workers: complete Affiliate, verification, canonical targeted, STEP 3, full, sanity; State was PENDING during collection. Canonical staged gate follows the seal.",
-    "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
-    "imported_modules": 94,
-    "cli_help_routes": 11,
-    "installed_entrypoint": "echo.cli:main",
+    "input_digest": "cb51a2ab0bc99ed8f9c5e6f0392c889b2a60bc988f8b0affbec8b5c8acbb32b4",
+    "verified_at_utc": "2026-09-29T00:34:12Z",
+    "imported_modules": 98,
+    "cli_help_routes": 12,
     "repository_unchanged_during_gate": true,
     "index_unchanged_during_gate": true,
     "existing_database_unchanged": true,
     "worker_blocked_side_effects": [],
-    "env_present": false,
-    "diff_check": "PASS (worktree and cached before/after fresh workers)",
     "independent_review": {
       "status": "PASS",
-      "reviewed_at_utc": "2026-09-28T22:42:00Z",
+      "reviewed_at_utc": "2026-09-29T00:34:12Z",
       "reviewers": [
         {
-          "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+          "name": "RAKUTEN_INTEGRATION_ARCHITECTURE_REVIEW",
           "model": "GPT-6 Luna",
           "status": "PASS",
-          "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
+          "scope": "Final static read-only re-review of official API mapping, transport/auth/redaction/retries, adapters, independent observations and current field-wise offer merge; sparse/stale regressions close DISCOVERY-OFFER-MERGE-01. No remaining concrete defect. Main alone ran tests."
         },
         {
-          "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+          "name": "AFFILIATE_DISCOVERY_SAFETY_REVIEW",
           "model": "GPT-6 Luna",
           "status": "PASS",
-          "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
+          "scope": "Final static read-only re-review of original evidence linkage, current/expired fields, conflicts, score and no-filler selection, exact returned destinations, unknown rights, disclosure, compliance and Human Approval. No weakened boundary or concrete defect. No reviewer tests/writes/network."
         }
-      ],
-      "carry_forward": {
-        "source_input_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
-        "recorded_at_utc": "2026-09-28T23:26:09Z",
-        "authorization": "External EOF hygiene completion instruction permits prior functional acceptance to carry forward subject to fresh verification.",
-        "basis": "Only one trailing LF removed from each of three named files; Python AST and significant token sequences equal; document text/policy equal; all other candidate content unchanged; complete fresh guarded verification passed.",
-        "new_product_review_performed": false
-      }
-    }
+      ]
+    },
+    "evidence_disposition": "Final post-remediation preliminary guarded workers and static reviews; frozen candidate receives formal worktree verification externally after sealing."
   },
   "handoff": {
     "what_changed": [
@@ -243,7 +250,10 @@
       "SCORE-01: six component-specific normalized assessments require relevant, current, non-conflicted support with offer linkage; confidence and freshness derive from actual positive weighted contributing evidence with explicit explanations.",
       "SIG-02: public signals require expiry after effective validity start and observation, within any evidence ceiling; model/deserialization consistency stays separate from deterministic evaluation-time checks.",
       "SCORE-02: one shared normalized product/service/family conflict rule compares overlapping applicability independently of observation identity; current-asof freshness filtering preserves succession. Scoring includes known sibling offers, uses typed conflict membership, and preserves input-order determinism.",
-      "EOF hygiene: removed only one trailing blank-line LF from each of three existing Affiliate candidate files; recorded the staged whitespace failure and fresh guarded evidence, preserving all previous histories and false authorities."
+      "EOF hygiene: removed only one trailing blank-line LF from each of three existing Affiliate candidate files; recorded the staged whitespace failure and fresh guarded evidence, preserving all previous histories and false authorities.",
+      "Phase 1: source-neutral discovery models/Protocol, injectable bounded readonly transport, current official Rakuten Search/Genre/Ranking adapters and credential/live guards.",
+      "Phase 1: independent observation retention, field-wise current offer merge, existing signal/score/conflict reuse, deterministic quality-only Top-N, planned visual metadata and offline CLI/config/fixtures.",
+      "Phase 1: new adversarial/regression tests, canonical verifier scope/help integration and synchronized official-contract documentation; real provider requests/credential reads/Git mutations remain zero."
     ],
     "limitations": [
       "Japanese support is deterministic normalization/extraction/character overlap, not full semantic NLP; conflict keyword/negation vocabulary remains English",
@@ -252,9 +262,9 @@
       "Technical verification supplies no Git or live authority; baseline_head is the checkpoint parent before and after commit",
       "CP-01 MEDIUM NON-BLOCKING: before a feature re-saves changed content under the same research ID, implement either immutable/reject semantics or fully consistent transactional replacement; not fixed by lifecycle remediation",
       "CP-02 LOW NON-BLOCKING: research documentation overstates configurability of the fixed 0.3 reliability coefficient; deferred without documentation changes",
-      "No verified live destination adapter exists. Verified destinations require fresh typed evidence binding the exact URL to service and provider item; current fixture adapters leave destinations uncreated/unverified.",
+      "Phase 1 has a guarded future readonly destination adapter; real provider verification has not run. Exact returned URL evidence remains service/item-bound; fixtures leave typed destinations uncreated/unverified.",
       "Scene history is not persisted in Phase 0. The builder requires an explicit prior-scene inventory, and compliance fails closed when it is omitted.",
-      "Affiliate Phase 0 has no live Rakuten link/destination adapter; fixture destinations remain uncreated and unverified.",
+      "Phase 0 fixture adapters remain unchanged and unverified; Phase 1 mocked live-factory tests validate structure only and grant no credential or live authority.",
       "Rakuyoko product search, affiliate attribution/destination, bundle API and content workflow remain UNKNOWN/UNVERIFIED pending an official public contract.",
       "All publish-facing copy must be exact evidence-rendered claims; non-identity facts carry their verified product name, captions begin with exactly PR, and item annotations bind to that same product.",
       "The Human Review digest binding uses the reserved first line of the existing reviewer_note field. Phase 0 provides the model contract only; any future review bridge must show the digest to the human and persist the exact decision. No review UI or database change is included.",
@@ -264,7 +274,11 @@
       "VIS-01 MEDIUM NON-BLOCKING: whitespace-only scene dimension changes can bypass fingerprint equality; defer normalization until before persistent scene history or production visual rotation.",
       "Opportunity Score's six input values remain normalized caller assessments over validated factual support; confidence measures verified contributing factual-component coverage, not probabilistic certainty or commercial prediction.",
       "BuyNowSignal model enforces positive typed semantics/provenance/basis/expiry, while evaluation-time freshness and cross-record conflict membership require derive_buy_now_signals with its explicit as_of and candidate evidence.",
-      "Cross-offer scoring requires the caller to provide its known evidence_candidates inventory; the target is always included and only same-product/service siblings affect support. The single-candidate API cannot infer undisclosed evidence. Conflict membership retains evidence family and ID."
+      "Cross-offer scoring requires the caller to provide its known evidence_candidates inventory; the target is always included and only same-product/service siblings affect support. The single-candidate API cannot infer undisclosed evidence. Conflict membership retains evidence family and ID.",
+      "Official naive Rakuten wall-time timezone was not verified. Raw timing is preserved; ambiguous timing cannot create positive deadline/point-window claims.",
+      "Discovery is bounded per execution and has no persistence/attribution; configured closed-form component assessments are not conversion predictions.",
+      "Product image references prove no rights; all visual rights/transformation metadata stay UNKNOWN and recent-scene history is absent, so compliance blocks approval/publication.",
+      "GPT-6 Luna model metadata applies to the two independent reviewers; the tool does not provide a switch/verification mechanism for the main session model."
     ],
     "review_resolutions": [
       "Reject symbol-only and whitespace-padded Japanese noise; preserve English sentences with short Japanese product names",
@@ -289,7 +303,9 @@
       "SCORE-02: overlapping different-observation contradictions suppress whole features and derived confidence/freshness; stale/future/history-only conflict and non-overlap succession retain valid support.",
       "TEMPORAL-REVIEW: preserve pre-correction 621/628 PASS evidence and NOT READY reviews. Resolve service sorting ties, missing sibling-offer scoring context and cross-family reused-ID suppression; final fresh sequence and both final read-only Luna reviews PASS.",
       "TEMPORAL-SUPERVISOR: preserve first runner failure caused by reused targeted basetemp; distinct external temporary roots per stage keep the original side-effect guard unchanged. Restarted from SIG-02 after each correction.",
-      "EOF-HYGIENE: cached diff-check exit 2 occurred before staged tests/commit/push. Three byte-only EOF removals preserve Python AST/tokens and document policy; fresh complete guarded sequence passed and existing acceptance carried forward by semantic equivalence. Worktree checks of untracked files are an execution observation, not a new product blocker."
+      "EOF-HYGIENE: cached diff-check exit 2 occurred before staged tests/commit/push. Three byte-only EOF removals preserve Python AST/tokens and document policy; fresh complete guarded sequence passed and existing acceptance carried forward by semantic equivalence. Worktree checks of untracked files are an execution observation, not a new product blocker.",
+      "PHASE1-CREDENTIAL-DIAGNOSTIC: first transport failure preserved; required credential absence checked before printable format; fresh complete sequence restarted.",
+      "DISCOVERY-OFFER-MERGE-01 MEDIUM: each current known offer field retains original evidence linkage; sparse Ranking cannot erase Search price/stock/rate/destination, stale quotes are not resurrected; six added regressions and final reviews pass."
     ],
     "resume_protocol": {
       "method": "derive_from_git_and_external_authority",
@@ -319,7 +335,7 @@
     ]
   },
   "state_model": "durable_checkpoint",
-  "checkpoint_subject": "Affiliate Phase 0 Foundation",
+  "checkpoint_subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
   "verification_history": [
     {
       "status": "PASS",
@@ -738,6 +754,85 @@
         }
       },
       "evidence_disposition": "Historical accepted PASS for f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99; not active evidence for the EOF-remediated candidate."
+    },
+    {
+      "status": "PASS",
+      "mode": "staged",
+      "evidence_type": "guarded_offline_workers",
+      "digest_algorithm": "sha256-path-content-lf-state-v2",
+      "input_digest": "dcd5b7ad59f9f62c6cbd2804de66552617bb1792e10934467f22968bf2538725",
+      "verified_at_utc": "2026-09-28T23:24:44Z",
+      "command": "Supervised existing scripts/verify.py guarded preliminary workers: complete Affiliate, verification, canonical targeted, STEP 3, full, sanity; State was PENDING during collection. Canonical staged gate follows the seal.",
+      "interpreter": "C:/Users/syuya/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "imported_modules": 94,
+      "cli_help_routes": 11,
+      "installed_entrypoint": "echo.cli:main",
+      "repository_unchanged_during_gate": true,
+      "index_unchanged_during_gate": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "env_present": false,
+      "diff_check": "PASS (worktree and cached before/after fresh workers)",
+      "independent_review": {
+        "status": "PASS",
+        "reviewed_at_utc": "2026-09-28T22:42:00Z",
+        "reviewers": [
+          {
+            "name": "TEMPORAL_SIGNAL_INVARIANT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: public effective-start/non-empty interval/observation floor/validity ceiling and construction/validation/JSON invariants; deterministic generator as_of/freshness boundaries; shared temporal integration and family-safe conflict membership. No remaining SIG-02 or shared-layer finding. Tests executed by main guarded workers, not this reviewer."
+          },
+          {
+            "name": "TEMPORAL_EVIDENCE_CONFLICT_REVIEW",
+            "model": "GPT-6 Luna",
+            "status": "PASS",
+            "scope": "Final static read-only review: normalized typed overlapping product/service/family conflicts across observations; current-asof history/future filtering, succession, full sibling-offer context and single-citation score/confidence/freshness suppression; affected-ID ordering and family-aware membership. Ordering, inventory and cross-family reused-ID findings closed; deferred VIS/CP excluded. Tests executed by main guarded workers, not this reviewer."
+          }
+        ],
+        "carry_forward": {
+          "source_input_digest": "f5866435251b6ed46fdcaa7bfec3d0009a3f12c33182dcd940f7dbae6266dc99",
+          "recorded_at_utc": "2026-09-28T23:26:09Z",
+          "authorization": "External EOF hygiene completion instruction permits prior functional acceptance to carry forward subject to fresh verification.",
+          "basis": "Only one trailing LF removed from each of three named files; Python AST and significant token sequences equal; document text/policy equal; all other candidate content unchanged; complete fresh guarded verification passed.",
+          "new_product_review_performed": false
+        }
+      },
+      "accepted": {
+        "affiliate": {
+          "passed": 176,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 373,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 630,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 630
+        }
+      },
+      "historical_subject": "Accepted Affiliate Phase 0 checkpoint before Phase 1 implementation"
     }
   ],
   "review_history": [
@@ -893,6 +988,15 @@
         },
         "python": "3.14.6"
       }
+    },
+    {
+      "subject": "Affiliate Phase 0 Foundation",
+      "baseline_head": "118d3efd59d19f1a5e9a329835810cc990d1a477",
+      "accepted_commit": "9faec201c0285bdb9307993b0bac9460f51131de",
+      "accepted_input_digest": "dcd5b7ad59f9f62c6cbd2804de66552617bb1792e10934467f22968bf2538725",
+      "observed_local_origin_main": "9faec201c0285bdb9307993b0bac9460f51131de",
+      "remote_verification": "Historical external prior completion gate confirmed authoritative remote; no remote request in this Phase 1 preflight.",
+      "recorded_at_utc": "2026-09-28T23:59:49Z"
     }
   ],
   "implementation_verification_history": [
@@ -928,6 +1032,149 @@
       "finding": "CF-01",
       "initial_result": "CHANGES_REQUIRED",
       "resolution": "First failure and identity preserved independently of final hygiene failure; corrective code and regression test passed fresh verification and read-only re-review"
+    },
+    {
+      "subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
+      "attempt": 2,
+      "verified_at_utc": "2026-09-29T00:29:40Z",
+      "status": "PASS",
+      "evidence_disposition": "Pre-review preliminary measured workers; not sealed acceptance.",
+      "actual_test_counts": {
+        "transport": {
+          "passed": 37,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "adapters": {
+          "passed": 50,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "pipeline": {
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "affiliate": {
+          "passed": 278,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "architecture_verification": {
+          "passed": 106,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 475,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "full": {
+          "collected": 732,
+          "passed": 732,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "sanity": {
+          "modules": 98,
+          "cli_help_checks": 12,
+          "entrypoint": "echo.cli:main"
+        }
+      },
+      "repository_unchanged": true,
+      "worker_blocked_side_effects": []
+    },
+    {
+      "subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
+      "attempt": 3,
+      "verified_at_utc": "2026-09-29T00:34:12Z",
+      "status": "PASS",
+      "actual_test_counts": {
+        "verification": {
+          "passed": 103,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "targeted": {
+          "passed": 481,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "step3": {
+          "passed": 131,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "original_90_preserved": true
+        },
+        "full": {
+          "passed": 738,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0,
+          "collected": 738
+        },
+        "affiliate": {
+          "passed": 284,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "transport": {
+          "passed": 37,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "adapters": {
+          "passed": 50,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "pipeline": {
+          "passed": 21,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "architecture": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "python": "3.14.6"
+      },
+      "sanity": {
+        "stage": "sanity",
+        "exit": 0,
+        "blocked": [],
+        "modules": 98,
+        "cli_help_checks": 12,
+        "entrypoint": "echo.cli:main"
+      },
+      "repository_unchanged": true,
+      "index_unchanged": true,
+      "existing_database_unchanged": true,
+      "worker_blocked_side_effects": [],
+      "evidence_disposition": "Complete final fresh sequence after offer-merge correction, before State seal; prior failed sequence and preliminary review remain historical."
     }
   ],
   "verification_attempt_history": [
@@ -2001,6 +2248,28 @@
       "cached_diff_check": 0,
       "stage": "EOF hygiene fresh guarded verification before final State seal",
       "evidence_disposition": "Measured complete preliminary workers under PENDING State; canonical staged lifecycle validation follows sealing and State-only restage. Not a pre-seal checkpoint PASS claim."
+    },
+    {
+      "subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
+      "attempt": 1,
+      "observed_at_utc": "2026-09-29T00:23:32Z",
+      "status": "FAIL",
+      "stage": "transport",
+      "results": {
+        "transport": {
+          "stage": "targeted",
+          "exit": 1,
+          "blocked": [],
+          "passed": 3,
+          "failed": 1,
+          "skipped": 0,
+          "warnings": 0
+        }
+      },
+      "later_stages_run": false,
+      "repository_unchanged": true,
+      "reason": "Required credentials missing was reported as generic credential_configuration_invalid before the dedicated missing check. Safe diagnostic contract assertion failed; no credential values or live request were involved.",
+      "resolution": "Move required-value presence check before printable credential format validation; restart complete fresh sequence."
     }
   ],
   "final_read_only_review_history": [
@@ -2263,6 +2532,124 @@
         "CP-01",
         "CP-02"
       ]
+    },
+    {
+      "subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
+      "reviewed_at_utc": "2026-09-29T00:29:40Z",
+      "status": "NOT READY",
+      "findings": [
+        {
+          "id": "DISCOVERY-OFFER-MERGE-01",
+          "severity": "MEDIUM",
+          "blocking": true,
+          "finding": "Equal-time sparse Ranking offer can erase current Search offer fields even when independent current evidence was retained.",
+          "resolution": "Choose each current known offer field from deterministic independent observations with original evidence linkage; keep all conflicts. Add sparse price/price-range/stock/rate/affiliate destination and stale-quote regressions."
+        }
+      ],
+      "reviewers": [
+        {
+          "name": "RAKUTEN_INTEGRATION_ARCHITECTURE_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "NOT READY"
+        },
+        {
+          "name": "AFFILIATE_DISCOVERY_SAFETY_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS"
+        }
+      ],
+      "post_fix_fresh_sequence_required": true
+    },
+    {
+      "subject": "Affiliate Phase 1 Rakuten Discovery Foundation",
+      "reviewed_at_utc": "2026-09-29T00:34:12Z",
+      "status": "PASS",
+      "resolved_findings": [
+        "DISCOVERY-OFFER-MERGE-01"
+      ],
+      "reviewers": [
+        {
+          "name": "RAKUTEN_INTEGRATION_ARCHITECTURE_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only re-review of official API mapping, transport/auth/redaction/retries, adapters, independent observations and current field-wise offer merge; sparse/stale regressions close DISCOVERY-OFFER-MERGE-01. No remaining concrete defect. Main alone ran tests."
+        },
+        {
+          "name": "AFFILIATE_DISCOVERY_SAFETY_REVIEW",
+          "model": "GPT-6 Luna",
+          "status": "PASS",
+          "scope": "Final static read-only re-review of original evidence linkage, current/expired fields, conflicts, score and no-filler selection, exact returned destinations, unknown rights, disclosure, compliance and Human Approval. No weakened boundary or concrete defect. No reviewer tests/writes/network."
+        }
+      ],
+      "resolution": "Independent final static re-reviews confirm field-wise current known offer selection with original evidence linkage, complete observation/conflict retention and stale-quote exclusion. Existing Phase 0 behavior and safety predicates preserved."
     }
-  ]
+  ],
+  "affiliate_phase1": {
+    "official_capability_check": {
+      "checked_on": "2026-09-29",
+      "method": "Public official documentation only; no API calls",
+      "services": [
+        {
+          "name": "Item Search",
+          "version": "2026-07-01",
+          "documentation": "https://webservice.rakuten.co.jp/documentation/ichiba-item-search",
+          "endpoint": "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701"
+        },
+        {
+          "name": "Genre Search",
+          "version": "2026-07-01",
+          "documentation": "https://webservice.rakuten.co.jp/documentation/ichiba-genre-search",
+          "endpoint": "https://openapi.rakuten.co.jp/ichibagt/api/IchibaGenre/Search/20260701"
+        },
+        {
+          "name": "Ranking",
+          "version": "2022-06-01",
+          "documentation": "https://webservice.rakuten.co.jp/documentation/ichiba-item-ranking",
+          "endpoint": "https://openapi.rakuten.co.jp/ichibaranking/api/IchibaItem/Ranking/20220601"
+        }
+      ],
+      "auth": "applicationId query plus accessKey header; optional affiliateId for Search/Ranking",
+      "format": "JSON formatVersion 2; flat items; Genre genreId/nameJa/level",
+      "item_url_may_alias_affiliate_url": true,
+      "naive_time_timezone_verified": false,
+      "rakuyoko_developer_contract_verified": false,
+      "rakuyoko_guide": "https://rakuyoko.rakuten.co.jp/guide/"
+    },
+    "boundaries": {
+      "real_provider_requests": 0,
+      "real_credential_value_reads": 0,
+      "public_official_documentation_browsing": true,
+      "credential_source": "Environment only after explicit live-readonly intent AND ECHO_RAKUTEN_LIVE_READONLY=1",
+      "fixture_credentials": "Synthetic only; no environment credential reads",
+      "mocked_live_responses": "Synthetic sender/credentials exercise typed VERIFIED contracts; never actual provider verification",
+      "rakuyoko_automation_authorized": false,
+      "image_io_count": 0,
+      "publishing_count": 0,
+      "human_approval_required": true,
+      "can_publish": false,
+      "persistence_added": false,
+      "dependencies_added": false,
+      "stage_count": 0,
+      "commit_count": 0,
+      "push_count": 0
+    },
+    "implemented": [
+      "Bounded injectable HTTPS GET/strict JSON transport; fixed endpoints; no redirects; redacted diagnostics; success/failure per-execution memoization",
+      "Item Search, Genre Search and Ranking request/response contracts and source-neutral discovery observations",
+      "Independent product/source evidence and field-wise current offer selection; shared Phase 0 signals, conflicts, score v0 and deterministic quality-only Top-N",
+      "Planned single-item and explicit complementary-context RoomBundle metadata; unknown rights and fail-closed compliance; CLI defaults synthetic offline"
+    ],
+    "deferred": [
+      "Real Rakuten runtime validation",
+      "Credential provisioning",
+      "Official timezone clarification for naive timing claims",
+      "Rakuyoko integration",
+      "Discovery persistence and attribution",
+      "Publication",
+      "Image rights and runtime",
+      "VIS-01",
+      "CP-01",
+      "CP-02"
+    ]
+  }
 }
