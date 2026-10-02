@@ -100,6 +100,12 @@ def affiliate_discover(
     typer.echo("Project Echo Zero discovery — " + ("live-readonly" if live_readonly else "offline fixtures"))
     typer.echo(f"Candidates={len(result.candidates)}; selected={len(result.selected)}; visual proposals={len(result.proposals)}")
     typer.echo(f"Hydration requests={result.hydration.requests}; logical requests={result.logical_requests}")
+    from echo.monetization.asset_policy import visual_render_ready
+    evaluation_time = result.proposals[0].created_at if result.proposals else DEMO_AS_OF
+    typer.echo(f"Content ready={sum(r.content_ready for r in result.compliance)}; "
+               f"visual plans={sum(p.visual_plan is not None for p in result.proposals)}; "
+               f"render ready={sum(p.visual_plan is not None and visual_render_ready(p.visual_plan, as_of=evaluation_time) for p in result.proposals)}")
+    typer.echo("WebService credit required; social-only placement unresolved; publishing blocked.")
     score_by_id = {s.product_id: s for s in result.scores}
     for rank, candidate in enumerate(result.selected, 1):
         # No raw names, URLs, bodies, credentials or provider exception text in diagnostics.

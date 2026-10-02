@@ -5,17 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from decimal import Decimal
-import hashlib
 from typing import Protocol
 
 from echo.models.affiliate import (
     AffiliateOpportunityScore, DestinationStatus, EvidenceStatus, EvidenceType,
-    ProductCandidate, ProductSet, ProductSetItem, ScoreComponent, ScoreFeature, ValueInterpretation,
+    ProductCandidate, ProductSet, ScoreComponent, ScoreFeature, ValueInterpretation,
 )
 from echo.models.affiliate_visual import (
-    CarouselPlan, CarouselSlide, ComplianceReport, DisclosurePlacement, LifestyleScene, MarketingClaim, PlatformVariant,
-    ProductVisualLabel, SlideKind,
-    RightsStatus, SocialPlatform, SocialProposal, VisualAsset, VisualAssetKind,
+    ComplianceReport, SocialProposal,
 )
 from echo.models.discovery import DiscoveryIdentityMismatch, DiscoveryPage, DiscoveryQuery, DiscoverySource, HydrationReport, ProviderObservation
 from echo.monetization.compliance import evaluate_compliance
@@ -23,7 +20,6 @@ from echo.monetization.config import AffiliatePhase0Config, DiscoveryPolicy, loa
 from echo.monetization.evidence import evidence_is_current, find_conflicting_evidence, interpret_evidence_value
 from echo.monetization.scoring import rank_candidates, score_candidate
 from echo.monetization.signals import derive_buy_now_signals
-from echo.monetization.visuals import build_carousel_plan
 from echo.monetization.hydration import hydrate_ranked
 
 
@@ -135,63 +131,11 @@ def _assess(candidate: ProductCandidate, policy: DiscoveryPolicy, *, as_of: date
     return ProductCandidate.model_validate({**candidate.model_dump(), "score_features": tuple(features)})
 
 
-def _scene(identity, context, categories, *, detail=False):
-    return LifestyleScene(scene_id=identity, room_geometry="planned rectangular room", room_size="planned compact room",
-        window_placement="planned side window", furniture_placement="planned functional corner", interior_style="restrained original lifestyle",
-        time_of_day="planned daytime", lighting="planned natural light", color_temperature="planned neutral",
-        outside_scenery="unspecified planned view", season="unspecified", camera_angle="detail view " + identity if detail else "wide overview",
-        usage_context=context, product_categories=categories)
-
-
 def _proposal(candidates, observations, context, config, as_of):
-    ids = tuple(c.product_id for c in candidates)
-    identity = hashlib.sha256((context + "|" + "|".join(ids)).encode()).hexdigest()[:16]
-    set_id = "discovery-set-" + identity
-    product_set = ProductSet(product_set_id=set_id, theme=context,
-        shared_scene_id="overview-" + identity,
-        items=tuple(ProductSetItem(product_id=c.product_id, slide_order=i + 1, featured=True) for i, c in enumerate(candidates))) if len(candidates) >= 2 else None
-    assets = []
-    for candidate in candidates:
-        refs = [a for o in observations if o.candidate.product_id == candidate.product_id for a in o.assets]
-        if not refs or len(candidate.name) > config.visual.max_slide1_headline_characters:
-            return None
-        ref = sorted(refs, key=lambda a: (a.url, a.source_field))[0]
-        assets.append(VisualAsset(asset_id="asset-" + candidate.product_id, kind=VisualAssetKind.PRODUCT,
-            source_reference=ref.url, provenance_status=ref.status, rights_status=RightsStatus.UNKNOWN,
-            official_asset=None, transformations_allowed=None, product_ids=(candidate.product_id,)))
-    overview_id = "context-" + identity
-    detail_ids = {c.product_id: "context-detail-" + c.product_id for c in candidates}
-    for aid in (overview_id, *detail_ids.values()):
-        assets.append(VisualAsset(asset_id=aid, kind=VisualAssetKind.GENERATED_CONTEXT,
-            source_reference="planned-not-rendered:" + aid, provenance_status=EvidenceStatus.UNKNOWN,
-            rights_status=RightsStatus.UNKNOWN))
-    if product_set is not None:
-        carousel = build_carousel_plan(product_set, candidates, assets=tuple(assets),
-        overview_scene=_scene(product_set.shared_scene_id, context, tuple(sorted({c.category for c in candidates}))),
-        detail_scenes={c.product_id: _scene("detail-" + c.product_id, context, (c.category,), detail=True) for c in candidates},
-        overview_context_asset_id=overview_id, detail_context_asset_ids=detail_ids, headline=candidates[0].name,
-        policy=config.visual, prior_scene_fingerprints=())
-    else:
-        candidate = candidates[0]
-        label = ProductVisualLabel(product_id=candidate.product_id, product_name=candidate.name,
-            price=candidate.offer.price.amount, currency=candidate.offer.price.currency,
-            price_evidence_id=candidate.offer.price.evidence_id,
-            destination_id=candidate.offer.affiliate_destination.destination_id, product_asset_id="asset-" + candidate.product_id)
-        carousel = CarouselPlan(product_set_id=set_id, slides=(
-            CarouselSlide(slide_number=1, kind=SlideKind.OVERVIEW,
-                scene=_scene("overview-" + identity, context, (candidate.category,)), labels=(label,),
-                context_asset_id=overview_id, headline=candidate.name, arrow_product_ids=(candidate.product_id,)),
-            CarouselSlide(slide_number=2, kind=SlideKind.PRODUCT_DETAIL,
-                scene=_scene("detail-" + candidate.product_id, context, (candidate.category,), detail=True),
-                labels=(label,), context_asset_id=detail_ids[candidate.product_id])))
-    claims = tuple(MarketingClaim(claim_id="identity-" + c.product_id, product_id=c.product_id,
-        statement=c.name, claim_type=EvidenceType.PRODUCT_IDENTITY,
-        evidence_ids=(next(r.evidence_id for r in c.evidence if r.evidence_type == EvidenceType.PRODUCT_IDENTITY and r.value_text == c.name),)) for c in candidates)
-    message = " / ".join(c.name for c in candidates)
-    proposal = SocialProposal(proposal_id="discovery-proposal-" + identity, product_set_id=set_id,
-        canonical_message=message, product_ids=ids, claims=claims, visual_assets=tuple(assets), carousel=carousel,
-        platform_variants=(PlatformVariant(platform=SocialPlatform.X, caption="PR " + message,
-            disclosure_text="PR", disclosure_placement=DisclosurePlacement.FIRST_VIEW),), created_at=as_of)
+    from echo.models.affiliate_content import ContextHeadline
+    from echo.monetization.content_proposal import build_content_proposal
+    product_set, proposal = build_content_proposal(candidates, observations, context, as_of=as_of, config=config,
+        headline=ContextHeadline.DESK if context in ("reading corner", "work desk") else ContextHeadline.LIFESTYLE)
     report = evaluate_compliance(proposal, candidates, config.compliance, as_of=as_of,
                                  prior_scene_fingerprints=None)
     return product_set, proposal, report

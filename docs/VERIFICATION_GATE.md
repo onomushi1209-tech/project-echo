@@ -280,6 +280,15 @@ the ordinary full worktree verifier and checks-only verifier in that order.
 
 ## Efficiency Foundation inventory
 
+Stage 6A preliminary verification starts with `tests/test_affiliate_content_proposal.py`,
+then all Affiliate tests plus ranked hydration, verifier/lifecycle, canonical
+targeted, STEP 3, full pytest, imports and CLI. The content regression file is
+also in the canonical targeted/full scope. Synthetic reviewed asset metadata
+never grants real asset intake, rendering or publishing authority. Any separately
+authorized real readonly observation is external business evidence, not part of
+these offline workers. A successful candidate then uses the same frozen-State
+worktree/staged/committed lifecycle above; a PASS grants no new authority.
+
 | Component | State | Rationale |
 |---|---|---|
 | Project AGENTS | ACTIVE | Small repository-specific invariants and authority boundaries |

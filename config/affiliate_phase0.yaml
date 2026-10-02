@@ -50,6 +50,7 @@ compliance:
   require_verified_destination: true
   require_verified_asset_rights: true
 visual:
+  # Context headline only. Canonical product names remain complete and unmodified.
   max_slide1_headline_characters: 24
   require_product_asset_rights: true
   require_scene_diversity: true

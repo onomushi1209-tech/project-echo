@@ -17,11 +17,14 @@ from echo.models.affiliate_visual import (
     DisclosurePlacement,
     HumanApproval,
     RightsStatus,
+    SocialPlatform,
     SocialProposal,
     VisualAssetKind,
 )
-from echo.monetization.config import CompliancePolicy
+from echo.monetization.config import CompliancePolicy, load_phase0_config
 from echo.monetization.evidence import find_conflicting_evidence
+from echo.monetization.evidence import evidence_is_current
+from echo.monetization.asset_policy import visual_render_ready
 from echo.monetization.visuals import proposal_content_digest, validate_scene_diversity
 
 
@@ -122,8 +125,17 @@ def evaluate_compliance(
     expected_canonical_message = " / ".join(
         statement for statement in rendered_claim_statements if statement is not None
     )
+    stage6_valid = True
+    if proposal.content is not None:
+        try:
+            SocialProposal.model_validate(proposal.model_dump())
+            stage6_valid = _content_inventory_valid(proposal, candidates)
+            expected_canonical_message = proposal.content.body_copy
+        except (ValueError, TypeError, AttributeError):
+            stage6_valid = False
     publish_copy_ok = (
         all(statement is not None for statement in rendered_claim_statements)
+        and stage6_valid
         and proposal.canonical_message == expected_canonical_message
     )
     expected_caption = "PR" if not expected_canonical_message else f"PR {expected_canonical_message}"
@@ -132,6 +144,7 @@ def evaluate_compliance(
     )
     publish_copy_ok = publish_copy_ok and all(
         slide.headline is None or slide.headline in claim_statements
+        or proposal.content is not None and stage6_valid and slide.headline == proposal.content.headline.value
         for slide in proposal.carousel.slides
     ) and all(
         not label.annotation or any(
@@ -179,9 +192,10 @@ def evaluate_compliance(
             ):
                 promotion_ok = False
 
-    conflicts = find_conflicting_evidence(tuple(
-        candidate for candidate in requested_products if candidate is not None
-    ))
+    conflict_candidates = tuple(candidate for candidate in requested_products if candidate is not None)
+    conflicts = find_conflicting_evidence(conflict_candidates,
+        **({"as_of":as_of, "max_age":timedelta(hours=load_phase0_config().scoring_max_evidence_age_hours)}
+           if proposal.content is not None else {}))
 
     used_asset_ids = {
         slide.context_asset_id for slide in proposal.carousel.slides
@@ -201,6 +215,8 @@ def evaluate_compliance(
              or (asset.official_asset is not None and asset.transformations_allowed is not None))
         for asset in used_assets
     )
+    if proposal.content is not None:
+        rights_ok = rights_ok and stage6_valid and visual_render_ready(proposal.visual_plan, as_of=as_of)
     appearance_ok = assets_present and all(
         asset.kind != VisualAssetKind.PRODUCT or not asset.product_appearance_altered
         for asset in used_assets
@@ -254,6 +270,20 @@ def evaluate_compliance(
                         reason="The same canonical proposal digest cannot be repeated in the selected history."),
         ComplianceCheck(code=ComplianceCheckCode.HUMAN_APPROVAL, passed=approval_valid,
                         reason="A current explicit approval through the existing Human Review Gate is required."),
+        ComplianceCheck(code=ComplianceCheckCode.WEBSERVICE_CREDIT,
+                        passed=proposal.content is None,
+                        reason="Stage 6A requires Rakuten Web Service credit; social-only placement is unresolved and cannot be approved away."),
+        ComplianceCheck(code=ComplianceCheckCode.PLATFORM_COMPLIANCE,
+                        passed=proposal.content is None or all(v.platform != SocialPlatform.X or
+                            v.native_disclosure_requirement_known and v.native_paid_partnership_enabled for v in proposal.platform_variants),
+                        reason="X affiliate partnerships also require verified native Paid Partnership disclosure; PR alone is insufficient."),
+        ComplianceCheck(code=ComplianceCheckCode.CURRENT_AVAILABILITY,
+                        passed=proposal.content is None or all(c.offer.available is True and any(
+                            e.evidence_type == EvidenceType.AVAILABILITY and e.value_boolean is True
+                            and e.status == EvidenceStatus.VERIFIED and evidence_is_current(e,as_of=as_of,
+                                max_age=timedelta(hours=load_phase0_config().buy_now.max_age_by_type[EvidenceType.AVAILABILITY]))
+                            for e in c.evidence) for c in conflict_candidates),
+                        reason="Content proposals require current verified positive availability, independently of price."),
     )
     preapproval_ok = all(check.passed for check in checks if check.code != ComplianceCheckCode.HUMAN_APPROVAL)
     return ComplianceReport(
@@ -265,6 +295,31 @@ def evaluate_compliance(
         eligible_for_future_publish=preapproval_ok and approval_valid,
         live_publish_authorized=False,
     )
+
+
+def _content_inventory_valid(proposal, candidates) -> bool:
+    by_id = {c.product_id:c for c in candidates}
+    if len(by_id) != len(candidates) or set(by_id) != set(proposal.product_ids):
+        return False
+    expected_claims = set()
+    for product in proposal.content.products:
+        candidate = by_id[product.product_id]
+        quote = candidate.offer.price
+        if quote is None or (product.service,product.provider_item_id,product.canonical_product_name,
+                product.price,product.currency,product.price_evidence_id,product.affiliate_destination_reference) != (
+                candidate.service,candidate.provider_item_id,candidate.name,quote.amount,quote.currency,quote.evidence_id,
+                candidate.offer.affiliate_destination.destination_id):
+            return False
+        expected_claims |= {(product.product_id,EvidenceType.PRODUCT_IDENTITY,product.identity_evidence_id),
+                            (product.product_id,EvidenceType.PRICE,product.price_evidence_id)}
+    actual_claims = {(c.product_id,c.claim_type,c.evidence_ids[0]) for c in proposal.claims}
+    if actual_claims != expected_claims or len(actual_claims) != len(proposal.claims):
+        return False
+    for asset in proposal.visual_plan.assets:
+        candidate = by_id.get(asset.product_id)
+        if candidate is None or (asset.service,asset.provider_item_id) != (candidate.service,candidate.provider_item_id):
+            return False
+    return True
 
 
 def _fresh(observed_at: datetime, valid_until: datetime | None, as_of: datetime,

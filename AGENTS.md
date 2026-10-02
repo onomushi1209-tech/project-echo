@@ -7,10 +7,10 @@ working-tree scope against state before editing. Preserve existing user work.
 
 ## Phase and authority
 
-- Accepted baseline: Affiliate Phase 1 Rakuten Discovery Foundation, Affiliate
-  Phase 0, STEP 1/2/3 and the Efficiency Foundation at
-  `42a344ae68e67b890f35ec9167a0f53850c33326`. The checkpoint subject is Affiliate
-  Phase 1.1 Ranked Candidate Hydration on that parent. Project State records the
+- Accepted baseline: Affiliate Phase 1.1 Ranked Candidate Hydration, Affiliate
+  Phase 0/1, STEP 1/2/3 and the Efficiency Foundation at
+  `9a45fa5df980148e8c1433411a1ceb6624334ae4`. The checkpoint subject is Affiliate
+  Phase 1.2 Real Content Proposal Foundation on that parent. Project State records the
   completed bounded readonly validation; it grants no continuing runtime authority.
 - No authority for STEP 4, live affiliate integration, account/API access,
   affiliate-link creation, social posting, live execution, Scheduler, plugins,
@@ -33,6 +33,9 @@ working-tree scope against state before editing. Preserve existing user work.
 - Keep affiliate adapter details out of Core/STEP 1/2. SQL stays in storage;
   Phase 0 adds no persistence. Keep public STEP 1/2 interfaces compatible.
   Human Review remains the only approval gate; research status is informational.
+- Preserve full canonical product names separately from short context headlines.
+  API image references are not rights. Whole product images have protected regions;
+  unresolved Web Service credit and native platform disclosure block publishing.
 - Minimal scoped changes; no unrelated refactor or extra dependencies.
   New files must be necessary for the authorized fix or its verification.
 - No parallel writes. Subagents may perform read-only reviews when requested;

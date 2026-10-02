@@ -173,6 +173,14 @@ the documented double guard. Project State records one separately authorized,
 bounded readonly validation; that observation grants no continuing live authority.
 See [docs/AFFILIATE_PHASE_1.md](docs/AFFILIATE_PHASE_1.md).
 
+Stage 6A content planning preserves full canonical names and exact supported
+prices separately from short context headlines. X proposals begin with PR.
+Protected whole-image plans keep text outside product pixels; API references
+do not grant rights. Social-only Web Service credit and native platform
+disclosure remain publishing gates. The fixture command reports content/plan/
+render counts without printing product data. See
+[content proposal contracts](docs/AFFILIATE_CONTENT_PROPOSAL.md).
+
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) -- Core vs. Vertical separation, package layout, extension points
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md) -- data models and SQLite schema
 - [docs/SOURCE_INTELLIGENCE.md](docs/SOURCE_INTELLIGENCE.md) -- Source Registry, fetch/dedup/clustering/scoring, adding a new source

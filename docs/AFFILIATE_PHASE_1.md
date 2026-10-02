@@ -1,5 +1,10 @@
 # Project Echo Zero: Affiliate Phase 1 Discovery Foundation
 
+Stage 6A extends this discovery flow with the existing proposal framework's
+[full-name content and protected visual contracts](AFFILIATE_CONTENT_PROPOSAL.md).
+It changes no ranking, quality or hydration predicate and supplies no ongoing
+live authority.
+
 The original Phase 1 Foundation was based on the accepted Phase 0 commit
 `9faec201c0285bdb9307993b0bac9460f51131de`. The Phase 1.1 ranked hydration checkpoint
 is based on the accepted Phase 1 commit `42a344ae68e67b890f35ec9167a0f53850c33326`.
@@ -107,9 +112,10 @@ blocks downstream approval. Selection is research metadata, never execution.
 Each supported selected item receives a planned overview/detail carousel using
 existing visual models. Multi-item RoomBundle requires one explicit shared
 lifestyle context, distinct complementary roles and separately verified individual
-evidence/destinations. An arbitrary Top-N is not a coherent room bundle. Headlines
-use supported product identity; long names or missing source assets do not force
-unsupported visuals. Product URLs remain references; all asset rights and
+evidence/destinations. An arbitrary Top-N is not a coherent room bundle. Stage 6A
+headlines use a short neutral context frame; full canonical identity remains in
+copy and labels without truncation. Missing source assets do not force
+unsupported visuals. Product URLs remain references; default API asset rights and
 transformation permissions stay UNKNOWN, and generated-context assets are plans
 only. No downloads, image generation, likeness/people or imitation is performed.
 

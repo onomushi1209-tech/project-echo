@@ -95,6 +95,8 @@ def validate_scene_diversity(scene: LifestyleScene, prior_fingerprints: tuple[st
 def proposal_content_digest(proposal: SocialProposal, candidates: tuple[ProductCandidate, ...]) -> str:
     """Bind approval to canonical content and all cited product/evidence state."""
     candidate_by_id = {item.product_id: item for item in candidates}
+    if proposal.content is not None and (len(candidate_by_id) != len(candidates) or set(candidate_by_id) != set(proposal.product_ids)):
+        raise ValueError("content digest requires the exact unique candidate inventory")
     if set(proposal.product_ids) - set(candidate_by_id):
         raise ValueError("proposal references an unknown product")
     products = [candidate_by_id[product_id].model_dump(mode="json") for product_id in sorted(proposal.product_ids)]

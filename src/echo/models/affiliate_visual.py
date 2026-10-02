@@ -12,6 +12,8 @@ from pydantic import Field, model_validator
 from echo.models.affiliate import AffiliateModel, EvidenceStatus, EvidenceType, ProductSet
 from echo.models.enums import DecisionType
 from echo.models.review import ReviewDecision
+from echo.models.affiliate_assets import RightsSafeVisualPlan
+from echo.models.affiliate_content import ContentProposalDetails, WebServiceCredit
 
 
 class VisualAssetKind(str, Enum):
@@ -51,6 +53,7 @@ class VisualAsset(AffiliateModel):
     transformations_allowed: bool | None = None
     product_ids: tuple[str, ...] = ()
     product_appearance_altered: bool = False
+    source_content_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
     @model_validator(mode="after")
     def _asset_role_is_explicit(self) -> Self:
@@ -199,6 +202,7 @@ class PlatformVariant(AffiliateModel):
     disclosure_text: str = Field(min_length=1)
     disclosure_placement: DisclosurePlacement
     native_disclosure_requirement_known: bool = False
+    native_paid_partnership_enabled: bool = Field(default=False, strict=True)
 
 
 class MarketingClaim(AffiliateModel):
@@ -227,9 +231,47 @@ class SocialProposal(AffiliateModel):
     carousel: CarouselPlan
     platform_variants: tuple[PlatformVariant, ...] = ()
     created_at: datetime
+    content: ContentProposalDetails | None = None
+    visual_plan: RightsSafeVisualPlan | None = None
+    webservice_credit: WebServiceCredit | None = None
 
     @model_validator(mode="after")
     def _proposal_references(self) -> Self:
+        expanded = (self.content, self.visual_plan, self.webservice_credit)
+        if any(item is not None for item in expanded) and any(item is None for item in expanded):
+            raise ValueError("Stage 6A content, protected visual plan and credit gate are inseparable")
+        if self.content is not None:
+            if tuple(p.product_id for p in self.content.products) != self.product_ids:
+                raise ValueError("content identity inventory must match the proposal")
+            if len(self.visual_plan.slides) != len(self.carousel.slides):
+                raise ValueError("protected visual plan must cover every carousel slide")
+            if self.canonical_message != self.content.body_copy:
+                raise ValueError("content copy must render its exact typed facts")
+            for item in self.content.products:
+                matching = [label for slide in self.carousel.slides for label in slide.labels if label.product_id == item.product_id]
+                if not matching or any((label.product_name,label.price,label.currency,label.price_evidence_id,label.destination_id) !=
+                    (item.canonical_product_name,item.price,item.currency,item.price_evidence_id,item.affiliate_destination_reference) for label in matching):
+                    raise ValueError("canonical content identity/price/destination must agree with every label")
+            for protected, slide in zip(self.visual_plan.slides,self.carousel.slides):
+                if protected.use_context != slide.scene.usage_context or {(r.product_id,r.asset_id) for r in protected.product_regions} != {(label.product_id,label.product_asset_id) for label in slide.labels}:
+                    raise ValueError("protected visual regions must match the carousel identity and context")
+                if {a.product_id for a in protected.arrow_regions} != set(slide.arrow_product_ids):
+                    raise ValueError("every planned arrow needs an outside-only bounding region")
+                expected_text = {("canonical_product_name",label.product_id,label.product_name) for label in slide.labels}
+                expected_text |= {("price",label.product_id,f"価格: {label.price} {label.currency}") for label in slide.labels}
+                if slide.headline is not None:
+                    if slide.headline != self.content.headline.value:
+                        raise ValueError("overview headline is a separate, neutral context frame")
+                    expected_text.add(("headline",self.product_ids[0],slide.headline))
+                expected_text |= {("annotation",label.product_id,label.annotation) for label in slide.labels if label.annotation}
+                actual_text = {(t.kind,t.product_id,t.text) for t in protected.text_regions}
+                if actual_text != expected_text or len(actual_text) != len(protected.text_regions):
+                    raise ValueError("protected visual text must render the exact canonical labels")
+            by_asset = {a.asset_id:a for a in self.visual_assets}
+            for provenance in self.visual_plan.assets:
+                asset = by_asset.get(provenance.asset_id)
+                if asset is None or asset.product_ids != (provenance.product_id,) or asset.source_reference != provenance.source_reference or asset.source_content_sha256 != provenance.asset_content_sha256:
+                    raise ValueError("fixed asset source/content identity must match rights provenance")
         if self.carousel.product_set_id != self.product_set_id:
             raise ValueError("carousel and proposal must refer to the same product set")
         if len(set(self.product_ids)) != len(self.product_ids):
@@ -302,6 +344,9 @@ class ComplianceCheckCode(str, Enum):
     SCENE_DIVERSITY = "scene_diversity"
     DUPLICATE_PROPOSAL = "duplicate_proposal"
     HUMAN_APPROVAL = "human_approval"
+    WEBSERVICE_CREDIT = "webservice_credit"
+    PLATFORM_COMPLIANCE = "platform_compliance"
+    CURRENT_AVAILABILITY = "current_availability"
 
 
 class ComplianceCheck(AffiliateModel):
@@ -322,6 +367,18 @@ class ComplianceReport(AffiliateModel):
     @property
     def can_publish(self) -> bool:
         return False
+
+    @property
+    def content_ready(self) -> bool:
+        required = {ComplianceCheckCode.DISCLOSURE, ComplianceCheckCode.DESTINATION,
+                    ComplianceCheckCode.CLAIM_EVIDENCE, ComplianceCheckCode.CONFLICTING_EVIDENCE,
+                    ComplianceCheckCode.PRICE_FRESHNESS, ComplianceCheckCode.PROMOTION_FRESHNESS}
+        required.add(ComplianceCheckCode.CURRENT_AVAILABILITY)
+        return all(c.passed for c in self.checks if c.code in required)
+
+    @property
+    def publish_ready(self) -> bool:
+        return self.eligible_for_future_publish
 
     @model_validator(mode="after")
     def _fail_closed(self) -> Self:
